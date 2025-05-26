@@ -1,0 +1,117 @@
+body{
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+a{
+    text-decoration: none;
+    text-decoration-color: none;
+}
+
+a:visited {
+    color: inherit;         /* Hereda el color del padre */
+    text-decoration: none;  /* Quita el subrayado */
+  }
+
+.ContenidoPrincipal{
+
+max-width: 1200px;
+margin: 0 auto;
+height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.ContenedorFormulario{
+  width: 50%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+
+
+}
+#Registro{
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+   
+
+}
+
+
+.ItemsFormulario{
+
+    font-size: 1rem;
+    
+
+}
+
+.ItemsFormulario input,
+.ItemsFormulario label {
+  width: 100%;
+  box-sizing: border-box;
+  font-weight: 400;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  color: orange;
+
+}
+.ItemsFormulario input{
+    background-color: black;
+}
+
+
+#RegistroBtn {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.7rem;
+    box-sizing: border-box;
+    color: black;
+    font-weight: bold;
+    background-color: orange;
+  }
+
+.RegistroForm{
+width: 100%;
+height: 100%;
+
+}
+
+#Pregunta{
+    color:white;
+}
+
+#LinkRegistro{
+    color: orange !important;
+}
+
+
+
+@media (max-width: 768px) {
+    .ItemsFormulario input,
+.ItemsFormulario label {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  border-radius: 5px;
+
+}
+
+
+#Registro{
+    font-size: 2rem;
+   
+
+}
+}
+
+
