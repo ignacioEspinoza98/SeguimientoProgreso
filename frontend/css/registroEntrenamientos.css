@@ -1,0 +1,119 @@
+body {
+  margin: 0;
+  padding: 2rem;
+  background-color: #0f0f0f;
+  font-family: 'Segoe UI', sans-serif;
+  color: #fff;
+}
+
+.contenedor {
+  max-width: 800px;
+  margin: auto;
+}
+
+form {
+  background-color: #1c1c1c;
+  padding: 2rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #ffa500;
+  font-weight: bold;
+}
+
+select, input {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #121212;
+  border: 1px solid #ffa500;
+  color: white;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.grupo-inputs {
+  display: flex;
+  gap: 1rem;
+}
+
+.grupo-inputs > div {
+  flex: 1;
+}
+
+.boton {
+  background-color: transparent;
+  color: #ffa500;
+  border: 2px solid #ffa500;
+  padding: 1rem;
+  width: 100%;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.boton:hover {
+  background-color: #ffa500;
+  color: black;
+}
+
+h2 {
+  color: #ffa500;
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: center;
+  background-color: #1c1c1c;
+}
+
+th {
+  color: #ffa500;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+.botones-secundarios {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.botones-secundarios .boton {
+  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  width: auto;
+  min-width: 140px;
+  text-align: center;
+}
+
+td button {
+  background-color: transparent;
+  color: #ffa500;
+  border: 1px solid #ffa500;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+td button:hover {
+  background-color: #ffa500;
+  color: #000;
+}

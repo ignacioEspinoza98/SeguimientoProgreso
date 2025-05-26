@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de Entrenamientos</title>
+  <link rel="stylesheet" href="../css/registroEntrenamientos.css" />
+</head>
+<body>
+  <main class="contenedor">
+
+    <form id="formulario-entrenamiento">
+      <label for="ejercicio">Ejercicio</label>
+      <select id="ejercicio" required>
+        <option value="">Selecciona un ejercicio</option>
+        <option value="Press de banca">Press de banca</option>
+        <option value="Peso muerto">Peso muerto</option>
+        <option value="Sentadilla">Sentadilla</option>
+      </select>
+
+      <div class="grupo-inputs">
+        <div>
+          <label for="peso">Peso (kg)</label>
+          <input type="number" id="peso" required />
+        </div>
+        <div>
+          <label for="repeticiones">Repeticiones</label>
+          <input type="number" id="repeticiones" required />
+        </div>
+        <div>
+          <label for="series">Series</label>
+          <input type="number" id="series" required />
+        </div>
+      </div>
+
+      <button type="submit" class="boton">Agregar ejercicio</button>
+    <div class="botones-secundarios">
+        <button id="vaciarSesion" class="boton secundario">Vaciar Sesión</button>
+            <a href="Dashboard.html" class="boton">Ir al Dashboard</a>
+            <a href="AnalisisRendimiento.html" class="boton secundario">Ver Análisis</a>
+    </div>
+    </form>
+
+    <h2>Resumen de la sesión</h2>
+    <table id="tabla-resumen">
+      <thead>
+        <tr>
+          <th>Ejercicio</th>
+          <th>Peso</th>
+          <th>Repeticiones</th>
+          <th>Series</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Se agregan dinámicamente -->
+      </tbody>
+    </table>
+    <button id="finalizarSesion" class="boton" style="margin-top: 2rem;">Finalizar Sesión</button>
+
+  </main>
+  <script src="../js/registroEntrenamientos.js"></script>
+</body>
+</html>
