@@ -22,6 +22,9 @@ document.getElementById('InicioSesionForm').addEventListener('submit', function(
 
 
     if(Correo == UsuarioLocalStorage.correo && Contraseña == UsuarioLocalStorage.contraseña ){
+      // Guardamos en sessionStorage que el usuario está logueado
+      sessionStorage.setItem("Logueado", "true");
+
       window.location.href = "dashboard.html";
     }
   

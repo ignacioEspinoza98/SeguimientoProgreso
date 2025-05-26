@@ -1,5 +1,5 @@
-const UsuarioLocalStorage = JSON.parse(localStorage.getItem("Usuario"));
+const LogueadoLocalStorage = JSON.parse(localStorage.getItem("Logueado"));
 
-if(!UsuarioLocalStorage){
+if(!LogueadoLocalStorage){
     window.location.href = "../../index.html";
 }
