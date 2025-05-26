@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Análisis de Rendimiento</title>
+  <link rel="stylesheet" href="../css/analisisRendimiento.css" />
+</head>
+<body>
+  <main class="contenedor">
+    <div class="cabecera">
+      <h1>Análisis de Rendimiento</h1>
+      <a href="Dashboard.html" class="boton-volver">Volver al dashboard</a>
+    </div>
+
+    <div class="filtros">
+      <select id="filtro-ejercicio">
+        <option value="todos">Todos los ejercicios</option>
+      </select>
+
+      <select id="filtro-tiempo">
+        <option value="7">Últimos 7 días</option>
+        <option value="30">Últimos 30 días</option>
+        <option value="90">Últimos 3 meses</option>
+        <option value="historial">Todo el historial</option>
+      </select>
+
+      <select id="filtro-grupo" disabled>
+        <option>Filtro</option>
+      </select>
+    </div>
+
+    <section class="panel">
+      <div class="grafico">
+        <h2>Rendimiento en el tiempo</h2>
+        <canvas id="graficoRendimiento"></canvas>
+        <!-- Aquí se insertará dinámicamente el <p id="contadorSesiones"> -->
+      </div>
+
+      <div class="record-box">
+        <h2>Récords personales</h2>
+        <ul id="lista-records"></ul>
+      </div>
+    </section>
+
+    <section class="estadisticas">
+      <div class="card">
+        <h3>Peso máximo</h3>
+        <p id="pesoMaxAnalisis">-- kg</p>
+      </div>
+      <div class="card">
+        <h3>Entrenamientos registrados</h3>
+        <p id="entrenamientosTotal">--</p>
+      </div>
+      <div class="card">
+        <h3>Promedio de repeticiones por serie</h3>
+        <p id="promedioReps">--</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lógica del análisis -->
+  <script src="../js/analisisRendimiento.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+body {
+  margin: 0;
+  padding: 2rem;
+  background-color: #0f0f0f;
+  font-family: 'Segoe UI', sans-serif;
+  color: #fff;
+}
+
+.contenedor {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #ffa500;
+}
+
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.boton-volver {
+  text-decoration: none;
+  border: 2px solid #ffa500;
+  color: #ffa500;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.boton-volver:hover {
+  background-color: #ffa500;
+  color: #000;
+}
+
+.filtros {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.filtros select {
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ffa500;
+  background-color: #1c1c1c;
+  color: #fff;
+  font-weight: bold;
+}
+
+.panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.grafico, .record-box {
+  background-color: #1c1c1c;
+  padding: 1rem;
+  border-radius: 12px;
+  flex: 1;
+  min-width: 300px;
+}
+
+.grafico h2, .record-box h2 {
+  color: #ffa500;
+  margin-bottom: 1rem;
+}
+
+#graficoRendimiento {
+  width: 100%;
+  height: 250px;
+}
+
+#lista-records {
+  list-style: none;
+  padding: 0;
+}
+
+#lista-records li {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #ffa500;
+}
+
+.estadisticas {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.card {
+  background-color: #1c1c1c;
+  padding: 1rem;
+  border-radius: 12px;
+  flex: 1;
+  min-width: 200px;
+  text-align: center;
+}
+
+.card h3 {
+  color: #ffa500;
+  margin-bottom: 0.5rem;
+}

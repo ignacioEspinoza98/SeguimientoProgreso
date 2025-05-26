@@ -1,23 +1,72 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const registros = JSON.parse(localStorage.getItem("sesion_entrenamiento")) || [];
+  const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
+  const claveHistorial = "historial_" + usuario.nombre.toLowerCase();
+  const historial = JSON.parse(localStorage.getItem(claveHistorial)) || [];
 
-  // 1. Peso Máximo
-  if (registros.length > 0) {
-    const pesoMax = Math.max(...registros.map(r => r.peso));
-    const ejercicioPesoMax = registros.find(r => r.peso === pesoMax)?.ejercicio;
-    document.querySelector(".box:nth-child(1) p").innerHTML = `
-      <strong>${ejercicioPesoMax}</strong><br>${pesoMax} kg`;
+  const saludo = document.querySelector("h1");
+  if (saludo) {
+    saludo.innerHTML = `Hola, ${usuario.nombre}!<br>Domina tus límites cada repetición.`;
   }
 
-  // 2. Último entrenamiento
-  const ultimo = registros[registros.length - 1];
-  if (ultimo) {
-    document.querySelector(".box:nth-child(2) p").innerHTML = `
-      <strong>${ultimo.ejercicio}</strong><br>
-      ${ultimo.series} series · ${ultimo.peso} kg`;
+  if (historial.length === 0) return;
+
+  let pesoMaximo = 0;
+  let ejercicioPesoMax = "N/A";
+  let totalSeriesSemana = 0;
+  let ultimaFecha = null;
+  const seriesPorGrupo = {};
+
+  const ahora = new Date();
+  const unaSemanaMs = 7 * 24 * 60 * 60 * 1000;
+
+  historial.forEach(sesion => {
+    const fechaSesion = new Date(sesion.fecha);
+
+    if (!ultimaFecha || fechaSesion > new Date(ultimaFecha)) {
+      ultimaFecha = sesion.fecha;
+    }
+
+    if (ahora - fechaSesion <= unaSemanaMs) {
+      sesion.ejercicios.forEach(e => {
+        if (e.peso > pesoMaximo) {
+          pesoMaximo = e.peso;
+          ejercicioPesoMax = e.ejercicio;
+        }
+
+        totalSeriesSemana += parseInt(e.series) || 0;
+
+        const grupo = e.grupoMuscular || "Otro";
+        seriesPorGrupo[grupo] = (seriesPorGrupo[grupo] || 0) + (parseInt(e.series) || 0);
+      });
+    }
+  });
+
+  // Mostrar peso máximo
+  document.getElementById("pesoMaximo").innerHTML = `<strong>${ejercicioPesoMax}</strong><br>${pesoMaximo} kg`;
+
+  // Mostrar último entrenamiento
+  if (ultimaFecha) {
+    const fechaFormateada = new Date(ultimaFecha).toLocaleDateString();
+    const ultimaSesion = historial.find(s => s.fecha === ultimaFecha);
+    const primerEjercicio = ultimaSesion?.ejercicios?.[0];
+    const infoExtra = primerEjercicio
+      ? `${primerEjercicio.ejercicio} - ${primerEjercicio.peso}kg`
+      : "Ejercicio no disponible";
+
+    document.getElementById("ultimoEntreno").innerHTML = `
+      <strong>${fechaFormateada}</strong><br>${infoExtra}`;
   }
 
-  // 3. Series realizadas esta semana (en simulación: suma total)
-  const totalSeries = registros.reduce((acc, r) => acc + (parseInt(r.series) || 0), 0);
-  document.querySelector(".box:nth-child(3) p").innerHTML = `<strong>${totalSeries}</strong>`;
+  // Mostrar total de series esta semana
+  document.getElementById("seriesSemana").innerHTML = `<strong>${totalSeriesSemana}</strong>`;
+
+  // Mostrar resumen por grupo muscular
+  const listaGrupos = document.getElementById("seriesPorGrupo");
+  listaGrupos.innerHTML = "";
+
+  for (const grupo in seriesPorGrupo) {
+    const li = document.createElement("li");
+    li.textContent = `${grupo}: ${seriesPorGrupo[grupo]} series`;
+    listaGrupos.appendChild(li);
+  }
 });
