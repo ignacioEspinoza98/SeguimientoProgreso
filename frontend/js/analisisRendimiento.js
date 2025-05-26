@@ -6,8 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (historial.length === 0) return;
 
   const selectEjercicio = document.getElementById("filtro-ejercicio");
-  const ctx = document.getElementById("graficoRendimiento");
-  const selectTiempo = document.getElementById("filtro-tiempo");
+  const ctx = document.getElementById("graficoRendimiento").getContext("2d");
 
   let chart;
 
@@ -30,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Estadísticas
   document.getElementById("pesoMaxAnalisis").textContent = `${pesoMaximo} kg`;
   document.getElementById("entrenamientosTotal").textContent = entrenamientoTotal;
   document.getElementById("promedioReps").textContent = totalSeries > 0
@@ -48,38 +48,26 @@ document.addEventListener("DOMContentLoaded", () => {
     opt.value = nombre;
     opt.textContent = nombre;
     selectEjercicio.appendChild(opt);
+    // Seleccionar automáticamente el primer ejercicio
+if (selectEjercicio.options.length > 1) {
+  selectEjercicio.selectedIndex = 1; // salta "Todos los ejercicios"
+  selectEjercicio.dispatchEvent(new Event("change"));
+}
   });
+  
 
-  selectEjercicio.addEventListener("change", filtrarYGraficar);
-  selectTiempo.addEventListener("change", filtrarYGraficar);
-
-  if (selectEjercicio.options.length > 1) {
-    selectEjercicio.selectedIndex = 1;
-    selectEjercicio.dispatchEvent(new Event("change"));
-  }
-
-  function filtrarYGraficar() {
+  // Escuchar cambio y generar gráfico
+  selectEjercicio.addEventListener("change", () => {
     const ejercicioSeleccionado = selectEjercicio.value;
-    const periodoSeleccionado = parseInt(selectTiempo.value);
-    const ahora = new Date();
-
     if (!ejercicioSeleccionado || ejercicioSeleccionado === "todos") return;
 
     const datosFiltrados = [];
 
     historial.forEach(sesion => {
-      const fechaSesion = new Date(sesion.fecha);
-
-      if (!isNaN(periodoSeleccionado)) {
-        const diferenciaMs = ahora - fechaSesion;
-        const diasMs = periodoSeleccionado * 24 * 60 * 60 * 1000;
-        if (diferenciaMs > diasMs) return;
-      }
-
       sesion.ejercicios.forEach(e => {
         if (e.ejercicio === ejercicioSeleccionado) {
           datosFiltrados.push({
-            fecha: fechaSesion.toLocaleDateString(),
+            fecha: new Date(sesion.fecha).toLocaleDateString(),
             peso: e.peso
           });
         }
@@ -89,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const labels = datosFiltrados.map(d => d.fecha);
     const pesos = datosFiltrados.map(d => d.peso);
 
+    // Destruir gráfico anterior si existe
     if (chart) chart.destroy();
 
     chart = new Chart(ctx, {
@@ -109,30 +98,24 @@ document.addEventListener("DOMContentLoaded", () => {
         scales: {
           y: {
             beginAtZero: true,
-            ticks: { color: '#fff' }
+            ticks: {
+              color: '#fff'
+            }
           },
           x: {
-            ticks: { color: '#fff' }
+            ticks: {
+              color: '#fff'
+            }
           }
         },
         plugins: {
           legend: {
-            labels: { color: '#fff' }
+            labels: {
+              color: '#fff'
+            }
           }
         }
       }
     });
-
-    // Mostrar cantidad de sesiones del ejercicio seleccionado
-    const contador = datosFiltrados.length;
-    if (!document.getElementById("contadorSesiones")) {
-      const p = document.createElement("p");
-      p.id = "contadorSesiones";
-      p.style.marginTop = "1rem";
-      p.style.color = "#ffa500";
-      ctx.canvas.parentNode.appendChild(p);
-    }
-    document.getElementById("contadorSesiones").textContent =
-      `Has entrenado ${ejercicioSeleccionado} en ${contador} sesión${contador !== 1 ? 'es' : ''}`;
-  }
+  });
 });
