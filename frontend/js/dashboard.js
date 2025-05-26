@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let ejercicioPesoMax = "N/A";
   let totalSeriesSemana = 0;
   let ultimaFecha = null;
+  const seriesPorGrupo = {};
 
   const ahora = new Date();
   const unaSemanaMs = 7 * 24 * 60 * 60 * 1000;
@@ -21,31 +22,51 @@ document.addEventListener("DOMContentLoaded", () => {
   historial.forEach(sesion => {
     const fechaSesion = new Date(sesion.fecha);
 
-    // ✅ CORRECTA MANERA DE ACTUALIZAR FECHA MÁS RECIENTE
     if (!ultimaFecha || fechaSesion > new Date(ultimaFecha)) {
       ultimaFecha = sesion.fecha;
     }
 
-    sesion.ejercicios.forEach(e => {
-      if (e.peso > pesoMaximo) {
-        pesoMaximo = e.peso;
-        ejercicioPesoMax = e.ejercicio;
-      }
+    if (ahora - fechaSesion <= unaSemanaMs) {
+      sesion.ejercicios.forEach(e => {
+        if (e.peso > pesoMaximo) {
+          pesoMaximo = e.peso;
+          ejercicioPesoMax = e.ejercicio;
+        }
 
-      if (ahora - fechaSesion <= unaSemanaMs) {
         totalSeriesSemana += parseInt(e.series) || 0;
-      }
-    });
+
+        const grupo = e.grupoMuscular || "Otro";
+        seriesPorGrupo[grupo] = (seriesPorGrupo[grupo] || 0) + (parseInt(e.series) || 0);
+      });
+    }
   });
 
-  // Mostrar resultados
+  // Mostrar peso máximo
   document.getElementById("pesoMaximo").innerHTML = `<strong>${ejercicioPesoMax}</strong><br>${pesoMaximo} kg`;
 
+  // Mostrar último entrenamiento
   if (ultimaFecha) {
     const fechaFormateada = new Date(ultimaFecha).toLocaleDateString();
+    const ultimaSesion = historial.find(s => s.fecha === ultimaFecha);
+    const primerEjercicio = ultimaSesion?.ejercicios?.[0];
+    const infoExtra = primerEjercicio
+      ? `${primerEjercicio.ejercicio} - ${primerEjercicio.peso}kg`
+      : "Ejercicio no disponible";
+
     document.getElementById("ultimoEntreno").innerHTML = `
-      <strong>${fechaFormateada}</strong><br>Última sesión registrada`;
+      <strong>${fechaFormateada}</strong><br>${infoExtra}`;
   }
 
+  // Mostrar total de series esta semana
   document.getElementById("seriesSemana").innerHTML = `<strong>${totalSeriesSemana}</strong>`;
+
+  // Mostrar resumen por grupo muscular
+  const listaGrupos = document.getElementById("seriesPorGrupo");
+  listaGrupos.innerHTML = "";
+
+  for (const grupo in seriesPorGrupo) {
+    const li = document.createElement("li");
+    li.textContent = `${grupo}: ${seriesPorGrupo[grupo]} series`;
+    listaGrupos.appendChild(li);
+  }
 });

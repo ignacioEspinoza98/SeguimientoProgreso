@@ -10,12 +10,15 @@
   <main class="contenedor">
 
     <form id="formulario-entrenamiento">
+      <label for="grupoMuscular">Grupo muscular</label>
+      <select id="grupoMuscular" required>
+        <option value="">Selecciona un grupo muscular</option>
+        <!-- Se cargan dinámicamente -->
+      </select>
+
       <label for="ejercicio">Ejercicio</label>
-      <select id="ejercicio" required>
+      <select id="ejercicio" required disabled>
         <option value="">Selecciona un ejercicio</option>
-        <option value="Press de banca">Press de banca</option>
-        <option value="Peso muerto">Peso muerto</option>
-        <option value="Sentadilla">Sentadilla</option>
       </select>
 
       <div class="grupo-inputs">

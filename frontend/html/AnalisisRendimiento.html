@@ -16,7 +16,6 @@
     <div class="filtros">
       <select id="filtro-ejercicio">
         <option value="todos">Todos los ejercicios</option>
-        <!-- Opciones se cargarán dinámicamente -->
       </select>
 
       <select id="filtro-tiempo">
@@ -35,6 +34,7 @@
       <div class="grafico">
         <h2>Rendimiento en el tiempo</h2>
         <canvas id="graficoRendimiento"></canvas>
+        <!-- Aquí se insertará dinámicamente el <p id="contadorSesiones"> -->
       </div>
 
       <div class="record-box">
@@ -58,7 +58,10 @@
       </div>
     </section>
   </main>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../js/analisisRendimiento.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lógica del análisis -->
+  <script src="../js/analisisRendimiento.js"></script>
 </body>
 </html>
