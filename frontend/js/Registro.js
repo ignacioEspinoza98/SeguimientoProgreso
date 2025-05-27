@@ -63,8 +63,12 @@ else
       console.log('Contraseña:', Contraseña);
       console.log('Correo:', Correo);
       console.log('ConfirmarContraseña',ConfirmarContraseña)
-      console.log('Usuario',Usuario)}
+      console.log('Usuario',Usuario)
 
+      window.location.href = "inicioSesion.html";
+    }
+    
+      
   
   });
   
