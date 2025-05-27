@@ -32,7 +32,7 @@ document.getElementById('RegistroForm').addEventListener('submit', function(even
     }
     
 
-let DatosUsuarios = JSON.parse(localStorage.getItem("Usuarios")) || { usuarios: [] };
+let DatosUsuarios = JSON.parse(localStorage.getItem("Usuario")) || { usuarios: [] };
 
 
 const UsuarioNuevo = {
@@ -53,7 +53,7 @@ else
   {DatosUsuarios.usuarios.push(UsuarioNuevo);
 
 
-  localStorage.setItem("Usuarios", JSON.stringify(DatosUsuarios));
+  localStorage.setItem("Usuario", JSON.stringify(DatosUsuarios));
   
   document.getElementById('RegistroForm').reset();
   
