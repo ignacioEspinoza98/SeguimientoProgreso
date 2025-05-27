@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const seriesPorGrupo = {};
   const volumenPorGrupo = {};
+
   const ahora = new Date();
   const unaSemanaMs = 7 * 24 * 60 * 60 * 1000;
 
@@ -29,19 +30,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (ahora - fechaSesion <= unaSemanaMs) {
       sesion.ejercicios.forEach(e => {
-        const grupo = e.grupoMuscular || "Otro";
+        // 🔥 Ignorar ejercicios que no tienen grupoMuscular
+        if (!e.grupoMuscular || e.grupoMuscular === "Otro") return;
+
+        const grupo = e.grupoMuscular;
         const series = parseInt(e.series) || 0;
         const repes = parseInt(e.repeticiones) || 0;
         const peso = parseFloat(e.peso) || 0;
 
-        // Sumar series
         seriesPorGrupo[grupo] = (seriesPorGrupo[grupo] || 0) + series;
+        volumenPorGrupo[grupo] = (volumenPorGrupo[grupo] || 0) + (series * repes * peso);
         totalSeriesSemana += series;
 
-        // Sumar volumen
-        volumenPorGrupo[grupo] = (volumenPorGrupo[grupo] || 0) + (series * repes * peso);
-
-        // Peso máximo
         if (peso > pesoMaximo) {
           pesoMaximo = peso;
           ejercicioPesoMax = e.ejercicio;
@@ -81,12 +81,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Mostrar volumen por grupo muscular
   const listaVolumen = document.getElementById("volumenPorGrupo");
-  listaVolumen.innerHTML = "";
-
-  for (const grupo in volumenPorGrupo) {
-    if (typeof volumenPorGrupo[grupo] !== "number") continue;
-    const li = document.createElement("li");
-    li.textContent = `${grupo}: ${volumenPorGrupo[grupo].toLocaleString()} kg totales`;
-    listaVolumen.appendChild(li);
+  if (listaVolumen) {
+    listaVolumen.innerHTML = "";
+    for (const grupo in volumenPorGrupo) {
+      if (typeof volumenPorGrupo[grupo] !== "number") continue;
+      const li = document.createElement("li");
+      li.textContent = `${grupo}: ${volumenPorGrupo[grupo].toLocaleString()} kg totales`;
+      listaVolumen.appendChild(li);
+    }
   }
 });
