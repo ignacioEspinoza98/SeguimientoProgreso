@@ -40,6 +40,8 @@ document.getElementById('RegistroForm').addEventListener('submit', function(even
    };
 
     localStorage.setItem("Usuario",JSON.stringify(DatosUsuario));
+    document.getElementById('RegistroForm').reset();
+    alert("Usuario Registrado");
   
     // Aquí puedes hacer algo con los datos, como enviarlos a un servidor
     console.log('Contraseña:', Contraseña);
