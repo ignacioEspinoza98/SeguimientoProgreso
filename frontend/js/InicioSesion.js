@@ -17,12 +17,20 @@ document.getElementById('InicioSesionForm').addEventListener('submit', function(
 
     if(!CorreoVerificado){
       alert("Correo Invalido");
-      return;
+      return; 
     }
 
-    if(Correo == UsuarioLocalStorage.correo && Contraseña == UsuarioLocalStorage.contraseña ){
-      // Guardamos en sessionStorage que el usuario está logueado
-      sessionStorage.setItem("Logueado", "true");
+    const BuscarCorreoUsuario = UsuarioLocalStorage.usuarios.find(
+      usuario => usuario.correo === Correo && usuario.contraseña === Contraseña
+    );
+
+    if(BuscarCorreoUsuario){
+      const UserLog = {
+        correo:Correo,
+        Logueado: true
+      }
+      
+      sessionStorage.setItem("Logueado", JSON.stringify(UserLog));
 
       window.location.href = "dashboard.html";
     }
