@@ -60,7 +60,7 @@ else
   
       alert("Usuario Registrado");
     
-      // Aquí puedes hacer algo con los datos, como enviarlos a un servidor
+      
       console.log('Contraseña:', Contraseña);
       console.log('Correo:', Correo);
       console.log('ConfirmarContraseña',ConfirmarContraseña)
