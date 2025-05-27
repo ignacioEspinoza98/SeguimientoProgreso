@@ -1,5 +1,11 @@
-// Limpiar los datos de sessionStorage
-sessionStorage.clear();
+document.addEventListener("DOMContentLoaded", () => {
+  const botonCerrar = document.getElementById("cerrarSesion");
+  if (botonCerrar) {
+    botonCerrar.addEventListener("click", () => {
+      sessionStorage.clear();
+      alert("Sesión cerrada correctamente");
+      window.location.href = "../../index.html"; // sube dos niveles
+    });
+  }
+});
 
-// Redirigir al login
-window.location.href = "index.html";

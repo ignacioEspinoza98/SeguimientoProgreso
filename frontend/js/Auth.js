@@ -1,5 +1,5 @@
-const LogueadoLocalStorage = JSON.parse(localStorage.getItem("Logueado"));
+const Logueado = sessionStorage.getItem("Logueado");
 
-if(!LogueadoLocalStorage){
-    window.location.href = "../../index.html";
+if (!Logueado) {
+  window.location.href = "../../index.html";
 }

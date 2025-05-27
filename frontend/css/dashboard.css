@@ -84,3 +84,22 @@ h1 {
   color: #ffa500;
   border: 2px solid #ffa500;
 }
+
+.boton-cerrar {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background-color: transparent;
+  border: 2px solid #ffa500;
+  color: #ffa500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.boton-cerrar:hover {
+  background-color: #ffa500;
+  color: #000;
+}
