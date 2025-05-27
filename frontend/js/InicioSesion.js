@@ -22,14 +22,9 @@ document.getElementById('InicioSesionForm').addEventListener('submit', function(
       usuario => usuario.correo === Correo && usuario.contraseña === Contraseña
     );
 
-    if(BuscarCorreoUsuario){
-      const UserLog = {
-        correo:Correo,
-        Logueado: true
-      }
-      
-      sessionStorage.setItem("Logueado", JSON.stringify(UserLog));
-
+    if (BuscarCorreoUsuario) {
+      sessionStorage.setItem("Logueado", "true");
+      sessionStorage.setItem("usuario", JSON.stringify({ nombre: BuscarCorreoUsuario.usuario }));
       window.location.href = "dashboard.html";
     }
 
