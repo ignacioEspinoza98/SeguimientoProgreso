@@ -20,15 +20,17 @@ document.getElementById('InicioSesionForm').addEventListener('submit', function(
       return;
     }
 
-
     if(Correo == UsuarioLocalStorage.correo && Contraseña == UsuarioLocalStorage.contraseña ){
       // Guardamos en sessionStorage que el usuario está logueado
       sessionStorage.setItem("Logueado", "true");
 
       window.location.href = "dashboard.html";
     }
-  
-    // Aquí puedes hacer algo con los datos, como enviarlos a un servidor
+
+    else{
+      alert("Credenciales Invalidas")
+    }
+   
     console.log('Contraseña:', Contraseña);
     console.log('Correo:', Correo);
   });
