@@ -14,8 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let ejercicioPesoMax = "N/A";
   let totalSeriesSemana = 0;
   let ultimaFecha = null;
-  const seriesPorGrupo = {};
 
+  const seriesPorGrupo = {};
+  const volumenPorGrupo = {};
   const ahora = new Date();
   const unaSemanaMs = 7 * 24 * 60 * 60 * 1000;
 
@@ -28,15 +29,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (ahora - fechaSesion <= unaSemanaMs) {
       sesion.ejercicios.forEach(e => {
-        if (e.peso > pesoMaximo) {
-          pesoMaximo = e.peso;
+        const grupo = e.grupoMuscular || "Otro";
+        const series = parseInt(e.series) || 0;
+        const repes = parseInt(e.repeticiones) || 0;
+        const peso = parseFloat(e.peso) || 0;
+
+        // Sumar series
+        seriesPorGrupo[grupo] = (seriesPorGrupo[grupo] || 0) + series;
+        totalSeriesSemana += series;
+
+        // Sumar volumen
+        volumenPorGrupo[grupo] = (volumenPorGrupo[grupo] || 0) + (series * repes * peso);
+
+        // Peso máximo
+        if (peso > pesoMaximo) {
+          pesoMaximo = peso;
           ejercicioPesoMax = e.ejercicio;
         }
-
-        totalSeriesSemana += parseInt(e.series) || 0;
-
-        const grupo = e.grupoMuscular || "Otro";
-        seriesPorGrupo[grupo] = (seriesPorGrupo[grupo] || 0) + (parseInt(e.series) || 0);
       });
     }
   });
@@ -60,13 +69,24 @@ document.addEventListener("DOMContentLoaded", () => {
   // Mostrar total de series esta semana
   document.getElementById("seriesSemana").innerHTML = `<strong>${totalSeriesSemana}</strong>`;
 
-  // Mostrar resumen por grupo muscular
+  // Mostrar resumen por grupo muscular (series)
   const listaGrupos = document.getElementById("seriesPorGrupo");
   listaGrupos.innerHTML = "";
-
   for (const grupo in seriesPorGrupo) {
+    if (typeof seriesPorGrupo[grupo] !== "number") continue;
     const li = document.createElement("li");
     li.textContent = `${grupo}: ${seriesPorGrupo[grupo]} series`;
     listaGrupos.appendChild(li);
+  }
+
+  // Mostrar volumen por grupo muscular
+  const listaVolumen = document.getElementById("volumenPorGrupo");
+  listaVolumen.innerHTML = "";
+
+  for (const grupo in volumenPorGrupo) {
+    if (typeof volumenPorGrupo[grupo] !== "number") continue;
+    const li = document.createElement("li");
+    li.textContent = `${grupo}: ${volumenPorGrupo[grupo].toLocaleString()} kg totales`;
+    listaVolumen.appendChild(li);
   }
 });
