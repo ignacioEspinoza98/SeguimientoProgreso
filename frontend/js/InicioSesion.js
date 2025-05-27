@@ -6,8 +6,6 @@ document.getElementById('InicioSesionForm').addEventListener('submit', function(
     const CorreoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const CorreoVerificado = CorreoRegex.test(Correo);
     const UsuarioLocalStorage = JSON.parse(localStorage.getItem("Usuario"));
-
-
   
     // Validación sencilla
     if (Contraseña.trim() === '' || Correo.trim() === '')  {
@@ -20,10 +18,10 @@ document.getElementById('InicioSesionForm').addEventListener('submit', function(
       return;
     }
 
-
     if(Correo == UsuarioLocalStorage.correo && Contraseña == UsuarioLocalStorage.contraseña ){
       // Guardamos en sessionStorage que el usuario está logueado
       sessionStorage.setItem("Logueado", "true");
+      sessionStorage.setItem("usuario", JSON.stringify({ nombre: UsuarioLocalStorage.usuario }));
 
       window.location.href = "dashboard.html";
     }
