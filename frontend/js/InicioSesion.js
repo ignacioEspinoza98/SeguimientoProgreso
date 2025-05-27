@@ -6,8 +6,6 @@ document.getElementById('InicioSesionForm').addEventListener('submit', function(
     const CorreoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const CorreoVerificado = CorreoRegex.test(Correo);
     const UsuarioLocalStorage = JSON.parse(localStorage.getItem("Usuario"));
-
-
   
     // Validación sencilla
     if (Contraseña.trim() === '' || Correo.trim() === '')  {

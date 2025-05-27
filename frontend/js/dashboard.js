@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const saludo = document.querySelector("h1");
   if (saludo) {
-    saludo.innerHTML = `Hola, ${usuario.nombre}!<br>Domina tus límites cada repetición.`;
+    saludo.innerHTML = `Hola, ${usuario.nombre}!<br>Domina tus límites con cada repetición.`;
   }
 
   if (historial.length === 0) return;

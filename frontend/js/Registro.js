@@ -30,7 +30,6 @@ document.getElementById('RegistroForm').addEventListener('submit', function(even
       alert("Usuario Invalido 4 a 20 caracteres(A-Z) Numeros (0-9) Guiones Altos y Bajos");
       return
     }
-    
 
 let DatosUsuarios = JSON.parse(localStorage.getItem("Usuario")) || { usuarios: [] };
 
