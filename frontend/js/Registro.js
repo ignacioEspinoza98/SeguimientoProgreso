@@ -32,19 +32,40 @@ document.getElementById('RegistroForm').addEventListener('submit', function(even
     }
     
 
-   const DatosUsuario = {
-    usuario:Usuario,
-    contraseña:Contraseña,
-    correo:Correo
+let DatosUsuarios = JSON.parse(localStorage.getItem("Usuario")) || { usuarios: [] };
 
-   };
 
-    localStorage.setItem("Usuario",JSON.stringify(DatosUsuario));
+const UsuarioNuevo = {
+  usuario: Usuario,
+  contraseña: Contraseña,
+  correo: Correo
+};
+
+const existeCorreo = DatosUsuarios.usuarios.some(
+  usuario => usuario.correo === UsuarioNuevo.correo
+);
+
+if (existeCorreo) {
+  alert("El correo ya está registrado. Intenta con otro.");
+}
+
+else
+  {DatosUsuarios.usuarios.push(UsuarioNuevo);
+
+
+  localStorage.setItem("Usuario", JSON.stringify(DatosUsuarios));
   
-    // Aquí puedes hacer algo con los datos, como enviarlos a un servidor
-    console.log('Contraseña:', Contraseña);
-    console.log('Correo:', Correo);
-    console.log('ConfirmarContraseña',ConfirmarContraseña)
-    console.log('Usuario',Usuario)  
+  document.getElementById('RegistroForm').reset();
+  
+  
+      alert("Usuario Registrado");
+    
+      
+      console.log('Contraseña:', Contraseña);
+      console.log('Correo:', Correo);
+      console.log('ConfirmarContraseña',ConfirmarContraseña)
+      console.log('Usuario',Usuario)}
+
+  
   });
   
