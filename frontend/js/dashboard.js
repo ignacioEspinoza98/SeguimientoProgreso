@@ -90,4 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
       listaVolumen.appendChild(li);
     }
   }
+  document.getElementById("cerrarSesion").addEventListener("click", () => {
+    sessionStorage.clear();
+    window.location.href = "index.html"; // o InicioSesion.html si lo estás usando
+  });
 });
