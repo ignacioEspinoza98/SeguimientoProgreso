@@ -25,7 +25,7 @@ document.getElementById('InicioSesionForm').addEventListener('submit', function(
     if (BuscarCorreoUsuario) {
       sessionStorage.setItem("Logueado", "true");
       sessionStorage.setItem("usuario", JSON.stringify({ nombre: BuscarCorreoUsuario.usuario }));
-      window.location.href = "dashboard.html";
+      window.location.href = "Dashboard.html";
     }
 
     else{
