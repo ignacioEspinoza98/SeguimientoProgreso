@@ -65,7 +65,7 @@ else
       console.log('ConfirmarContraseña',ConfirmarContraseña)
       console.log('Usuario',Usuario)
 
-      window.location.href = "inicioSesion.html";
+      window.location.href = "InicioSesion.html";
     }
     
       
