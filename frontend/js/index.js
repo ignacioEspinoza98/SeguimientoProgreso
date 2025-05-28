@@ -4,4 +4,3 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "pages/Dashboard.html";
   }
 });
-

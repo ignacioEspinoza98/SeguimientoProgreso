@@ -33,7 +33,6 @@ document.getElementById('RegistroForm').addEventListener('submit', function(even
 
 let DatosUsuarios = JSON.parse(localStorage.getItem("Usuario")) || { usuarios: [] };
 
-
 const UsuarioNuevo = {
   usuario: Usuario,
   contraseña: Contraseña,
@@ -51,24 +50,19 @@ if (existeCorreo) {
 else
   {DatosUsuarios.usuarios.push(UsuarioNuevo);
 
-
   localStorage.setItem("Usuario", JSON.stringify(DatosUsuarios));
   
-  document.getElementById('RegistroForm').reset();
+  document.getElementById('RegistroForm').reset(); 
   
-  
-      alert("Usuario Registrado");
-    
+      alert("Usuario Registrado"); 
       
       console.log('Contraseña:', Contraseña);
       console.log('Correo:', Correo);
       console.log('ConfirmarContraseña',ConfirmarContraseña)
       console.log('Usuario',Usuario)
 
-      window.location.href = "inicioSesion.html";
+      window.location.href = "InicioSesion.html";
     }
-    
-      
   
   });
   
