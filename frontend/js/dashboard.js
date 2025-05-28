@@ -10,17 +10,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (historial.length === 0) return;
 
+  const ahora = new Date();
+  const unaSemanaMs = 7 * 24 * 60 * 60 * 1000;
+
+  let totalSeriesSemana = 0;
+  let totalSeriesSemanaAnterior = 0;
   let pesoMaximo = 0;
   let ejercicioPesoMax = "N/A";
-  let totalSeriesSemana = 0;
   let ultimaFecha = null;
 
   const seriesPorGrupo = {};
   const volumenPorGrupo = {};
 
-  const ahora = new Date();
-  const unaSemanaMs = 7 * 24 * 60 * 60 * 1000;
+  // Calcular series de la semana anterior
+  historial.forEach(sesion => {
+    const fechaSesion = new Date(sesion.fecha);
+    const diferencia = ahora - fechaSesion;
 
+    if (diferencia > unaSemanaMs && diferencia <= unaSemanaMs * 2) {
+      sesion.ejercicios.forEach(e => {
+        if (!e.grupoMuscular || e.grupoMuscular === "Otro") return;
+        totalSeriesSemanaAnterior += parseInt(e.series) || 0;
+      });
+    }
+  });
+
+  // Calcular datos actuales (semana actual, último entreno, etc.)
   historial.forEach(sesion => {
     const fechaSesion = new Date(sesion.fecha);
 
@@ -30,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (ahora - fechaSesion <= unaSemanaMs) {
       sesion.ejercicios.forEach(e => {
-        // 🔥 Ignorar ejercicios que no tienen grupoMuscular
         if (!e.grupoMuscular || e.grupoMuscular === "Otro") return;
 
         const grupo = e.grupoMuscular;
@@ -50,6 +64,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Comparación de series con la semana pasada
+  const comparacionTexto = document.getElementById("comparacionSemanal");
+  const diferencia = totalSeriesSemana - totalSeriesSemanaAnterior;
+
+  if (comparacionTexto) {
+    if (diferencia > 0) {
+      comparacionTexto.textContent = `📈 +${diferencia} series respecto a la semana pasada`;
+    } else if (diferencia < 0) {
+      comparacionTexto.textContent = `📉 ${diferencia} series respecto a la semana pasada`;
+    } else {
+      comparacionTexto.textContent = `⚖️ Mismo número de series que la semana pasada`;
+    }
+  }
+
   // Mostrar peso máximo
   document.getElementById("pesoMaximo").innerHTML = `<strong>${ejercicioPesoMax}</strong><br>${pesoMaximo} kg`;
 
@@ -62,8 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
       ? `${primerEjercicio.ejercicio} - ${primerEjercicio.peso}kg`
       : "Ejercicio no disponible";
 
-    document.getElementById("ultimoEntreno").innerHTML = `
-      <strong>${fechaFormateada}</strong><br>${infoExtra}`;
+    document.getElementById("ultimoEntreno").innerHTML =
+      `<strong>${fechaFormateada}</strong><br>${infoExtra}`;
   }
 
   // Mostrar total de series esta semana
@@ -73,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const listaGrupos = document.getElementById("seriesPorGrupo");
   listaGrupos.innerHTML = "";
   for (const grupo in seriesPorGrupo) {
-    if (typeof seriesPorGrupo[grupo] !== "number") continue;
     const li = document.createElement("li");
     li.textContent = `${grupo}: ${seriesPorGrupo[grupo]} series`;
     listaGrupos.appendChild(li);
@@ -84,14 +111,15 @@ document.addEventListener("DOMContentLoaded", () => {
   if (listaVolumen) {
     listaVolumen.innerHTML = "";
     for (const grupo in volumenPorGrupo) {
-      if (typeof volumenPorGrupo[grupo] !== "number") continue;
       const li = document.createElement("li");
       li.textContent = `${grupo}: ${volumenPorGrupo[grupo].toLocaleString()} kg totales`;
       listaVolumen.appendChild(li);
     }
   }
+
+  // Cerrar sesión
   document.getElementById("cerrarSesion").addEventListener("click", () => {
     sessionStorage.clear();
-    window.location.href = "index.html"; // o InicioSesion.html si lo estás usando
+    window.location.href = "index.html";
   });
 });
