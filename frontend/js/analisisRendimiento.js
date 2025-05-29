@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const selectEjercicio = document.getElementById("filtro-ejercicio");
   const selectVista = document.getElementById("vista-grafico");
+  const selectTiempo = document.getElementById("filtro-tiempo");
   const ctx = document.getElementById("graficoRendimiento").getContext("2d");
 
   let chart;
@@ -30,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Estadísticas
   document.getElementById("pesoMaxAnalisis").textContent = `${pesoMaximo} kg`;
   document.getElementById("entrenamientosTotal").textContent = entrenamientoTotal;
   document.getElementById("promedioReps").textContent = totalSeries > 0
@@ -44,7 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
     lista.appendChild(li);
   }
 
-  // Cargar opciones en el select
   ejerciciosUnicos.forEach(nombre => {
     const opt = document.createElement("option");
     opt.value = nombre;
@@ -52,24 +51,33 @@ document.addEventListener("DOMContentLoaded", () => {
     selectEjercicio.appendChild(opt);
   });
 
-  // Función para renderizar gráfico según vista
   function renderizarGrafico() {
     const ejercicioSeleccionado = selectEjercicio.value;
     const vista = selectVista.value;
+    const filtroDias = selectTiempo.value;
+
     if (!ejercicioSeleccionado) return;
 
     const datosFiltrados = [];
+    const ahora = new Date();
+    const limiteDias = filtroDias === "historial" ? null : parseInt(filtroDias);
 
     historial.forEach(sesion => {
-      sesion.ejercicios.forEach(e => {
-        if (e.ejercicio === ejercicioSeleccionado) {
-          datosFiltrados.push({
-            fecha: new Date(sesion.fecha).toLocaleDateString(),
-            peso: e.peso,
-            series: e.series
-          });
-        }
-      });
+      const fechaSesion = new Date(sesion.fecha);
+      const diferenciaDias = (ahora - fechaSesion) / (1000 * 60 * 60 * 24);
+
+      if (limiteDias === null || diferenciaDias <= limiteDias) {
+        sesion.ejercicios.forEach(e => {
+          if (e.ejercicio === ejercicioSeleccionado) {
+            datosFiltrados.push({
+              fecha: fechaSesion.toLocaleDateString(),
+              peso: e.peso,
+              series: e.series,
+              repeticiones: e.repeticiones
+            });
+          }
+        });
+      }
     });
 
     const labels = datosFiltrados.map(d => d.fecha);
@@ -121,13 +129,32 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     document.getElementById("contadorSesiones").textContent =
       `Has entrenado ${ejercicioSeleccionado} en ${contador} sesión${contador !== 1 ? 'es' : ''}`;
+
+    // 📈 Cálculo de evolución porcentual (peso × repeticiones)
+    const evolucionElement = document.getElementById("evolucionPorcentual");
+    const primer = datosFiltrados[0];
+    const ultimo = datosFiltrados[datosFiltrados.length - 1];
+
+    const primerValor = primer ? primer.peso * (primer.repeticiones || 1) : null;
+    const ultimoValor = ultimo ? ultimo.peso * (ultimo.repeticiones || 1) : null;
+
+    if (datosFiltrados.length >= 2 && primerValor > 0 && ultimoValor !== null) {
+      const diferencia = ultimoValor - primerValor;
+      const porcentaje = ((diferencia / primerValor) * 100).toFixed(1);
+      const signo = porcentaje >= 0 ? "+" : "";
+      const emoji = porcentaje >= 0 ? "📈" : "📉";
+      evolucionElement.innerHTML =
+        `${emoji} ${signo}${porcentaje}% en ${ejercicioSeleccionado}<br><small style="font-size: 0.8em; color: #aaa;">Basado en potencia estimada (kg × reps)</small>`;
+    } else {
+      evolucionElement.innerHTML = "Sin datos suficientes<br><small style='font-size: 0.8em; color: #aaa;'>Basado en potencia estimada (kg × reps)</small>";
+    }
   }
 
   // Eventos
   selectEjercicio.addEventListener("change", renderizarGrafico);
   selectVista.addEventListener("change", renderizarGrafico);
+  selectTiempo.addEventListener("change", renderizarGrafico);
 
-  // Generar gráfico inicial
   if (selectEjercicio.options.length > 0) {
     selectEjercicio.selectedIndex = 0;
     selectEjercicio.dispatchEvent(new Event("change"));
