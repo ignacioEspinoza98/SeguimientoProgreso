@@ -117,9 +117,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Mostrar promedio de entrenamientos por semana (últimos 30 días)
+  calcularPromedioEntrenamientosMensual(historial);
+
   // Cerrar sesión
   document.getElementById("cerrarSesion").addEventListener("click", () => {
     sessionStorage.clear();
     window.location.href = "index.html";
   });
 });
+
+function calcularPromedioEntrenamientosMensual(historial) {
+  const hoy = new Date();
+  const hace30dias = new Date();
+  hace30dias.setDate(hoy.getDate() - 30);
+
+  const sesionesUltimoMes = historial.filter(sesion => {
+    const fecha = new Date(sesion.fecha);
+    return fecha >= hace30dias && fecha <= hoy;
+  });
+
+  const promedio = (sesionesUltimoMes.length / 4.3).toFixed(2);
+
+  document.getElementById("promedioEntrenamientos").textContent =
+    `${promedio} sesiones/semana`;
+}
