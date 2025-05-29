@@ -120,6 +120,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Mostrar promedio de entrenamientos por semana (últimos 30 días)
   calcularPromedioEntrenamientosMensual(historial);
 
+  // Mostrar grupo más trabajado de la semana
+  mostrarGrupoMasTrabajado(seriesPorGrupo);
+
   // Cerrar sesión
   document.getElementById("cerrarSesion").addEventListener("click", () => {
     sessionStorage.clear();
@@ -141,4 +144,22 @@ function calcularPromedioEntrenamientosMensual(historial) {
 
   document.getElementById("promedioEntrenamientos").textContent =
     `${promedio} sesiones/semana`;
+}
+
+function mostrarGrupoMasTrabajado(seriesPorGrupo) {
+  let grupoMas = null;
+  let maxSeries = 0;
+
+  for (const grupo in seriesPorGrupo) {
+    if (seriesPorGrupo[grupo] > maxSeries) {
+      maxSeries = seriesPorGrupo[grupo];
+      grupoMas = grupo;
+    }
+  }
+
+  const grupoTexto = grupoMas
+    ? `${grupoMas} (${maxSeries} series)`
+    : "No hay datos esta semana";
+
+  document.getElementById("grupoMasTrabajado").textContent = grupoTexto;
 }
