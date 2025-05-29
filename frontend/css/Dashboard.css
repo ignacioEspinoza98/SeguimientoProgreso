@@ -77,12 +77,14 @@ h1 {
 .boton {
   background-color: #ffa500;
   color: #000;
+  cursor: pointer;
 }
 
 .boton.secundario {
   background-color: transparent;
   color: #ffa500;
   border: 2px solid #ffa500;
+  cursor: pointer;
 }
 
 .boton-cerrar {

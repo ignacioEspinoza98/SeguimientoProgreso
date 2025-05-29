@@ -123,6 +123,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Mostrar grupo más trabajado de la semana
   mostrarGrupoMasTrabajado(seriesPorGrupo);
 
+  // Botones de exportación
+// document.getElementById("exportarJSON").addEventListener("click", () => {
+//   exportarHistorialComoJSON(historial, usuario.nombre.toLowerCase());
+// });
+
+  document.getElementById("exportarCSV").addEventListener("click", () => {
+    exportarHistorialComoCSV(historial, usuario.nombre.toLowerCase());
+  });
+
   // Cerrar sesión
   document.getElementById("cerrarSesion").addEventListener("click", () => {
     sessionStorage.clear();
@@ -162,4 +171,44 @@ function mostrarGrupoMasTrabajado(seriesPorGrupo) {
     : "No hay datos esta semana";
 
   document.getElementById("grupoMasTrabajado").textContent = grupoTexto;
+}
+
+// Exportar JSON
+function exportarHistorialComoJSON(historial, nombreUsuario) {
+  const blob = new Blob([JSON.stringify(historial, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  descargarArchivo(url, `historial_${nombreUsuario}.json`);
+}
+
+// Exportar CSV
+function exportarHistorialComoCSV(historial, nombreUsuario) {
+  const filas = [["Fecha", "Ejercicio", "Grupo Muscular", "Peso", "Reps", "Series"]];
+  historial.forEach(sesion => {
+    sesion.ejercicios.forEach(e => {
+      filas.push([
+        new Date(sesion.fecha).toLocaleDateString(),
+        e.ejercicio,
+        e.grupoMuscular,
+        e.peso,
+        e.repeticiones,
+        e.series
+      ]);
+    });
+  });
+
+  const csv = filas.map(fila => fila.join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  descargarArchivo(url, `historial_${nombreUsuario}.csv`);
+}
+
+// Utilidad común para descargar
+function descargarArchivo(url, nombreArchivo) {
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = nombreArchivo;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }

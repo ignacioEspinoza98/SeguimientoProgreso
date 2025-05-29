@@ -83,6 +83,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const labels = datosFiltrados.map(d => d.fecha);
     const valoresY = datosFiltrados.map(d => vista === "series" ? d.series : d.peso);
 
+    // 🟩 Identificar récord personal en la vista actual
+    const maxValor = Math.max(...valoresY);
+    const indexMax = valoresY.indexOf(maxValor);
+
     if (chart) chart.destroy();
 
     chart = new Chart(ctx, {
@@ -95,7 +99,11 @@ document.addEventListener("DOMContentLoaded", () => {
           borderColor: '#ffa500',
           backgroundColor: 'rgba(255, 165, 0, 0.2)',
           tension: 0.4,
-          fill: true
+          fill: true,
+          pointBackgroundColor: valoresY.map((_, i) => i === indexMax ? '#00ff00' : '#ffa500'),
+          pointBorderColor: valoresY.map((_, i) => i === indexMax ? '#00ff00' : '#ffa500'),
+          pointRadius: valoresY.map((_, i) => i === indexMax ? 7 : 4),
+          pointHoverRadius: 8
         }]
       },
       options: {
@@ -113,6 +121,15 @@ document.addEventListener("DOMContentLoaded", () => {
           legend: {
             onClick: null,
             labels: { color: '#fff' }
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                return context.dataIndex === indexMax
+                  ? `📍 Récord: ${context.parsed.y} ${vista === "series" ? "series" : "kg"}`
+                  : `${context.parsed.y} ${vista === "series" ? "series" : "kg"}`;
+              }
+            }
           }
         }
       }
@@ -130,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("contadorSesiones").textContent =
       `Has entrenado ${ejercicioSeleccionado} en ${contador} sesión${contador !== 1 ? 'es' : ''}`;
 
-    // 📈 Cálculo de evolución porcentual (peso × repeticiones)
+    // 📈 Evolución porcentual (basado en potencia estimada)
     const evolucionElement = document.getElementById("evolucionPorcentual");
     const primer = datosFiltrados[0];
     const ultimo = datosFiltrados[datosFiltrados.length - 1];
@@ -146,7 +163,8 @@ document.addEventListener("DOMContentLoaded", () => {
       evolucionElement.innerHTML =
         `${emoji} ${signo}${porcentaje}% en ${ejercicioSeleccionado}<br><small style="font-size: 0.8em; color: #aaa;">Basado en potencia estimada (kg × reps)</small>`;
     } else {
-      evolucionElement.innerHTML = "Sin datos suficientes<br><small style='font-size: 0.8em; color: #aaa;'>Basado en potencia estimada (kg × reps)</small>";
+      evolucionElement.innerHTML =
+        "Sin datos suficientes<br><small style='font-size: 0.8em; color: #aaa;'>Basado en potencia estimada (kg × reps)</small>";
     }
   }
 
