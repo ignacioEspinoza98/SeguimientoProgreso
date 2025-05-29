@@ -117,3 +117,18 @@ td button:hover {
   background-color: #ffa500;
   color: #000;
 }
+
+input.validado {
+  border: 2px solid green;
+}
+
+input.error {
+  border: 2px solid red;
+}
+
+.error {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: block;
+}

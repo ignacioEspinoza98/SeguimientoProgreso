@@ -25,18 +25,22 @@
         <div>
           <label for="peso">Peso (kg)</label>
           <input type="number" id="peso" required />
+          <small class="error" id="errorPeso"></small>
         </div>
         <div>
           <label for="repeticiones">Repeticiones</label>
           <input type="number" id="repeticiones" required />
+          <small class="error" id="errorRepeticiones"></small>
         </div>
         <div>
           <label for="series">Series</label>
           <input type="number" id="series" required />
+          <small class="error" id="errorSeries"></small>
         </div>
+
       </div>
 
-      <button type="submit" class="boton">Agregar ejercicio</button>
+      <button type="submit" class="boton" disabled>Agregar ejercicio</button>
     <div class="botones-secundarios">
         <button id="vaciarSesion" class="boton secundario">Vaciar Sesión</button>
             <a href="Dashboard.html" class="boton">Ir al Dashboard</a>
