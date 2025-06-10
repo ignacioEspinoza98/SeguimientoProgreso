@@ -66,9 +66,7 @@ else
       console.log('Usuario',Usuario)
 
       window.location.href = "InicioSesion.html";
-    }
-    
-      
+    }       
   
   });
   
