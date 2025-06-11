@@ -1,70 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Seguimiento de Progreso</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Estilos personalizados -->
     <link rel="stylesheet" href="../css/Registro.css">
-    <title>Registro</title>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
-<body>
-
-<header>
-
-
-</header>
-
-
-<section class="ContenidoPrincipal">
-
-    <div class="ContenedorFormulario">
-
-        <span id="Registro">Registro de usuarios</span>
-  
-        <div class="ItemsFormulario">
-
-            <form id="RegistroForm">
-
-                <label>Usuario</label>
-                <br>
-                <input type="text" id="Usuario">
-                <br>
-                <label>Correo</label>
-                <br>
-                <input type="email" id="Correo">
-                <br>
-                <label>Contraseña</label>
-                <br>
-                <input type="password" id="Contraseña">
-                <br>
-                <label>Confirmar Contraseña</label>
-                <br>
-                <input type="password" id="ConfirmarContraseña">
-                <br>
-
-                <input type="submit" value="Registrar" id="RegistroBtn">
-
-                <label id="Pregunta">¿Ya tienes una cuenta?<a id="LinkRegistro" href="../html/InicioSesion.html">Inicia Sesion</a></label>
-
-            </form>
-
-
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-7 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold text-primary">Crear una cuenta</h2>
+                            <p class="text-muted">Completa el formulario para registrarte</p>
+                        </div>
+                        
+                        <form id="RegistroForm">
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="Usuario" class="form-label">Nombre de Usuario</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <input type="text" class="form-control" id="Usuario" placeholder="Tu nombre de usuario" required>
+                                    </div>
+                                    <div class="form-text">4-20 caracteres, solo letras, números, guiones y guiones bajos</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="Correo" class="form-label">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" id="Correo" placeholder="tu@correo.com" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="Contraseña" class="form-label">Contraseña</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="Contraseña" placeholder="••••••••" required>
+                                    <button class="btn btn-outline-secondary toggle-password" type="button">
+                                        <i class="far fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div id="passwordHelp" class="form-text">Mínimo 6 caracteres</div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="ConfirmarContraseña" class="form-label">Confirmar Contraseña</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="ConfirmarContraseña" placeholder="••••••••" required>
+                                    <button class="btn btn-outline-secondary toggle-password" type="button">
+                                        <i class="far fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div id="passwordMatch" class="invalid-feedback">Las contraseñas no coinciden</div>
+                            </div>
+                            
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="terminos" required>
+                                <label class="form-check-label" for="terminos">
+                                    Acepto los <a href="#" class="text-decoration-none">Términos y Condiciones</a> y la <a href="#" class="text-decoration-none">Política de Privacidad</a>
+                                </label>
+                            </div>
+                            
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg" id="RegistroBtn">
+                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                    Crear cuenta
+                                </button>
+                            </div>
+                            
+                            <div class="text-center">
+                                <p class="mb-0">¿Ya tienes una cuenta? 
+                                    <a href="InicioSesion.html" class="text-decoration-none">Inicia Sesión</a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-
-
     </div>
 
-
-
-</section>
-
-
-<footer>
-
-
-</footer>
-
-
-<!-- Scripts -->
-<script src="../js/Registro.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- SweetAlert2 para alertas bonitas -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Configuración de Firebase -->
+    <script src="../js/firebase-config.js"></script>
+    
+    <!-- Script de Registro -->
+    <script src="../js/Registro.js"></script>
+    <!-- SweetAlert2 para alertas bonitas -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Configuración de Firebase -->
+    <script src="../js/firebase-config.js"></script>
+    
+    <!-- Script de Registro -->
+    <script src="../js/Registro.js" type="module"></script>
 </body>
 </html>
