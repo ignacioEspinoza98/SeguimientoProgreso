@@ -4,46 +4,150 @@ body {
   background-color: #0f0f0f;
   color: #ffffff;
   font-family: 'Segoe UI', sans-serif;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+}
+
+.header {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  background-color: rgba(15, 15, 15, 0.95);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .contenedor {
   text-align: center;
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   color: #ffa500;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   line-height: 1.3;
 }
 
 .botones {
   display: flex;
-  justify-content: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .boton {
   background-color: #ffa500;
   color: #000;
-  padding: 1rem 2rem;
-  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
   font-weight: bold;
   text-decoration: none;
-  border-radius: 8px;
-  transition: background-color 0.3s;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .boton:hover {
   background-color: #e68a00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .boton.secundario {
   background-color: transparent;
   border: 2px solid #ffa500;
   color: #ffa500;
+  transition: all 0.3s ease;
+}
+
+.boton.secundario:hover {
+  background-color: rgba(255, 165, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 165, 0, 0.2);
+}
+
+/* Tutorial Section Styles */
+.tutorial-section {
+  padding: 3rem 2rem;
+  background: #1a1a1a;
+  margin-top: 1rem;
+}
+
+.tutorial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tutorial-card {
+  background: #2a2a2a;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.tutorial-card:hover {
+  transform: translateY(-5px);
+}
+
+.tutorial-card h3 {
+  color: #ffa500;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.tutorial-card p {
+  color: #ffffff;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+/* CTA Section Styles */
+.cta-section {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+  color: white;
+}
+
+.cta-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cta-content h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #ffa500;
+}
+
+.cta-content p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: #ffa500;
+  color: #000;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.cta-button:hover {
+  background: #e68a00;
 }

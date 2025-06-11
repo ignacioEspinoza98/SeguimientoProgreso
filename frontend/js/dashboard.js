@@ -1,11 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
-  const claveHistorial = "historial_" + usuario.nombre.toLowerCase();
+  console.log("Session Storage:", sessionStorage);
+  const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { usuario: "default" };
+  console.log("Usuario parseado:", usuario);
+  const claveHistorial = "historial_" + usuario.usuario.toLowerCase();
   const historial = JSON.parse(localStorage.getItem(claveHistorial)) || [];
 
+  // Actualizar el saludo
   const saludo = document.querySelector("h1");
+  console.log("Elemento h1:", saludo);
   if (saludo) {
-    saludo.innerHTML = `Hola, ${usuario.nombre}!<br>Domina tus límites con cada repetición.`;
+    const nombreUsuario = usuario.usuario || "Usuario";
+    console.log("Nombre de usuario a mostrar:", nombreUsuario);
+    saludo.textContent = `Hola, ${nombreUsuario}!`;
+    saludo.innerHTML += `<br>Domina tus límites con cada repetición.`;
+  } else {
+    console.error("No se encontró el elemento h1");
   }
 
   if (historial.length === 0) return;
@@ -129,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // });
 
   document.getElementById("exportarCSV").addEventListener("click", () => {
-    exportarHistorialComoCSV(historial, usuario.nombre.toLowerCase());
+    exportarHistorialComoCSV(historial, usuario.usuario.toLowerCase());
   });
 
   // Cerrar sesión

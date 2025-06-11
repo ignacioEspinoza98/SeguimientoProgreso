@@ -4,17 +4,49 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Progreso Gym</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <link rel="stylesheet" href="frontend/css/index.css" />
 </head>
 <body>
-  <div class="contenedor">
-    <h1>Domina tus límites,<br>dale con intensidad<br>cada repetición</h1>
-
-    <div class="botones">
+  <header class="header">
+    <div class="botones animate__animated animate__fadeInDown">
       <a href="frontend/html/InicioSesion.html" class="boton">Iniciar Sesión</a>
       <a href="frontend/html/Registro.html" class="boton secundario">Registrarse</a>
     </div>
+  </header>
+
+  <div class="contenedor">
+    <h1 class="animate__animated animate__fadeInDown">Domina tus límites,<br>dale con intensidad<br>cada repetición</h1>
   </div>
+
+  <section class="tutorial-section">
+    <div class="tutorial-grid">
+      <div class="tutorial-card animate__animated animate__fadeInLeft">
+        <h3>1. Regístrate</h3>
+        <p>Crea tu cuenta en segundos y comienza tu viaje hacia una mejor versión de ti mismo. Solo necesitas un email y una contraseña.</p>
+      </div>
+      <div class="tutorial-card animate__animated animate__fadeInLeft animate__delay-1s">
+        <h3>2. Configura tu Perfil</h3>
+        <p>Personaliza tu perfil con tus objetivos, nivel de experiencia y preferencias de entrenamiento.</p>
+      </div>
+      <div class="tutorial-card animate__animated animate__fadeInLeft animate__delay-2s">
+        <h3>3. Registra tu Progreso</h3>
+        <p>Anota tus ejercicios, series y repeticiones. Visualiza tu evolución con gráficos detallados.</p>
+      </div>
+      <div class="tutorial-card animate__animated animate__fadeInLeft animate__delay-3s">
+        <h3>4. Sigue tu Evolución</h3>
+        <p>Mantén un registro detallado de tu progreso y celebra tus logros con estadísticas en tiempo real.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-content animate__animated animate__fadeIn">
+      <h2>¿Listo para Transformar tu Entrenamiento?</h2>
+      <p>Únete a miles de personas que ya están alcanzando sus objetivos fitness con nuestra plataforma.</p>
+      <a href="frontend/html/Registro.html" class="cta-button animate__animated animate__pulse animate__infinite">¡Comienza Ahora!</a>
+    </div>
+  </section>
 
   <script src="index.js"></script>
 </body>
