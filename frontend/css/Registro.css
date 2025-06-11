@@ -1,3 +1,8 @@
+/* 
+ * Estilos específicos para la página de Registro
+ * Los estilos principales están en index.css
+ */
+
 /* Variables de colores */
 :root {
     --primary-color: #4361ee;
@@ -10,6 +15,10 @@
     --border-radius: 12px;
     --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
     --transition: all 0.3s ease;
+    --color-texto-secundario: #6c757d;
+    --color-primario: #4361ee;
+    --color-secundario: #3f37c9;
+    --color-borde: #ddd;
 }
 
 /* Estilos generales */

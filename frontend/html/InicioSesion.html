@@ -1,89 +1,122 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - Seguimiento de Progreso</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="../css/InicioSesion.css">
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar Sesión - Progreso Gym</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/index.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="bg-light">
-    <div class="container">
-        <div class="row justify-content-center align-items-center min-vh-100">
-            <div class="col-md-6 col-lg-5">
-                <div class="card shadow-sm">
-                    <div class="card-body p-5">
-                        <div class="text-center mb-4">
-                            <h2 class="fw-bold text-primary">Iniciar Sesión</h2>
-                            <p class="text-muted">Ingresa tus credenciales para acceder</p>
-                        </div>
-                        
-                        <form id="InicioSesionForm">
-                            <div class="mb-3">
-                                <label for="Correo" class="form-label">Correo Electrónico</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="Correo" placeholder="tu@correo.com" required>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <div class="d-flex justify-content-between">
-                                    <label for="Contraseña" class="form-label">Contraseña</label>
-                                    <a href="#" class="text-decoration-none small">¿Olvidaste tu contraseña?</a>
-                                </div>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" id="Contraseña" placeholder="••••••••" required>
-                                    <button class="btn btn-outline-secondary toggle-password" type="button">
-                                        <i class="far fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-primary btn-lg" id="IniciarSesionBtn">
-                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                    Iniciar Sesión
-                                </button>
-                            </div>
-                            
-                            <div class="text-center">
-                                <p class="mb-0">¿No tienes una cuenta? 
-                                    <a href="Registro.html" class="text-decoration-none">Regístrate</a>
-                                </p>
-                            </div>
-                            
-                            <div class="text-center mt-4">
-                                <p class="text-muted small">O inicia sesión con</p>
-                                <button type="button" class="btn btn-outline-primary me-2" id="googleSignIn">
-                                    <i class="fab fa-google"></i> Google
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<body>
+  <div class="contenedor">
+    <h1>Domina tus límites,<br>dale con intensidad<br>cada repetición</h1>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- SweetAlert2 para alertas bonitas -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <!-- Configuración de Firebase -->
-    <script src="../js/firebase-config.js"></script>
-    
-    <!-- Scripts de la aplicación -->
-    <script src="../js/InicioSesion.js"></script>
+    <div class="formulario">
+      <form id="InicioSesionForm">
+        <div id="fraseMotivacional" class="frase-motivacional">
+          <i class="fas fa-quote-left"></i>
+          <p id="fraseTexto">Cargando motivación...</p>
+          <i class="fas fa-quote-right"></i>
+        </div>
+        <h2>Iniciar Sesión</h2>
+        <p class="text-muted">Ingresa tus credenciales para acceder a tu cuenta</p>
+        <div class="grupo-formulario">
+          <label for="Correo">Correo Electrónico</label>
+          <div class="input-con-icono">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="Correo" placeholder="tu@correo.com" required>
+          </div>
+        </div>
+        
+        <div class="grupo-formulario">
+          <div class="etiqueta-contenedor">
+            <label for="Contraseña">Contraseña</label>
+            <a href="#" class="enlace-pequeno">¿Olvidaste tu contraseña?</a>
+          </div>
+          <div class="input-con-icono">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="Contraseña" placeholder="••••••••" required>
+            <button type="button" class="toggle-password">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+        </div>
+                            
+        <button type="submit" class="boton" id="IniciarSesionBtn">
+          <span class="spinner"></span>
+          <span>Iniciar Sesión</span>
+        </button>
+
+        <div class="separador">
+          <span>o inicia sesión con</span>
+        </div>
+
+        <button type="button" class="boton google-btn" id="googleSignIn">
+          <img src="https://www.google.com/favicon.ico" alt="Google" width="20">
+          <span>Continuar con Google</span>
+        </button>
+
+        <p class="texto-centrado">
+          ¿No tienes una cuenta? <a href="Registro.html" class="enlace">Regístrate</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- SweetAlert2 para alertas bonitas -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- Configuración de Firebase -->
+  <script src="../js/firebase-config.js"></script>
+  
+  <!-- Scripts de la aplicación -->
+  <script src="../js/InicioSesion.js"></script>
+  
+  <!-- Font Awesome para iconos -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <!-- Efecto de partículas -->
+  <div class="particulas" id="particulas"></div>
+  
+  <!-- Script para partículas -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const particulas = document.getElementById('particulas');
+      const numParticulas = 30;
+      
+      for (let i = 0; i < numParticulas; i++) {
+        const particula = document.createElement('div');
+        particula.className = 'particula';
+        
+        // Tamaño aleatorio
+        const size = Math.random() * 15 + 5;
+        particula.style.width = `${size}px`;
+        particula.style.height = `${size}px`;
+        
+        // Posición aleatoria
+        particula.style.left = `${Math.random() * 100}%`;
+        particula.style.top = `${Math.random() * 100}%`;
+        
+        // Opacidad aleatoria
+        particula.style.opacity = Math.random() * 0.5 + 0.1;
+        
+        // Animación personalizada
+        const duration = Math.random() * 20 + 10;
+        const delay = Math.random() * -20;
+        particula.style.animation = `flotar ${duration}s linear ${delay}s infinite`;
+        
+        particulas.appendChild(particula);
+      }
+    });
+  </script>
 </body>
 </html>

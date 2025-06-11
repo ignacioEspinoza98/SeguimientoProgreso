@@ -8,12 +8,74 @@
 </head>
 <body>
   <div class="contenedor">
+    <div id="fraseMotivacional" class="frase-motivacional">
+      <i class="fas fa-quote-left"></i>
+      <p id="fraseTexto">Cargando motivación...</p>
+      <i class="fas fa-quote-right"></i>
+    </div>
     <h1>Domina tus límites,<br>dale con intensidad<br>cada repetición</h1>
-
     <div class="botones">
       <a href="frontend/html/InicioSesion.html" class="boton">Iniciar Sesión</a>
       <a href="frontend/html/Registro.html" class="boton secundario">Registrarse</a>
     </div>
   </div>
+
+  <script>
+    // Array de frases motivacionales
+    const frases = [
+      "¡Cada repetición te acerca a tu mejor versión!",
+      "El éxito comienza con la decisión de intentarlo.",
+      "Tu cuerpo logra lo que tu mente cree.",
+      "No esperes resultados diferentes si siempre haces lo mismo.",
+      "El dolor que sientes hoy será la fuerza que sientas mañana.",
+      "La disciplina es el puente entre tus metas y tus logros.",
+      "No cuentes los días, haz que los días cuenten.",
+      "El único entrenamiento malo es el que no se hace.",
+      "Sé más fuerte que tus excusas.",
+      "El dolor es temporal, el orgullo es para siempre.",
+      "No te rindas cuando estés más cerca de lo que piensas.",
+      "La diferencia entre lo imposible y lo posible está en la determinación.",
+      "Cada gota de sudor te acerca a tu meta.",
+      "El único límite es el que te pones a ti mismo.",
+      "Hoy es una buena oportunidad para ser mejor que ayer."
+    ];
+
+    // Función para obtener una frase aleatoria
+    function mostrarFraseAleatoria() {
+      const frases = document.querySelectorAll('.frase-motivacional p');
+      const frasesArray = Array.from(frases);
+      const frasesVisibles = frasesArray.filter(frase => {
+        const rect = frase.getBoundingClientRect();
+        return (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+          rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+      });
+
+      // Si hay frases visibles, cambiar su opacidad para el efecto de transición
+      frasesVisibles.forEach(frase => {
+        frase.style.opacity = '0';
+        setTimeout(() => {
+          const indiceAleatorio = Math.floor(Math.random() * frases.length);
+          frase.textContent = frases[indiceAleatorio];
+          frase.style.opacity = '1';
+        }, 500);
+      });
+    }
+
+    // Mostrar una frase aleatoria al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+      const fraseElemento = document.getElementById('fraseTexto');
+      if (fraseElemento) {
+        const indiceAleatorio = Math.floor(Math.random() * frases.length);
+        fraseElemento.textContent = frases[indiceAleatorio];
+        
+        // Cambiar la frase cada 8 segundos
+        setInterval(mostrarFraseAleatoria, 8000);
+      }
+    });
+  </script>
 </body>
 </html>
