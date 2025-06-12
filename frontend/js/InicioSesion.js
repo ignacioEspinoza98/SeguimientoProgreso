@@ -90,12 +90,34 @@ document.addEventListener('DOMContentLoaded', function() {
             // Iniciar sesión con Firebase
             firebase.auth().signInWithEmailAndPassword(correo, contraseña)
                 .then((userCredential) => {
-                    console.log('Inicio de sesión exitoso:', userCredential.user);
+                    const user = userCredential.user;
+                    console.log('Inicio de sesión exitoso:', user);
                     
-                    // Establecer la variable de sesión
+                    // Verificar si el correo está verificado
+                    if (!user.emailVerified) {
+                        // Cerrar sesión para forzar la verificación
+                        return firebase.auth().signOut().then(() => {
+                            // Mostrar mensaje de verificación
+                            return Swal.fire({
+                                icon: 'warning',
+                                title: '¡Verifica tu correo electrónico!',
+                                html: `Por favor, verifica tu dirección de correo electrónico antes de iniciar sesión.<br><br>
+                                      Hemos enviado un nuevo correo de verificación a <strong>${user.email}</strong>.<br><br>
+                                      <small>¿No ves el correo? Revisa tu carpeta de <strong>spam</strong> o <strong>correo no deseado</strong>.</small>`,
+                                confirmButtonText: 'Entendido',
+                                confirmButtonColor: '#0d6efd',
+                                allowOutsideClick: false
+                            });
+                        }).then(() => {
+                            // Redirigir a la página de verificación
+                            window.location.href = 'verificacion.html';
+                        });
+                    }
+                    
+                    // Si el correo está verificado, continuar con el inicio de sesión
+                    console.log('Correo verificado, redirigiendo a Dashboard.html');
                     sessionStorage.setItem('Logueado', 'true');
                     
-                    console.log('Redirigiendo a Dashboard.html');
                     // Usar ruta absoluta desde la raíz del sitio
                     const baseUrl = window.location.origin;
                     const dashboardUrl = `${baseUrl}/SeguimientoProgreso/frontend/html/Dashboard.html`;
