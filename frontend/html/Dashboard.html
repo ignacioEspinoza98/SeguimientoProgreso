@@ -8,9 +8,30 @@
   <link rel="stylesheet" href="../css/Dashboard.css" />
 </head>
 <body>
-  <button id="cerrarSesion" class="boton-cerrar">Cerrar sesión</button>
+  <nav class="navbar">
+    <div class="nav-buttons">
+      <button id="cerrarSesion" class="boton-cerrar">Cerrar sesión</button>
+      <a href="Historial.html" class="boton-historial">Historial</a>
+    </div>
+  </nav>
+
   <main class="contenedor">
     <h1 class="saludo">Domina tus límites,<br>dale con intensidad cada repetición!</h1>
+
+    <section class="ultima-sesion">
+      <div class="box ultima-sesion-box">
+        <h3>Última Sesión</h3>
+        <div id="resumenUltimaSesion">
+          <p class="fecha-ultima-sesion">--</p>
+          <div class="detalles-ultima-sesion">
+            <p>Ejercicios realizados: <span id="ejerciciosUltimaSesion">--</span></p>
+            <p>Series totales: <span id="seriesUltimaSesion">--</span></p>
+            <p>Volumen total: <span id="volumenUltimaSesion">--</span></p>
+          </div>
+          <a href="Historial.html" class="ver-mas">Ver historial completo →</a>
+        </div>
+      </div>
+    </section>
 
     <section class="estadisticas">
       <div class="box">

@@ -10,6 +10,7 @@ body {
   max-width: 900px;
   margin: 0 auto;
   text-align: center;
+  padding-top: 5rem;
 }
 
 h1.saludo {
@@ -107,4 +108,121 @@ h1.saludo {
 .boton-cerrar:hover {
   background-color: #ffa500;
   color: #000;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.boton-cerrar, .boton-historial {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.boton-cerrar {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+}
+
+.boton-cerrar:hover {
+  background-color: #c82333;
+}
+
+.boton-historial {
+  background-color: #ffa500;
+  color: black;
+  border: none;
+}
+
+.boton-historial:hover {
+  background-color: #e68a00;
+}
+
+/* Estilos para el resumen de la última sesión */
+.ultima-sesion {
+  margin-bottom: 2rem;
+}
+
+.ultima-sesion-box {
+  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+  border: 1px solid #ffa500;
+  padding: 1.5rem;
+}
+
+.fecha-ultima-sesion {
+  color: #ffa500;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.detalles-ultima-sesion {
+  margin-bottom: 1.5rem;
+}
+
+.detalles-ultima-sesion p {
+  margin: 0.5rem 0;
+  color: #fff;
+}
+
+.detalles-ultima-sesion span {
+  color: #ffa500;
+  font-weight: bold;
+}
+
+.ver-mas {
+  display: inline-block;
+  color: #ffa500;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.ver-mas:hover {
+  color: #e68a00;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.75rem 1rem;
+  }
+
+  .nav-buttons {
+    gap: 0.5rem;
+  }
+
+  .boton-cerrar, .boton-historial {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .ultima-sesion-box {
+    padding: 1rem;
+  }
+
+  .fecha-ultima-sesion {
+    font-size: 1.1rem;
+  }
 }
