@@ -27,11 +27,26 @@
   </nav>
 
   <main class="contenedor">
-    <!-- Sección de bienvenida -->
     <section class="seccion-bienvenida">
       <h1 class="saludo">Domina tus límites,<br>dale con intensidad cada repetición!</h1>
       <p>Bienvenido de nuevo a tu panel de control. Aquí podrás ver tus estadísticas, progreso y recomendaciones personalizadas para mejorar tu rendimiento.</p>
     </section>
+
+    <!-- Acciones rápidas -->
+    <div class="acciones-rapidas">
+      <a href="RegistroEntrenamientos.html" class="boton boton-primario">
+        <i class="fas fa-plus-circle"></i> Registrar Entrenamiento
+      </a>
+      <a href="AnalisisRendimiento.html" class="boton boton-secundario">
+        <i class="fas fa-chart-line"></i> Ver Análisis
+      </a>
+      <a href="compararDesempeno.html" class="boton boton-secundario">
+        <i class="fas fa-exchange-alt"></i> Comparar Desempeño
+      </a>
+      <button id="exportarCSV" class="boton boton-secundario">
+        <i class="fas fa-file-export"></i> Exportar CSV
+      </button>
+    </div>
 
     <!-- Última sesión -->
     <section class="ultima-sesion">
@@ -76,22 +91,6 @@
       </div>
     </section>
 
-    <!-- Acciones rápidas -->
-    <div class="acciones-rapidas">
-      <a href="RegistroEntrenamientos.html" class="boton boton-primario">
-        <i class="fas fa-plus-circle"></i> Registrar Entrenamiento
-      </a>
-      <a href="AnalisisRendimiento.html" class="boton boton-secundario">
-        <i class="fas fa-chart-line"></i> Ver Análisis
-      </a>
-      <a href="compararDesempeno.html" class="boton boton-secundario">
-        <i class="fas fa-exchange-alt"></i> Comparar Desempeño
-      </a>
-      <button id="exportarCSV" class="boton boton-secundario">
-        <i class="fas fa-file-export"></i> Exportar CSV
-      </button>
-
-    </div>
 
     <!-- Estadísticas principales -->
     <section class="estadisticas">
@@ -218,50 +217,299 @@
       </div>
     </section>
 
-    <!-- Sección de sugerencias -->
-    <section class="sugerencias">
-      <h2><i class="fas fa-lightbulb"></i> Sugerencias de Ejercicios</h2>
-      <div class="sugerencias-contenedor">
-        <div class="sugerencia-box">
-          <h3><i class="fas fa-user-check"></i> Recomendados para ti</h3>
-          <div id="ejerciciosRecomendados" class="ejercicios-lista">
-            <div class="ejercicio-item">
-              <i class="fas fa-dumbbell"></i>
-              <span>Press banca con mancuernas</span>
+    <!-- Sección de Análisis de Progreso -->
+    <section class="analisis-progreso">
+      <h2><i class="fas fa-chart-line"></i> Tu Progreso</h2>
+      <div class="estadisticas">
+        <!-- Resumen de Rendimiento -->
+        <div class="estadistica-card">
+          <div class="estadistica-cabecera">
+            <div class="estadistica-icono">
+              <i class="fas fa-trophy"></i>
             </div>
-            <div class="ejercicio-item">
-              <i class="fas fa-dumbbell"></i>
-              <span>Sentadilla búlgara</span>
+            <h3 class="estadistica-titulo">Rendimiento</h3>
+          </div>
+          <div class="estadistica-contenido">
+            <p class="estadistica-valor" id="nivelRendimiento">--</p>
+            <p class="estadistica-descripcion">Tu nivel de rendimiento actual</p>
+            <div class="barra-progreso">
+              <div class="progreso" style="width: 75%;"></div>
             </div>
-            <div class="ejercicio-item">
-              <i class="fas fa-dumbbell"></i>
-              <span>Rem con barra</span>
-            </div>
+            <p class="estadistica-tendencia"><i class="fas fa-arrow-up"></i> 12% vs mes anterior</p>
           </div>
         </div>
-        <div class="sugerencia-box">
-          <h3><i class="fas fa-chart-line"></i> Ejercicios Populares</h3>
-          <div id="ejerciciosPopulares" class="ejercicios-lista">
-            <div class="ejercicio-item">
+
+        <!-- Series por grupo muscular -->
+        <div class="estadistica-card">
+          <div class="estadistica-cabecera">
+            <div class="estadistica-icono">
               <i class="fas fa-dumbbell"></i>
-              <span>Press banca con barra</span>
             </div>
-            <div class="ejercicio-item">
-              <i class="fas fa-dumbbell"></i>
-              <span>Sentadilla libre</span>
+            <h3 class="estadistica-titulo">Series Totales</h3>
+          </div>
+          <div class="estadistica-contenido">
+            <p class="estadistica-valor" id="totalSeries">--</p>
+            <p class="estadistica-descripcion">Series completadas este mes</p>
+            <div class="barra-progreso">
+              <div class="progreso" style="width: 65%;"></div>
             </div>
-            <div class="ejercicio-item">
-              <i class="fas fa-dumbbell"></i>
-              <span>Peso muerto convencional</span>
+            <p class="estadistica-tendencia"><i class="fas fa-arrow-up"></i> 8% más que el mes pasado</p>
+          </div>
+        </div>
+
+        <!-- Frecuencia de entrenamiento -->
+        <div class="estadistica-card">
+          <div class="estadistica-cabecera">
+            <div class="estadistica-icono">
+              <i class="fas fa-calendar-check"></i>
             </div>
+            <h3 class="estadistica-titulo">Frecuencia</h3>
+          </div>
+          <div class="estadistica-contenido">
+            <p class="estadistica-valor" id="promedioEntrenamientos">--</p>
+            <p class="estadistica-descripcion">Entrenamientos por semana</p>
+            <div class="barra-progreso">
+              <div class="progreso" style="width: 85%;"></div>
+            </div>
+            <p class="estadistica-tendencia"><i class="fas fa-check"></i> ¡Objetivo semanal cumplido!</p>
+          </div>
+        </div>
+
+        <!-- Grupo muscular destacado -->
+        <div class="estadistica-card">
+          <div class="estadistica-cabecera">
+            <div class="estadistica-icono">
+              <i class="fas fa-fire"></i>
+            </div>
+            <h3 class="estadistica-titulo">Grupo Destacado</h3>
+          </div>
+          <div class="estadistica-contenido">
+            <p class="estadistica-valor" id="grupoMasTrabajado">--</p>
+            <p class="estadistica-descripcion">Tu grupo muscular más trabajado</p>
+            <div class="barra-progreso">
+              <div class="progreso" style="width: 90%;"></div>
+            </div>
+            <p class="estadistica-tendencia"><i class="fas fa-star"></i> ¡Muy buen trabajo!</p>
+          </div>
+        </div>
+
+        <!-- Intensidad promedio -->
+        <div class="estadistica-card">
+          <div class="estadistica-cabecera">
+            <div class="estadistica-icono">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <h3 class="estadistica-titulo">Intensidad</h3>
+          </div>
+          <div class="estadistica-contenido">
+            <p class="estadistica-valor" id="intensidadPromedio">--</p>
+            <p class="estadistica-descripcion">Nivel de intensidad promedio</p>
+            <div class="barra-progreso">
+              <div class="progreso" style="width: 70%;"></div>
+            </div>
+            <p class="estadistica-tendencia"><i class="fas fa-arrow-up"></i> 5% más intenso</p>
+          </div>
+        </div>
+
+        <!-- Progreso hacia objetivos -->
+        <div class="estadistica-card">
+          <div class="estadistica-cabecera">
+            <div class="estadistica-icono">
+              <i class="fas fa-bullseye"></i>
+            </div>
+            <h3 class="estadistica-titulo">Objetivos</h3>
+          </div>
+          <div class="estadistica-contenido">
+            <p class="estadistica-valor" id="progresoObjetivos">--</p>
+            <p class="estadistica-descripcion">Progreso hacia tus metas</p>
+            <div class="barra-progreso">
+              <div class="progreso" style="width: 60%;"></div>
+            </div>
+            <p class="estadistica-tendencia"><i class="fas fa-running"></i> ¡Sigue así!</p>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- Sección de Sugerencias de Ejercicios -->
+    <section class="sugerencias">
+      <div class="sugerencias-header">
+        <h2><i class="fas fa-lightbulb"></i> Descubre Nuevos Ejercicios</h2>
+        <p class="sugerencias-descripcion">Recomendaciones personalizadas basadas en tu historial y tendencias actuales</p>
+      </div>
+      
+      <div class="sugerencias-contenedor">
+        <!-- Tarjeta de Ejercicios Recomendados -->
+        <div class="sugerencia-box">
+          <div class="sugerencia-cabecera">
+            <div class="sugerencia-icono">
+              <i class="fas fa-user-check"></i>
+            </div>
+            <h3>Recomendados para ti</h3>
+            <span class="sugerencia-badge">Personalizado</span>
+          </div>
+          <div id="ejerciciosRecomendados" class="ejercicios-lista">
+            <div class="ejercicio-item">
+              <div class="ejercicio-icono">
+                <i class="fas fa-dumbbell"></i>
+              </div>
+              <div class="ejercicio-info">
+                <h4>Press banca con mancuernas</h4>
+                <div class="ejercicio-meta">
+                  <span class="ejercicio-musculo"><i class="fas fa-dumbbell"></i> Pecho</span>
+                  <span class="ejercicio-nivel"><i class="fas fa-signal"></i> Intermedio</span>
+                </div>
+              </div>
+              <button class="ejercicio-boton">Ver Detalles</button>
+            </div>
+            
+            <div class="ejercicio-item">
+              <div class="ejercicio-icono">
+                <i class="fas fa-running"></i>
+              </div>
+              <div class="ejercicio-info">
+                <h4>Sentadilla búlgara</h4>
+                <div class="ejercicio-meta">
+                  <span class="ejercicio-musculo"><i class="fas fa-dumbbell"></i> Piernas</span>
+                  <span class="ejercicio-nivel"><i class="fas fa-signal"></i> Avanzado</span>
+                </div>
+              </div>
+              <button class="ejercicio-boton">Ver Detalles</button>
+            </div>
+            
+            <div class="ejercicio-item">
+              <div class="ejercicio-icono">
+                <i class="fas fa-dumbbell"></i>
+              </div>
+              <div class="ejercicio-info">
+                <h4>Rem con barra</h4>
+                <div class="ejercicio-meta">
+                  <span class="ejercicio-musculo"><i class="fas fa-dumbbell"></i> Espalda</span>
+                  <span class="ejercicio-nivel"><i class="fas fa-signal"></i> Intermedio</span>
+                </div>
+              </div>
+              <button class="ejercicio-boton">Ver Detalles</button>
+            </div>
+          </div>
+          <div class="sugerencia-footer">
+            <a href="#" class="ver-todos">Ver todos los recomendados <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+        
+        <!-- Tarjeta de Ejercicios Populares -->
+        <div class="sugerencia-box">
+          <div class="sugerencia-cabecera">
+            <div class="sugerencia-icono">
+              <i class="fas fa-fire"></i>
+            </div>
+            <h3>Tendencias Actuales</h3>
+            <span class="sugerencia-badge tendencia">En tendencia</span>
+          </div>
+          <div id="ejerciciosPopulares" class="ejercicios-lista">
+            <div class="ejercicio-item">
+              <div class="ejercicio-icono">
+                <i class="fas fa-dumbbell"></i>
+              </div>
+              <div class="ejercicio-info">
+                <h4>Press banca con barra</h4>
+                <div class="ejercicio-meta">
+                  <span class="ejercicio-musculo"><i class="fas fa-dumbbell"></i> Pecho</span>
+                  <span class="ejercicio-nivel"><i class="fas fa-signal"></i> Principiante</span>
+                </div>
+              </div>
+              <button class="ejercicio-boton">Ver Detalles</button>
+            </div>
+            
+            <div class="ejercicio-item">
+              <div class="ejercicio-icono">
+                <i class="fas fa-running"></i>
+              </div>
+              <div class="ejercicio-info">
+                <h4>Sentadilla libre</h4>
+                <div class="ejercicio-meta">
+                  <span class="ejercicio-musculo"><i class="fas fa-dumbbell"></i> Piernas</span>
+                  <span class="ejercicio-nivel"><i class="fas fa-signal"></i> Intermedio</span>
+                </div>
+              </div>
+              <button class="ejercicio-boton">Ver Detalles</button>
+            </div>
+            
+            <div class="ejercicio-item">
+              <div class="ejercicio-icono">
+                <i class="fas fa-dumbbell"></i>
+              </div>
+              <div class="ejercicio-info">
+                <h4>Peso muerto convencional</h4>
+                <div class="ejercicio-meta">
+                  <span class="ejercicio-musculo"><i class="fas fa-dumbbell"></i> Espalda</span>
+                  <span class="ejercicio-nivel"><i class="fas fa-signal"></i> Avanzado</span>
+                </div>
+              </div>
+              <button class="ejercicio-boton">Ver Detalles</button>
+            </div>
+          </div>
+          <div class="sugerencia-footer">
+            <a href="#" class="ver-todos">Explorar más ejercicios <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sugerencias-acciones">
+        <button class="boton boton-primario">
+          <i class="fas fa-plus-circle"></i> Añadir a mi rutina
+        </button>
+        <button class="boton boton-secundario">
+          <i class="fas fa-sync-alt"></i> Actualizar sugerencias
+        </button>
+      </div>
+    </section>
     
     <!-- Sección de Recomendaciones Personalizadas -->
-    <section id="recomendacionesContainer" class="recomendaciones-seccion">
-      <!-- Las recomendaciones se cargarán aquí dinámicamente -->
+    <section class="recomendaciones-seccion">
+      <h2><i class="fas fa-star"></i> Análisis de tu Progreso</h2>
+      <div class="recomendaciones-contenedor">
+        <div class="recomendaciones-lista">
+          <div class="recomendacion-item">
+            <div class="recomendacion-icono">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="recomendacion-contenido">
+              <h3>Registra más entrenamientos</h3>
+              <p>Registra más entrenamientos para recibir recomendaciones personalizadas basadas en tu progreso.</p>
+            </div>
+          </div>
+          
+          <div class="recomendacion-item">
+            <div class="recomendacion-icono">
+              <i class="fas fa-dumbbell"></i>
+            </div>
+            <div class="recomendacion-contenido">
+              <h3>Variedad de ejercicios</h3>
+              <p>Asegúrate de incluir una variedad de ejercicios en tus rutinas para un desarrollo muscular equilibrado.</p>
+            </div>
+          </div>
+          
+          <div class="recomendacion-item">
+            <div class="recomendacion-icono">
+              <i class="fas fa-moon"></i>
+            </div>
+            <div class="recomendacion-contenido">
+              <h3>Descanso adecuado</h3>
+              <p>Asegúrate de dormir al menos 7-8 horas cada noche para una óptima recuperación muscular.</p>
+            </div>
+          </div>
+          
+          <div class="recomendacion-item">
+            <div class="recomendacion-icono">
+              <i class="fas fa-tint"></i>
+            </div>
+            <div class="recomendacion-contenido">
+              <h3>Hidratación</h3>
+              <p>Recuerda mantener una hidratación adecuada durante todo el día, especialmente durante los entrenamientos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 

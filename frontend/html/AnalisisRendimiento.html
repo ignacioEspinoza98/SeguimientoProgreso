@@ -3,63 +3,139 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Análisis de Rendimiento</title>
+  <title>Análisis de Rendimiento | Progreso Gym</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/Dashboard.css" />
   <link rel="stylesheet" href="../css/analisisRendimiento.css" />
 </head>
 <body>
+  <!-- Barra de navegación -->
+  <nav class="navbar">
+    <div class="nav-contenedor">
+      <a href="#" class="nav-logo">
+        <i class="fas fa-dumbbell"></i>
+        <span>Progreso Gym</span>
+      </a>
+      <div class="nav-botones">
+        <a href="Dashboard.html" class="boton boton-secundario">
+          <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+        <button id="cerrarSesion" class="boton boton-primario">
+          <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </nav>
+
   <main class="contenedor">
-    <div class="cabecera">
-      <h1>Análisis de Rendimiento</h1>
-      <a href="Dashboard.html" class="boton-volver">Volver al Dashboard</a>
-    </div>
+    <!-- Sección de bienvenida -->
+    <section class="seccion-bienvenida">
+      <h1 class="saludo">Análisis de Rendimiento</h1>
+      <p>Visualiza tu progreso, analiza tus estadísticas y mejora tu rendimiento con datos detallados de tus entrenamientos.</p>
+    </section>
 
-    <div class="filtros">
-      <select id="filtro-ejercicio">
-      </select>
-
-      <select id="vista-grafico">
-        <option value="peso">Peso (kg)</option>
-        <option value="series">Series</option>
-      </select>
-
-      <select id="filtro-tiempo">
-        <option value="7">Últimos 7 días</option>
-        <option value="30">Últimos 30 días</option>
-        <option value="90">Últimos 3 meses</option>
-        <option value="historial">Todo el historial</option>
-      </select>
-
-    </div>
-
-    <section class="panel">
-      <div class="grafico">
-        <h2>Rendimiento en el tiempo</h2>
-        <canvas id="graficoRendimiento"></canvas>
-        <!-- Aquí se insertará dinámicamente el <p id="contadorSesiones"> -->
+    <!-- Filtros -->
+    <div class="filtros-analisis">
+      <div class="filtro-grupo">
+        <label for="filtro-ejercicio"><i class="fas fa-dumbbell"></i> Ejercicio</label>
+        <select id="filtro-ejercicio" class="select-estilizado">
+          <option value="">Todos los ejercicios</option>
+        </select>
       </div>
 
-      <div class="record-box">
-        <h2>Récords personales</h2>
-        <ul id="lista-records"></ul>
+      <div class="filtro-grupo">
+        <label for="vista-grafico"><i class="fas fa-chart-line"></i> Vista</label>
+        <select id="vista-grafico" class="select-estilizado">
+          <option value="peso">Peso (kg)</option>
+          <option value="series">Series</option>
+        </select>
+      </div>
+
+      <div class="filtro-grupo">
+        <label for="filtro-tiempo"><i class="far fa-calendar-alt"></i> Período</label>
+        <select id="filtro-tiempo" class="select-estilizado">
+          <option value="7">Últimos 7 días</option>
+          <option value="30">Últimos 30 días</option>
+          <option value="90">Últimos 3 meses</option>
+          <option value="historial">Todo el historial</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Panel principal -->
+    <section class="panel-analisis">
+      <!-- Gráfico de rendimiento -->
+      <div class="grafico-container">
+        <div class="panel-cabecera">
+          <h2><i class="fas fa-chart-line"></i> Rendimiento en el tiempo</h2>
+          <div id="contadorSesiones" class="contador-sesiones"></div>
+        </div>
+        <div class="grafico-wrapper">
+          <canvas id="graficoRendimiento"></canvas>
+        </div>
+      </div>
+
+      <!-- Récords personales -->
+      <div class="records-container">
+        <div class="panel-cabecera">
+          <h2><i class="fas fa-trophy"></i> Récords personales</h2>
+        </div>
+        <ul id="lista-records" class="lista-records"></ul>
       </div>
     </section>
 
-    <section class="estadisticas">
-      <div class="card">
-        <h3>Peso máximo</h3>
-        <p id="pesoMaxAnalisis">-- kg</p>
+    <!-- Estadísticas rápidas -->
+    <section class="estadisticas-rapidas">
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-weight-hanging"></i>
+          </div>
+          <h3>Peso máximo</h3>
+        </div>
+        <div class="estadistica-contenido">
+          <p class="estadistica-valor" id="pesoMaxAnalisis">-- kg</p>
+          <p class="estadistica-descripcion">Tu mejor marca personal</p>
+        </div>
       </div>
-      <div class="card">
-        <h3>Entrenamientos registrados</h3>
-        <p id="entrenamientosTotal">--</p>
+
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-dumbbell"></i>
+          </div>
+          <h3>Entrenamientos</h3>
+        </div>
+        <div class="estadistica-contenido">
+          <p class="estadistica-valor" id="entrenamientosTotal">--</p>
+          <p class="estadistica-descripcion">Total registrados</p>
+        </div>
       </div>
-      <div class="card">
-        <h3>Promedio de repeticiones por serie</h3>
-        <p id="promedioReps">--</p>
+
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-redo"></i>
+          </div>
+          <h3>Repeticiones</h3>
+        </div>
+        <div class="estadistica-contenido">
+          <p class="estadistica-valor" id="promedioReps">--</p>
+          <p class="estadistica-descripcion">Promedio por serie</p>
+        </div>
       </div>
-      <div class="card">
-        <h3>Evolución porcentual</h3>
-        <p id="evolucionPorcentual">--</p>
+
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3>Evolución</h3>
+        </div>
+        <div class="estadistica-contenido">
+          <p class="estadistica-valor" id="evolucionPorcentual">--%</p>
+          <p class="estadistica-descripcion">Mejora general</p>
+        </div>
       </div>
     </section>
   </main>
@@ -67,5 +143,6 @@
   <script src="../js/Auth.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="../js/analisisRendimiento.js"></script>
+  <script src="../js/CerrarSesion.js"></script>
 </body>
 </html>

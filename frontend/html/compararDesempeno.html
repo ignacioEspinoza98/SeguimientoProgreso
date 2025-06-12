@@ -3,48 +3,169 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Comparar Desempeño</title>
+  <title>Comparar Desempeño | Progreso Gym</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../css/Dashboard.css">
   <link rel="stylesheet" href="../css/compararDesempeno.css">
 </head>
 <body>
-  <button id="volverDashboard" class="boton-volver">← Volver al Dashboard</button>
-  <main class="contenedor">
-    <h1>Comparar Desempeño</h1>
-    
-    <section class="seleccion-sesiones">
-      <div class="selector-container">
-        <div class="selector-sesion">
-          <h3>Sesión Reciente</h3>
-          <select id="sesionReciente" class="selector"></select>
-        </div>
-        <div class="vs">VS</div>
-        <div class="selector-sesion">
-          <h3>Sesión Anterior</h3>
-          <select id="sesionAnterior" class="selector"></select>
-        </div>
+  <!-- Barra de navegación -->
+  <nav class="navbar">
+    <div class="nav-contenedor">
+      <a href="#" class="nav-logo">
+        <i class="fas fa-dumbbell"></i>
+        <span>Progreso Gym</span>
+      </a>
+      <div class="nav-botones">
+        <a href="Dashboard.html" class="boton boton-secundario">
+          <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+        <button id="cerrarSesion" class="boton boton-primario">
+          <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </button>
       </div>
-      <button id="compararBtn" class="boton">Comparar Sesiones</button>
+    </div>
+  </nav>
+
+  <main class="contenedor">
+    <!-- Sección de bienvenida -->
+    <section class="seccion-bienvenida">
+      <h1 class="saludo">Comparar Desempeño</h1>
+      <p>Analiza y compara tu progreso entre diferentes sesiones de entrenamiento para medir tu mejora.</p>
     </section>
 
-    <section id="resultados" class="resultados-comparacion">
-      <div class="resumen-comparacion">
-        <h2>Resumen de Comparación</h2>
-        <div id="resumenEstadisticas" class="estadisticas-comparacion">
-          <p>Selecciona dos sesiones para comparar tu progreso.</p>
+    <!-- Selector de sesiones -->
+    <section class="seleccion-sesiones">
+      <div class="panel-comparacion">
+        <div class="panel-cabecera">
+          <h2><i class="fas fa-exchange-alt"></i> Comparar Sesiones</h2>
+        </div>
+        <div class="panel-contenido">
+          <div class="selector-container">
+            <div class="selector-sesion">
+              <div class="selector-cabecera">
+                <i class="fas fa-calendar-check"></i>
+                <h3>Sesión Reciente</h3>
+              </div>
+              <select id="sesionReciente" class="select-estilizado">
+                <option value="">Selecciona una sesión</option>
+              </select>
+              <div class="fecha-sesion" id="fechaSesionReciente"></div>
+            </div>
+            
+            <div class="vs-container">
+              <div class="vs-circle">VS</div>
+            </div>
+            
+            <div class="selector-sesion">
+              <div class="selector-cabecera">
+                <i class="fas fa-calendar"></i>
+                <h3>Sesión Anterior</h3>
+              </div>
+              <select id="sesionAnterior" class="select-estilizado">
+                <option value="">Selecciona una sesión</option>
+              </select>
+              <div class="fecha-sesion" id="fechaSesionAnterior"></div>
+            </div>
+          </div>
+          
+          <button id="compararBtn" class="boton boton-primario boton-grande">
+            <i class="fas fa-chart-line"></i> Comparar Sesiones
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resultados de la comparación -->
+    <section id="resultados" class="resultados-comparacion" style="display: none;">
+      <!-- Resumen de comparación -->
+      <div class="panel-comparacion">
+        <div class="panel-cabecera">
+          <h2><i class="fas fa-chart-pie"></i> Resumen de Comparación</h2>
+        </div>
+        <div class="panel-contenido">
+          <div id="resumenEstadisticas" class="estadisticas-comparacion">
+            <div class="estadistica-comparativa">
+              <div class="estadistica-item">
+                <div class="estadistica-icono">
+                  <i class="fas fa-dumbbell"></i>
+                </div>
+                <div class="estadistica-info">
+                  <h4>Ejercicios Realizados</h4>
+                  <div class="valores-comparados">
+                    <span class="valor valor-actual">0</span>
+                    <span class="vs-indicator">vs</span>
+                    <span class="valor valor-anterior">0</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="estadistica-item">
+                <div class="estadistica-icono">
+                  <i class="fas fa-weight-hanging"></i>
+                </div>
+                <div class="estadistica-info">
+                  <h4>Peso Promedio</h4>
+                  <div class="valores-comparados">
+                    <span class="valor valor-actual">0 kg</span>
+                    <span class="vs-indicator">vs</span>
+                    <span class="valor valor-anterior">0 kg</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="estadistica-item">
+                <div class="estadistica-icono">
+                  <i class="fas fa-redo"></i>
+                </div>
+                <div class="estadistica-info">
+                  <h4>Repeticiones</h4>
+                  <div class="valores-comparados">
+                    <span class="valor valor-actual">0</span>
+                    <span class="vs-indicator">vs</span>
+                    <span class="valor valor-anterior">0</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="estadistica-item">
+                <div class="estadistica-icono">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="estadistica-info">
+                  <h4>Mejora General</h4>
+                  <div class="mejora-indicador">
+                    <span class="valor-mejora mejora-positiva">+0%</span>
+                    <span class="mejora-descripcion">respecto a la sesión anterior</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="ejercicios-comparados">
-        <h2>Ejercicios Comparados</h2>
-        <div id="listaEjerciciosComparados" class="lista-ejercicios">
-          <!-- Aquí se cargarán los ejercicios comparados -->
+      <!-- Ejercicios comparados -->
+      <div class="panel-comparacion">
+        <div class="panel-cabecera">
+          <h2><i class="fas fa-list-check"></i> Ejercicios Comparados</h2>
+        </div>
+        <div class="panel-contenido">
+          <div id="listaEjerciciosComparados" class="lista-ejercicios">
+            <!-- Aquí se cargarán los ejercicios comparados -->
+            <div class="sin-comparacion">
+              <i class="fas fa-exchange-alt"></i>
+              <p>Selecciona dos sesiones para comparar los ejercicios</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
   <script src="../js/Auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="../js/compararDesempeno.js"></script>
+  <script src="../js/CerrarSesion.js"></script>
 </body>
 </html>

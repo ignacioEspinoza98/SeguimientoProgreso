@@ -259,59 +259,101 @@ export function analizarRendimiento(historial) {
 
 // Función para mostrar las recomendaciones en el DOM
 export function mostrarRecomendaciones(contenedorId) {
-  const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
-  const claveHistorial = `historial_${usuario.nombre.toLowerCase()}`;
-  const historial = JSON.parse(localStorage.getItem(claveHistorial)) || [];
-  
-  const { recomendaciones, alertas } = analizarRendimiento(historial);
-  const contenedor = document.getElementById(contenedorId);
-  
-  if (!contenedor) return;
-  
-  let html = `
-    <div class="recomendaciones-container">
-      <h3>Recomendaciones Personalizadas</h3>
-  `;
-  
-  if (alertas.length > 0) {
-    html += `
-      <div class="alertas">
-        <h4>¡Atención!</h4>
-        <ul>
-          ${alertas.map(alerta => `<li>${alerta}</li>`).join('')}
-        </ul>
-      </div>
-    `;
-  }
-  
-  html += `
-    <div class="consejos">
-      <ul>
-        ${recomendaciones.map(consejo => `<li>${consejo}</li>`).join('')}
-      </ul>
-    </div>
-  `;
-  
-  // Añadir un consejo aleatorio adicional
-  const categoriasConsejos = Object.keys(consejosEntrenamiento);
-  const categoriaAleatoria = categoriasConsejos[Math.floor(Math.random() * categoriasConsejos.length)];
-  
-  if (Array.isArray(consejosEntrenamiento[categoriaAleatoria])) {
-    const consejoAleatorio = consejosEntrenamiento[categoriaAleatoria][
-      Math.floor(Math.random() * consejosEntrenamiento[categoriaAleatoria].length)
-    ];
+  try {
+    const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
+    const claveHistorial = `historial_${usuario.nombre.toLowerCase()}`;
+    const historial = JSON.parse(localStorage.getItem(claveHistorial)) || [];
     
-    html += `
-      <div class="consejo-extra">
-        <h4>Consejo del día:</h4>
-        <p>${consejoAleatorio}</p>
-      </div>
+    const { recomendaciones, alertas } = analizarRendimiento(historial);
+    const contenedor = document.getElementById(contenedorId);
+    const contenedorRecomendados = document.getElementById('ejerciciosRecomendados');
+    
+    if (!contenedor || !contenedorRecomendados) return;
+    
+    // Actualizar ejercicios recomendados
+    if (recomendaciones.length > 0) {
+      const ejerciciosRecomendados = [
+        recomendaciones[0] || 'Press banca con mancuernas',
+        recomendaciones[1] || 'Sentadilla búlgara',
+        recomendaciones[2] || 'Rem con barra'
+      ];
+      
+      contenedorRecomendados.innerHTML = ejerciciosRecomendados
+        .map(ejercicio => `
+          <div class="ejercicio-item">
+            <i class="fas fa-dumbbell"></i>
+            <span>${ejercicio}</span>
+          </div>
+        `).join('');
+    }
+    
+    // Actualizar recomendaciones personalizadas
+    let html = `
+      <div class="recomendaciones-container">
+        <h3><i class="fas fa-chart-line"></i> Análisis de tu Progreso</h3>
     `;
+    
+    if (alertas.length > 0) {
+      html += `
+        <div class="alertas">
+          <h4><i class="fas fa-exclamation-triangle"></i> ¡Atención!</h4>
+          <div class="alertas-contenido">
+            ${alertas.map(alerta => `
+              <div class="alerta-item">
+                <i class="fas fa-info-circle"></i>
+                <p>${alerta}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+    
+    if (recomendaciones.length > 3) {
+      html += `
+        <div class="consejos">
+          <h4><i class="fas fa-lightbulb"></i> Recomendaciones clave</h4>
+          <div class="consejos-lista">
+            ${recomendaciones.slice(0, 3).map(consejo => `
+              <div class="consejo-item">
+                <i class="fas fa-check-circle"></i>
+                <p>${consejo}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+    
+    // Añadir un consejo aleatorio adicional
+    const categoriasConsejos = Object.keys(consejosEntrenamiento);
+    const categoriaAleatoria = categoriasConsejos[Math.floor(Math.random() * categoriasConsejos.length)];
+    
+    if (Array.isArray(consejosEntrenamiento[categoriaAleatoria])) {
+      const consejoAleatorio = consejosEntrenamiento[categoriaAleatoria][
+        Math.floor(Math.random() * consejosEntrenamiento[categoriaAleatoria].length)
+      ];
+      
+      html += `
+        <div class="consejo-extra">
+          <div class="consejo-extra-icono">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="consejo-extra-contenido">
+            <h4>Consejo del día</h4>
+            <p>${consejoAleatorio}</p>
+          </div>
+        </div>
+      `;
+    }
+    
+    html += `</div>`;
+    
+    contenedor.innerHTML = html;
+    
+  } catch (error) {
+    console.error('Error al cargar las recomendaciones:', error);
   }
-  
-  html += `</div>`;
-  
-  contenedor.innerHTML = html;
 }
 
 // Función para inicializar el sistema de recomendaciones
