@@ -1,196 +1,319 @@
-body{
+/* 
+ * Estilos específicos para la página de Registro
+ * Los estilos principales están en index.css
+ */
+
+/* Variables de colores */
+:root {
+    --primary-color: #4361ee;
+    --primary-hover: #3a56d4;
+    --secondary-color: #3f37c9;
+    --light-gray: #f8f9fa;
+    --dark-gray: #343a40;
+    --danger: #dc3545;
+    --success: #198754;
+    --border-radius: 12px;
+    --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+    --color-texto-secundario: #6c757d;
+    --color-primario: #4361ee;
+    --color-secundario: #3f37c9;
+    --color-borde: #ddd;
+}
+
+/* Estilos generales */
+body {
     margin: 0;
+    padding: 0;
     width: 100%;
-    height: 100%;
-    background-color: black;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    line-height: 1.6;
 }
 
-a{
+a {
     text-decoration: none;
-    text-decoration-color: none;
+    color: var(--primary-color);
+    font-weight: 500;
+    transition: color 0.2s;
 }
 
-a:visited {
-    color: inherit;         /* Hereda el color del padre */
-    text-decoration: none;  /* Quita el subrayado */
-  }
-
-.ContenidoPrincipal{
-
-max-width: 1200px;
-margin: 0 auto;
-height: 100vh;
-display: flex;
-justify-content: center;
-align-items: center;
+a:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
 }
 
-.ContenedorFormulario{
-  width: 50%;
-  height: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-
-
-}
-#Registro{
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: white;
-   
-
+/* Contenedor principal */
+.min-vh-100 {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 2rem 0;
 }
 
-
-.ItemsFormulario{
-
-    font-size: 1rem;
-    
-
-}
-
-.ItemsFormulario input,
-.ItemsFormulario label {
-  width: 100%;
-  box-sizing: border-box;
-  font-weight: 400;
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  color: orange;
-
-}
-.ItemsFormulario input{
-    background-color: black;
-}
-
-
-#RegistroBtn {
+/* Tarjeta del formulario */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
     width: 100%;
-    padding: 10px;
-    font-size: 1.7rem;
-    box-sizing: border-box;
-    color: black;
-    font-weight: bold;
-    background-color: orange;
-  }
-
-.RegistroForm{
-width: 100%;
-height: 100%;
-
+    max-width: 600px;
+    margin: 0 auto;
 }
 
-#Pregunta{
-    color:white;
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
 }
 
-#LinkRegistro{
-    color: orange !important;
+.card-body {
+    padding: 2.5rem;
 }
 
-
-
-@media (max-width: 768px) {
-    .ItemsFormulario input,
-.ItemsFormulario label {
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 1rem;
-  margin-bottom: 10px;
-  border-radius: 5px;
-
+/* Títulos y texto */
+h2 {
+    font-weight: 700;
+    color: var(--dark-gray);
+    margin-bottom: 0.5rem;
+    text-align: center;
 }
 
-
-#Registro{
-    font-size: 2rem;
-   
-
-}
-}
-
-.form-group {
+.text-muted {
+    color: #6c757d !important;
+    font-size: 0.95rem;
+    text-align: center;
     margin-bottom: 1.5rem;
-    position: relative;
+    display: block;
+}
+
+/* Formulario */
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    display: block;
 }
 
 .form-control {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 0.75rem 1rem;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    border: 1px solid #e1e5ee;
+    border-radius: 8px;
+    transition: var(--transition);
+    background-color: #fff;
+    color: #333;
 }
 
 .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
     outline: none;
-    border-color: #ffa500;
-    box-shadow: 0 0 0 2px rgba(255, 165, 0, 0.2);
 }
 
-.feedback {
-    font-size: 0.875rem;
+.input-group-text {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #e1e5ee;
+    border-right: none;
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+}
+
+/* Botón de alternar contraseña */
+.toggle-password {
+    background-color: #fff;
+    border: 1px solid #e1e5ee;
+    border-left: none;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    color: #6c757d;
+    transition: var(--transition);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.75rem;
+}
+
+.toggle-password:hover {
+    background-color: #f8f9fa;
+    color: var(--primary-color);
+}
+
+/* Botón de registro */
+.btn {
+    display: inline-block;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 8px;
+    transition: var(--transition);
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
+}
+
+/* Checkbox de términos y condiciones */
+.form-check {
+    margin: 1.5rem 0;
+    padding-left: 1.75em;
+}
+
+.form-check-input {
+    margin-top: 0.2em;
+    margin-left: -1.5em;
+    width: 1.25em;
+    height: 1.25em;
+    border: 1px solid #ced4da;
+    border-radius: 0.25em;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check-label {
+    color: #495057;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.form-check a {
+    font-weight: 600;
+}
+
+/* Validación de formulario */
+.is-invalid {
+    border-color: var(--danger) !important;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.invalid-feedback {
+    display: none;
+    width: 100%;
     margin-top: 0.25rem;
-    min-height: 1.25rem;
+    font-size: 0.875em;
+    color: var(--danger);
 }
 
-.feedback.error {
-    color: #dc3545;
+#passwordMatch {
+    display: none;
 }
 
-.feedback.success {
-    color: #28a745;
+.was-validated .form-control:invalid ~ .invalid-feedback,
+.was-validated .form-control:invalid ~ .invalid-tooltip,
+.form-control.is-invalid ~ .invalid-feedback,
+.form-control.is-invalid ~ .invalid-tooltip {
+    display: block;
 }
 
-.feedback.warning {
-    color: #ffc107;
-}
-
-/* Estilos para los estados de validación */
-.form-control.is-valid {
-    border-color: #28a745;
-}
-
-.form-control.is-invalid {
-    border-color: #dc3545;
-}
-
-/* Animación para los mensajes de feedback */
+/* Animaciones */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-.feedback {
-    animation: fadeIn 0.3s ease;
+.card {
+    animation: fadeIn 0.5s ease-out forwards;
 }
 
-/* Estilo para el botón de registro */
-#RegistroBtn {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #ffa500;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+/* Responsive */
+@media (max-width: 767.98px) {
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    .text-muted {
+        font-size: 0.875rem;
+    }
+    
+    .btn {
+        padding: 0.65rem 1.25rem;
+        font-size: 0.9rem;
+    }
 }
 
-#RegistroBtn:hover {
-    background-color: #e68a00;
+/* Mensaje de éxito */
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
 }
 
-#RegistroBtn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+/* Estilos específicos para el enlace de inicio de sesión */
+#Pregunta {
+    color: #6c757d;
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.95rem;
 }
 
+#LinkRegistro {
+    color: var(--primary-color) !important;
+    font-weight: 600;
+    margin-left: 0.25rem;
+}
 
+#LinkRegistro:hover {
+    text-decoration: underline !important;
+    color: var(--secondary-color) !important;
+}
+
+/* Estilos para los mensajes de ayuda */
+.form-text {
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Estilos para el contenedor de contraseña */
+.password-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+/* Estilos para los íconos de los campos */
+.input-group-text i {
+    width: 1em;
+    text-align: center;
+}

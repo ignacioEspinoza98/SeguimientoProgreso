@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comparar Desempeño</title>
+  <link rel="stylesheet" href="../css/Dashboard.css">
+  <link rel="stylesheet" href="../css/compararDesempeno.css">
+</head>
+<body>
+  <button id="volverDashboard" class="boton-volver">← Volver al Dashboard</button>
+  <main class="contenedor">
+    <h1>Comparar Desempeño</h1>
+    
+    <section class="seleccion-sesiones">
+      <div class="selector-container">
+        <div class="selector-sesion">
+          <h3>Sesión Reciente</h3>
+          <select id="sesionReciente" class="selector"></select>
+        </div>
+        <div class="vs">VS</div>
+        <div class="selector-sesion">
+          <h3>Sesión Anterior</h3>
+          <select id="sesionAnterior" class="selector"></select>
+        </div>
+      </div>
+      <button id="compararBtn" class="boton">Comparar Sesiones</button>
+    </section>
+
+    <section id="resultados" class="resultados-comparacion">
+      <div class="resumen-comparacion">
+        <h2>Resumen de Comparación</h2>
+        <div id="resumenEstadisticas" class="estadisticas-comparacion">
+          <p>Selecciona dos sesiones para comparar tu progreso.</p>
+        </div>
+      </div>
+
+      <div class="ejercicios-comparados">
+        <h2>Ejercicios Comparados</h2>
+        <div id="listaEjerciciosComparados" class="lista-ejercicios">
+          <!-- Aquí se cargarán los ejercicios comparados -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/Auth.js"></script>
+  <script src="../js/compararDesempeno.js"></script>
+</body>
+</html>

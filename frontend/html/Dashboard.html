@@ -68,15 +68,49 @@
       </div>
     </section>
 
+    <section class="sugerencias">
+      <h2>💡 Sugerencias de Ejercicios</h2>
+      <div class="sugerencias-contenedor">
+        <div class="sugerencia-box">
+          <h3>Recomendados para ti</h3>
+          <div id="ejerciciosRecomendados" class="ejercicios-lista">
+            <p>Cargando recomendaciones...</p>
+          </div>
+        </div>
+        <div class="sugerencia-box">
+          <h3>Ejercicios Populares</h3>
+          <div id="ejerciciosPopulares" class="ejercicios-lista">
+            <p>Press banca con barra</p>
+            <p>Sentadilla libre</p>
+            <p>Peso muerto convencional</p>
+            <p>Dominadas pronas</p>
+            <p>Press militar en máquina</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Sección de Recomendaciones Personalizadas -->
+    <section id="recomendacionesContainer" class="recomendaciones-seccion">
+      <!-- Las recomendaciones se cargarán aquí dinámicamente -->
+    </section>
+
     <div class="acciones">
       <a href="RegistroEntrenamientos.html" class="boton">Registrar Entrenamiento</a>
       <a href="AnalisisRendimiento.html" class="boton secundario">Ver Análisis</a>
+      <a href="compararDesempeno.html" class="boton secundario">Comparar Desempeño</a>
       <button id="exportarCSV" class="boton secundario">Exportar CSV</button>
     </div>
   </main>
 
   <script src="../js/Auth.js"></script>
-  <script src="../js/dashboard.js"></script>
+  <script src="../js/dashboard.js" type="module"></script>
   <script src="../js/CerrarSesion.js"></script>
+  <script type="module">
+    import { inicializarRecomendaciones } from '../js/recomendaciones.js';
+    document.addEventListener('DOMContentLoaded', () => {
+      inicializarRecomendaciones();
+    });
+  </script>
 </body>
 </html>

@@ -1,77 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/Registro.css">
-    <title>Registro</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro - Progreso Gym</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/index.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
+  <div class="contenedor">
+    <h1>Domina tus límites,<br>dale con intensidad<br>cada repetición</h1>
 
-<header>
-
-
-</header>
-
-
-<section class="ContenidoPrincipal">
-
-    <div class="ContenedorFormulario">
-
-        <span id="Registro">Registro de usuarios</span>
-  
-        <div class="ItemsFormulario">
-
-            <form id="RegistroForm">
-
-                <div class="form-group">
-                    <label>Usuario</label>
-                    <input type="text" id="Usuario" class="form-control">
-                    <div id="usuarioFeedback" class="feedback"></div>
-                </div>
-
-                <div class="form-group">
-                    <label>Correo</label>
-                    <input type="email" id="Correo" class="form-control">
-                    <div id="correoFeedback" class="feedback"></div>
-                </div>
-
-                <div class="form-group">
-                    <label>Contraseña</label>
-                    <input type="password" id="Contraseña" class="form-control">
-                    <div id="passwordFeedback" class="feedback"></div>
-                </div>
-
-                <div class="form-group">
-                    <label>Confirmar Contraseña</label>
-                    <input type="password" id="ConfirmarContraseña" class="form-control">
-                    <div id="confirmPasswordFeedback" class="feedback"></div>
-                </div>
-
-                <input type="submit" value="Registrar" id="RegistroBtn">
-
-                <label id="Pregunta">¿Ya tienes una cuenta?<a id="LinkRegistro" href="../html/InicioSesion.html">Inicia Sesion</a></label>
-
-            </form>
-
-
+    <div class="formulario">
+      <h2>Crear una cuenta</h2>
+      <p class="subtitulo">Completa el formulario para registrarte</p>
+      
+      <form id="RegistroForm">
+        <div class="grupo-formulario">
+          <label for="Usuario">Nombre de Usuario</label>
+          <div class="input-con-icono">
+            <i class="fas fa-user"></i>
+            <input type="text" id="Usuario" placeholder="Tu nombre de usuario" required>
+          </div>
+          <p class="ayuda">4-20 caracteres, solo letras, números, guiones y guiones bajos</p>
         </div>
-
-
+        
+        <div class="grupo-formulario">
+          <label for="Correo">Correo Electrónico</label>
+          <div class="input-con-icono">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="Correo" placeholder="tu@correo.com" required>
+          </div>
+        </div>
+        
+        <div class="grupo-formulario">
+          <label for="Contraseña">Contraseña</label>
+          <div class="input-con-icono">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="Contraseña" placeholder="••••••••" required>
+            <button type="button" class="toggle-password">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+          <p class="ayuda">Mínimo 8 caracteres, incluyendo mayúsculas, minúsculas y números</p>
+        </div>
+        
+        <div class="grupo-formulario">
+          <label for="ConfirmarContraseña">Confirmar Contraseña</label>
+          <div class="input-con-icono">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="ConfirmarContraseña" placeholder="••••••••" required>
+            <button type="button" class="toggle-password">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+          <p id="passwordMatch" class="texto-error" style="display: none; color: #dc3545; margin-top: 5px; font-size: 0.875rem;">Las contraseñas no coinciden</p>
+        </div>
+        
+        <div class="terminos">
+          <input type="checkbox" id="terminos" required>
+          <label for="terminos">Acepto los <a href="#" class="enlace">Términos y Condiciones</a> y la <a href="#" class="enlace">Política de Privacidad</a></label>
+        </div>
+        
+        <button type="submit" class="boton" id="RegistroBtn">
+          <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          <span class="ms-2">Registrarse</span>
+        </button>
+        
+        <p class="texto-centrado">
+          ¿Ya tienes una cuenta? <a href="InicioSesion.html" class="enlace">Inicia Sesión</a>
+        </p>
+      </form>
     </div>
+  </div>
 
-
-
-</section>
-
-
-<footer>
-
-
-</footer>
-
-
-<!-- Scripts -->
-<script src="../js/Registro.js"></script>
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- SweetAlert2 para alertas bonitas -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- Configuración de Firebase -->
+  <script src="../js/firebase-config.js"></script>
+  
+  <!-- Script de Registro -->
+  <script src="../js/Registro.js" type="module"></script>
+  
+  <!-- Font Awesome para iconos -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="../js/Registro.js" type="module"></script>
+  <!-- Efecto de partículas -->
+  <div class="particulas" id="particulas"></div>
+  
+  <!-- Script para partículas -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const particulas = document.getElementById('particulas');
+      const numParticulas = 30;
+      
+      for (let i = 0; i < numParticulas; i++) {
+        const particula = document.createElement('div');
+        particula.className = 'particula';
+        
+        // Tamaño aleatorio
+        const size = Math.random() * 15 + 5;
+        particula.style.width = `${size}px`;
+        particula.style.height = `${size}px`;
+        
+        // Posición aleatoria
+        particula.style.left = `${Math.random() * 100}%`;
+        particula.style.top = `${Math.random() * 100}%`;
+        
+        // Opacidad aleatoria
+        particula.style.opacity = Math.random() * 0.5 + 0.1;
+        
+        // Animación personalizada
+        const duration = Math.random() * 20 + 10;
+        const delay = Math.random() * -20;
+        particula.style.animation = `flotar ${duration}s linear ${delay}s infinite`;
+        
+        particulas.appendChild(particula);
+      }
+    });
+  </script>
 </body>
 </html>

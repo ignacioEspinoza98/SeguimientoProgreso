@@ -1,0 +1,136 @@
+/* Estilos para el contenedor de recomendaciones */
+.recomendaciones-container {
+  background-color: #1c1c1c;
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #ffa500;
+}
+
+.recomendaciones-container h3 {
+  color: #ffa500;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+}
+
+.recomendaciones-container h3::before {
+  content: "💡";
+  margin-right: 0.8rem;
+  font-size: 1.6rem;
+}
+
+/* Estilos para las alertas */
+.alertas {
+  background-color: rgba(255, 165, 0, 0.1);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #ffa500;
+}
+
+.alertas h4 {
+  color: #ffa500;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.alertas h4::before {
+  content: "⚠️";
+  margin-right: 0.5rem;
+}
+
+.alertas ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.alertas li {
+  margin-bottom: 0.5rem;
+  color: #ffa500;
+  font-weight: 500;
+}
+
+/* Estilos para la lista de consejos */
+.consejos ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.consejos li {
+  position: relative;
+  padding-left: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  color: #e0e0e0;
+}
+
+.consejos li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #ffa500;
+  font-weight: bold;
+}
+
+.consejos li:last-child {
+  margin-bottom: 0;
+}
+
+/* Estilos para el consejo extra */
+.consejo-extra {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #333;
+}
+
+.consejo-extra h4 {
+  color: #ffa500;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.consejo-extra h4::before {
+  content: "🌟";
+  margin-right: 0.5rem;
+}
+
+.consejo-extra p {
+  margin: 0;
+  color: #e0e0e0;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* Efectos de hover */
+.consejos li:hover {
+  color: #fff;
+  transform: translateX(5px);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .recomendaciones-container {
+    padding: 1rem;
+  }
+  
+  .recomendaciones-container h3 {
+    font-size: 1.2rem;
+  }
+  
+  .consejos li {
+    padding-left: 1.5rem;
+    font-size: 0.95rem;
+  }
+}
