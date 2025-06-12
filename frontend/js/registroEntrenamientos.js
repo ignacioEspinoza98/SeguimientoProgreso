@@ -31,6 +31,11 @@ const ejerciciosPorGrupo = {
   ]
 };
 
+// Guardar la lista de ejercicios por grupo en localStorage si no existe
+if (!localStorage.getItem('ejerciciosPorGrupo')) {
+  localStorage.setItem('ejerciciosPorGrupo', JSON.stringify(ejerciciosPorGrupo));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const formulario = document.getElementById("formulario-entrenamiento");
   const selectGrupo = document.getElementById("grupoMuscular");
@@ -39,6 +44,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const repeticionesInput = document.getElementById("repeticiones");
   const seriesInput = document.getElementById("series");
   const botonAgregar = formulario.querySelector("button[type='submit']");
+  
+  // Verificar si hay un ejercicio seleccionado previamente
+  const ejercicioSeleccionado = sessionStorage.getItem('ejercicioSeleccionado');
+  if (ejercicioSeleccionado) {
+    try {
+      const ejercicio = JSON.parse(ejercicioSeleccionado);
+      // Seleccionar el grupo muscular
+      selectGrupo.value = ejercicio.grupo;
+      // Disparar el evento change para cargar los ejercicios
+      const event = new Event('change');
+      selectGrupo.dispatchEvent(event);
+      
+      // Esperar un momento para que se carguen los ejercicios
+      setTimeout(() => {
+        selectEjercicio.value = ejercicio.nombre;
+        // Limpiar el ejercicio seleccionado para futuras cargas
+        sessionStorage.removeItem('ejercicioSeleccionado');
+      }, 100);
+    } catch (e) {
+      console.error('Error al cargar el ejercicio seleccionado:', e);
+      sessionStorage.removeItem('ejercicioSeleccionado');
+    }
+  }
 
   const errorPeso = document.getElementById("errorPeso");
   const errorReps = document.getElementById("errorRepeticiones");

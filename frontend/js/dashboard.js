@@ -1,3 +1,120 @@
+// Función para obtener ejercicios recomendados basados en el historial
+function obtenerEjerciciosRecomendados(historial) {
+  if (!historial || historial.length === 0) {
+    return [];
+  }
+
+  // Contar la frecuencia de cada grupo muscular
+  const frecuenciaGrupos = {};
+  const fechaActual = new Date();
+  const ultimos30Dias = new Date();
+  ultimos30Dias.setDate(ultimos30Dias.getDate() - 30);
+
+  historial.forEach(sesion => {
+    const fechaSesion = new Date(sesion.fecha);
+    if (fechaSesion < ultimos30Dias) return;
+
+    sesion.ejercicios.forEach(ejercicio => {
+      if (!ejercicio.grupoMuscular || ejercicio.grupoMuscular === "Otro") return;
+      
+      if (!frecuenciaGrupos[ejercicio.grupoMuscular]) {
+        frecuenciaGrupos[ejercicio.grupoMuscular] = 0;
+      }
+      frecuenciaGrupos[ejercicio.grupoMuscular]++;
+    });
+  });
+
+  // Ordenar grupos por frecuencia (de menor a mayor para priorizar los menos trabajados)
+  const gruposOrdenados = Object.keys(frecuenciaGrupos).sort(
+    (a, b) => (frecuenciaGrupos[a] || 0) - (frecuenciaGrupos[b] || 0)
+  );
+
+  // Tomar los 2-3 grupos menos trabajados
+  const gruposARecomendar = gruposOrdenados.slice(0, 3);
+  
+  // Si no hay suficientes datos, usar grupos por defecto
+  if (gruposARecomendar.length === 0) {
+    return [
+      { nombre: "Press banca con barra", grupo: "Pecho" },
+      { nombre: "Sentadilla libre", grupo: "Piernas" },
+      { nombre: "Remo con barra", grupo: "Espalda" },
+      { nombre: "Press militar en máquina", grupo: "Hombros" },
+      { nombre: "Curl con barra recta", grupo: "Bíceps" }
+    ];
+  }
+
+
+  // Obtener ejercicios de los grupos recomendados
+  const ejerciciosRecomendados = [];
+  const ejerciciosPorGrupo = JSON.parse(localStorage.getItem('ejerciciosPorGrupo')) || {};
+  
+  gruposARecomendar.forEach(grupo => {
+    if (ejerciciosPorGrupo[grupo]) {
+      // Tomar hasta 2 ejercicios por grupo, evitando duplicados
+      const ejerciciosDelGrupo = ejerciciosPorGrupo[grupo]
+        .filter(ej => !ejerciciosRecomendados.some(e => e.nombre === ej))
+        .slice(0, 2);
+      
+      ejerciciosDelGrupo.forEach(nombre => {
+        ejerciciosRecomendados.push({
+          nombre,
+          grupo
+        });
+      });
+    }
+  });
+
+  // Si no hay suficientes ejercicios, añadir algunos populares
+  const ejerciciosPopulares = [
+    { nombre: "Press banca con barra", grupo: "Pecho" },
+    { nombre: "Sentadilla libre", grupo: "Piernas" },
+    { nombre: "Peso muerto convencional", grupo: "Piernas" },
+    { nombre: "Dominadas pronas", grupo: "Espalda" },
+    { nombre: "Press militar en máquina", grupo: "Hombros" }
+  ];
+
+  while (ejerciciosRecomendados.length < 5) {
+    const ejercicio = ejerciciosPopulares.find(
+      e => !ejerciciosRecomendados.some(er => er.nombre === e.nombre)
+    );
+    if (ejercicio) {
+      ejerciciosRecomendados.push(ejercicio);
+    } else {
+      break;
+    }
+  }
+
+  return ejerciciosRecomendados.slice(0, 5); // Limitar a 5 ejercicios
+}
+
+// Función para mostrar los ejercicios recomendados
+function mostrarEjerciciosRecomendados(ejercicios) {
+  const contenedor = document.getElementById('ejerciciosRecomendados');
+  if (!contenedor) return;
+
+  if (ejercicios.length === 0) {
+    contenedor.innerHTML = '<p>Comienza a registrar entrenamientos para obtener recomendaciones personalizadas.</p>';
+    return;
+  }
+
+  contenedor.innerHTML = ''; // Limpiar contenedor
+  
+  ejercicios.forEach(ejercicio => {
+    const elemento = document.createElement('p');
+    elemento.textContent = ejercicio.nombre;
+    elemento.title = `Grupo: ${ejercicio.grupo}`;
+    elemento.addEventListener('click', () => {
+      // Redirigir a la página de registro con el ejercicio seleccionado
+      sessionStorage.setItem('ejercicioSeleccionado', JSON.stringify({
+        grupo: ejercicio.grupo,
+        nombre: ejercicio.nombre
+      }));
+      window.location.href = 'RegistroEntrenamientos.html';
+    });
+    contenedor.appendChild(elemento);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
   const claveHistorial = "historial_" + usuario.nombre.toLowerCase();
@@ -7,6 +124,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (saludo) {
     saludo.innerHTML = `Hola, ${usuario.nombre}!<br>Domina tus límites con cada repetición.`;
   }
+
+  // Cargar ejercicios recomendados
+  const ejerciciosRecomendados = obtenerEjerciciosRecomendados(historial);
+  mostrarEjerciciosRecomendados(ejerciciosRecomendados);
 
   if (historial.length === 0) return;
 
