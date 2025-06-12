@@ -146,6 +146,62 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.clear();
     window.location.href = "index.html";
   });
+
+  // Función para formatear la fecha
+  function formatearFecha(fecha) {
+    const opciones = { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    return new Date(fecha).toLocaleDateString('es-ES', opciones);
+  }
+
+  // Función para calcular el volumen total
+  function calcularVolumenTotal(ejercicios) {
+    return ejercicios.reduce((total, ejercicio) => {
+      return total + ejercicio.series.reduce((sum, serie) => {
+        return sum + (serie.peso * serie.repeticiones);
+      }, 0);
+    }, 0);
+  }
+
+  // Función para actualizar el resumen de la última sesión
+  function actualizarResumenUltimaSesion() {
+    const entrenamientos = JSON.parse(localStorage.getItem('entrenamientos')) || [];
+    
+    if (entrenamientos.length === 0) {
+      document.getElementById('resumenUltimaSesion').innerHTML = `
+        <p class="fecha-ultima-sesion">No hay sesiones registradas</p>
+        <div class="detalles-ultima-sesion">
+          <p>Comienza a registrar tus entrenamientos para ver tu progreso</p>
+        </div>
+      `;
+      return;
+    }
+
+    // Ordenar entrenamientos por fecha (más reciente primero)
+    entrenamientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    const ultimaSesion = entrenamientos[0];
+
+    // Calcular estadísticas
+    const ejerciciosRealizados = ultimaSesion.ejercicios.length;
+    const seriesTotales = ultimaSesion.ejercicios.reduce((total, ejercicio) => 
+      total + ejercicio.series.length, 0);
+    const volumenTotal = calcularVolumenTotal(ultimaSesion.ejercicios);
+
+    // Actualizar el DOM
+    document.querySelector('.fecha-ultima-sesion').textContent = 
+      `Última sesión: ${formatearFecha(ultimaSesion.fecha)}`;
+    document.getElementById('ejerciciosUltimaSesion').textContent = ejerciciosRealizados;
+    document.getElementById('seriesUltimaSesion').textContent = seriesTotales;
+    document.getElementById('volumenUltimaSesion').textContent = `${volumenTotal} kg`;
+  }
+
+  // Llamar a la función cuando se carga la página
+  actualizarResumenUltimaSesion();
 });
 
 function calcularPromedioEntrenamientosMensual(historial) {

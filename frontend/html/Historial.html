@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Entrenamientos</title>
+    <link rel="stylesheet" href="../css/Historial.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-buttons">
+            <a href="Dashboard.html" class="boton-volver">← Volver al Dashboard</a>
+            <button id="cerrarSesion" class="boton-cerrar">Cerrar sesión</button>
+        </div>
+    </nav>
+
+    <main class="contenedor">
+        <h1>Historial de Entrenamientos</h1>
+
+        <div class="filtros">
+            <div class="filtro-grupo">
+                <label for="filtroGrupo">Filtrar por grupo muscular:</label>
+                <select id="filtroGrupo">
+                    <option value="todos">Todos los grupos</option>
+                    <option value="Pecho">Pecho</option>
+                    <option value="Espalda">Espalda</option>
+                    <option value="Piernas">Piernas</option>
+                    <option value="Hombros">Hombros</option>
+                    <option value="Brazos">Brazos</option>
+                    <option value="Core">Core</option>
+                </select>
+            </div>
+
+            <div class="filtro-fecha">
+                <label for="filtroFecha">Filtrar por fecha:</label>
+                <select id="filtroFecha">
+                    <option value="todos">Todas las fechas</option>
+                    <option value="semana">Última semana</option>
+                    <option value="mes">Último mes</option>
+                    <option value="trimestre">Último trimestre</option>
+                </select>
+            </div>
+
+            <div class="ordenar">
+                <label for="ordenarPor">Ordenar por:</label>
+                <select id="ordenarPor">
+                    <option value="fecha-desc">Fecha (más reciente)</option>
+                    <option value="fecha-asc">Fecha (más antigua)</option>
+                    <option value="volumen-desc">Volumen (mayor)</option>
+                    <option value="volumen-asc">Volumen (menor)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="estadisticas-resumen">
+            <div class="stat-box">
+                <h3>Total de Sesiones</h3>
+                <p id="totalSesiones">--</p>
+            </div>
+            <div class="stat-box">
+                <h3>Volumen Total</h3>
+                <p id="volumenTotal">--</p>
+            </div>
+            <div class="stat-box">
+                <h3>Series Totales</h3>
+                <p id="seriesTotales">--</p>
+            </div>
+            <div class="stat-box">
+                <h3>Promedio por Sesión</h3>
+                <p id="promedioSesion">--</p>
+            </div>
+        </div>
+
+        <div class="historial-container">
+            <div id="listaEntrenamientos" class="lista-entrenamientos">
+                <!-- Los entrenamientos se cargarán dinámicamente aquí -->
+            </div>
+        </div>
+
+        <div class="acciones">
+            <button id="exportarCSV" class="boton">Exportar a CSV</button>
+            <button id="exportarJSON" class="boton secundario">Exportar a JSON</button>
+        </div>
+    </main>
+
+    <script src="../js/Auth.js"></script>
+    <script src="../js/Historial.js"></script>
+    <script src="../js/CerrarSesion.js"></script>
+</body>
+</html> 
