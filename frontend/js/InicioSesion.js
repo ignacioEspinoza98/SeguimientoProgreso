@@ -1,6 +1,20 @@
-// Esperar a que el DOM esté completamente cargado
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM cargado, inicializando...');
+// Función para inicializar la página de inicio de sesión
+function inicializarInicioSesion() {
+    console.log('Inicializando página de inicio de sesión...');
+    
+    // Verificar si Firebase está cargado
+    if (typeof firebase === 'undefined' || !firebase.apps.length) {
+        console.error('Firebase no está cargado correctamente');
+        mostrarErrorInicializacion('Error al cargar Firebase. Por favor, recarga la página.');
+        return;
+    }
+    
+    // Verificar si SweetAlert2 está cargado
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 no está cargado correctamente');
+        mostrarErrorInicializacion('Error al cargar las dependencias. Por favor, recarga la página.');
+        return;
+    }
     
     try {
         // Elementos del formulario
@@ -168,24 +182,48 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Manejar clic en "¿Olvidaste tu correo o contraseña?"
-        document.getElementById('olvideUsuario').addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = 'recuperar-acceso.html';
-        });
+        const enlaceOlvidePassword = document.querySelector('a[href*="recuperar-contrasena.html"]');
+        if (enlaceOlvidePassword) {
+            enlaceOlvidePassword.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'recuperar-contrasena.html';
+            });
+        } else {
+            console.warn('No se encontró el enlace de recuperación de contraseña');
+        }
 
         console.log('Inicialización completada correctamente');
     } catch (error) {
         console.error('Error en la inicialización:', error);
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error de inicialización',
-                text: 'Ocurrió un error al cargar la página. Por favor, recarga la página e inténtalo de nuevo.',
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor: '#0d6efd'
-            });
-        } else {
-            alert('Error al cargar la página. Por favor, recarga e inténtalo de nuevo.');
-        }
+        mostrarErrorInicializacion('Ocurrió un error al cargar la página. Por favor, recarga la página e inténtalo de nuevo.');
     }
-});
+}
+
+// Función para mostrar errores de inicialización
+function mostrarErrorInicializacion(mensaje) {
+    console.error('Error de inicialización:', mensaje);
+    
+    // Mostrar mensaje de error en el DOM
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-inicializacion';
+    errorDiv.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #ff4444; color: white; padding: 15px 25px; border-radius: 5px; z-index: 9999; max-width: 90%; text-align: center;';
+    errorDiv.textContent = mensaje;
+    document.body.appendChild(errorDiv);
+    
+    // Intentar con SweetAlert2 si está disponible
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error de inicialización',
+            text: mensaje,
+            confirmButtonText: 'Aceptar'
+        });
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inicializarInicioSesion);
+} else {
+    inicializarInicioSesion();
+}

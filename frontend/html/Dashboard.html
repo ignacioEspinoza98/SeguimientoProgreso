@@ -1,90 +1,259 @@
-<!-- frontend/html/Dashboard.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard</title>
+  <title>Dashboard | Progreso Gym</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../css/Dashboard.css" />
 </head>
 <body>
+  <!-- Barra de navegación -->
   <nav class="navbar">
-    <div class="nav-buttons">
-      <button id="cerrarSesion" class="boton-cerrar">Cerrar sesión</button>
-      <a href="Historial.html" class="boton-historial">Historial</a>
+    <div class="nav-contenedor">
+      <a href="#" class="nav-logo">
+        <i class="fas fa-dumbbell"></i>
+        <span>Progreso Gym</span>
+      </a>
+      <div class="nav-botones">
+        <a href="Historial.html" class="boton boton-secundario">
+          <i class="fas fa-history"></i> Historial
+        </a>
+        <button id="cerrarSesion" class="boton boton-primario">
+          <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </button>
+      </div>
     </div>
   </nav>
 
   <main class="contenedor">
-    <h1 class="saludo">Domina tus límites,<br>dale con intensidad cada repetición!</h1>
+    <!-- Sección de bienvenida -->
+    <section class="seccion-bienvenida">
+      <h1 class="saludo">Domina tus límites,<br>dale con intensidad cada repetición!</h1>
+      <p>Bienvenido de nuevo a tu panel de control. Aquí podrás ver tus estadísticas, progreso y recomendaciones personalizadas para mejorar tu rendimiento.</p>
+    </section>
 
+    <!-- Última sesión -->
     <section class="ultima-sesion">
-      <div class="box ultima-sesion-box">
-        <h3>Última Sesión</h3>
-        <div id="resumenUltimaSesion">
-          <p class="fecha-ultima-sesion">--</p>
-          <div class="detalles-ultima-sesion">
-            <p>Ejercicios realizados: <span id="ejerciciosUltimaSesion">--</span></p>
-            <p>Series totales: <span id="seriesUltimaSesion">--</span></p>
-            <p>Volumen total: <span id="volumenUltimaSesion">--</span></p>
+      <div class="ultima-sesion-card">
+        <div class="ultima-sesion-cabecera">
+          <h2 class="ultima-sesion-titulo">
+            <i class="fas fa-calendar-check"></i> Última Sesión
+          </h2>
+          <span class="ultima-sesion-fecha">
+            <i class="far fa-calendar-alt"></i>
+            <span id="fechaUltimaSesion">--</span>
+          </span>
+        </div>
+        
+        <div class="ultima-sesion-detalles">
+          <div class="detalle-item">
+            <div class="detalle-etiqueta">
+              <i class="fas fa-dumbbell"></i> Ejercicios realizados
+            </div>
+            <div id="ejerciciosUltimaSesion" class="detalle-valor">--</div>
           </div>
-          <a href="Historial.html" class="ver-mas">Ver historial completo →</a>
+          
+          <div class="detalle-item">
+            <div class="detalle-etiqueta">
+              <i class="fas fa-layer-group"></i> Series totales
+            </div>
+            <div id="seriesUltimaSesion" class="detalle-valor">--</div>
+          </div>
+          
+          <div class="detalle-item">
+            <div class="detalle-etiqueta">
+              <i class="fas fa-weight-hanging"></i> Volumen total
+            </div>
+            <div id="volumenUltimaSesion" class="detalle-valor">--</div>
+          </div>
+        </div>
+        
+        <a href="Historial.html" class="ver-mas">
+          Ver historial completo 
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- Acciones rápidas -->
+    <div class="acciones-rapidas">
+      <a href="RegistroEntrenamientos.html" class="boton boton-primario">
+        <i class="fas fa-plus-circle"></i> Registrar Entrenamiento
+      </a>
+      <a href="AnalisisRendimiento.html" class="boton boton-secundario">
+        <i class="fas fa-chart-line"></i> Ver Análisis
+      </a>
+      <a href="compararDesempeno.html" class="boton boton-secundario">
+        <i class="fas fa-exchange-alt"></i> Comparar Desempeño
+      </a>
+      <button id="exportarCSV" class="boton boton-secundario">
+        <i class="fas fa-file-export"></i> Exportar CSV
+      </button>
+
+    </div>
+
+    <!-- Estadísticas principales -->
+    <section class="estadisticas">
+      <!-- Series por grupo muscular -->
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-chart-pie"></i>
+          </div>
+          <h3 class="estadistica-titulo">Series por Grupo Muscular</h3>
+        </div>
+        <div id="seriesPorGrupo" class="estadistica-contenido">
+          <p class="estadistica-descripcion">Distribución de series por grupo muscular esta semana</p>
+          <div id="graficoSeriesPorGrupo" class="grafico-miniatura">
+            <!-- Gráfico se insertará aquí -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Peso máximo -->
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-weight"></i>
+          </div>
+          <h3 class="estadistica-titulo">Peso Máximo</h3>
+        </div>
+        <div class="estadistica-contenido">
+          <p class="estadistica-valor" id="pesoMaximo">--</p>
+          <p class="estadistica-descripcion">Tu récord personal</p>
+          <span class="estadistica-tendencia">
+            <i class="fas fa-arrow-up"></i> 5% respecto al mes pasado
+          </span>
+        </div>
+      </div>
+
+      <!-- Último entrenamiento -->
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-calendar-day"></i>
+          </div>
+          <h3 class="estadistica-titulo">Último Entrenamiento</h3>
+        </div>
+        <div class="estadistica-contenido">
+          <p class="estadistica-valor" id="ultimoEntreno">--</p>
+          <p class="estadistica-descripcion">Días desde tu última sesión</p>
+        </div>
+      </div>
+
+      <!-- Series esta semana -->
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-layer-group"></i>
+          </div>
+          <h3 class="estadistica-titulo">Series Esta Semana</h3>
+        </div>
+        <div class="estadistica-contenido">
+          <p class="estadistica-valor" id="seriesSemana">--</p>
+          <p class="estadistica-descripcion">Series completadas</p>
+          <span class="estadistica-tendencia">
+            <i class="fas fa-arrow-up"></i> 3 más que la semana pasada
+          </span>
+        </div>
+      </div>
+
+      <!-- Volumen por grupo muscular -->
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-chart-bar"></i>
+          </div>
+          <h3 class="estadistica-titulo">Volumen por Grupo</h3>
+        </div>
+        <div id="volumenPorGrupo" class="estadistica-contenido">
+          <p class="estadistica-descripcion">Distribución de volumen por grupo muscular</p>
+          <div id="graficoVolumenPorGrupo" class="grafico-miniatura">
+            <!-- Gráfico se insertará aquí -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparación semanal -->
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <h3 class="estadistica-titulo">Comparación Semanal</h3>
+        </div>
+        <div class="estadistica-contenido">
+          <p class="estadistica-valor" id="comparacionSemanal">--</p>
+          <p class="estadistica-descripcion">Respecto a la semana anterior</p>
+        </div>
+      </div>
+
+      <!-- Promedio de entrenamientos -->
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-calendar-week"></i>
+          </div>
+          <h3 class="estadistica-titulo">Frecuencia Semanal</h3>
+        </div>
+        <div class="estadistica-contenido">
+          <p class="estadistica-valor" id="promedioEntrenamientos">--</p>
+          <p class="estadistica-descripcion">Promedio de entrenamientos por semana</p>
+        </div>
+      </div>
+
+      <!-- Grupo más trabajado -->
+      <div class="estadistica-card">
+        <div class="estadistica-cabecera">
+          <div class="estadistica-icono">
+            <i class="fas fa-fire"></i>
+          </div>
+          <h3 class="estadistica-titulo">Grupo Destacado</h3>
+        </div>
+        <div class="estadistica-contenido">
+          <p class="estadistica-valor" id="grupoMasTrabajado">--</p>
+          <p class="estadistica-descripcion">Tu grupo muscular más trabajado</p>
         </div>
       </div>
     </section>
 
-    <section class="estadisticas">
-      <div class="box">
-        <h3>Series por Grupo Muscular (semana)</h3>
-        <ul id="seriesPorGrupo" style="list-style: none; padding: 0; margin: 0;"></ul>
-      </div>
-      <div class="box">
-        <h3>Peso Máximo</h3>
-        <p id="pesoMaximo">--</p>
-      </div>
-      <div class="box">
-        <h3>Último Entrenamiento</h3>
-        <p id="ultimoEntreno">--</p>
-      </div>
-      <div class="box">
-        <h3>Series Realizadas Esta Semana</h3>
-        <p id="seriesSemana">--</p>
-      </div>
-      <div class="box">
-        <h3>Volumen por Grupo Muscular (semana)</h3>
-        <ul id="volumenPorGrupo" style="list-style: none; padding: 0; margin: 0;"></ul>
-      </div>
-      <div class="box">
-        <h3>Comparación con la semana anterior</h3>
-        <p id="comparacionSemanal">--</p>
-      </div>
-      <div class="box">
-        <h3>Promedio de entrenamientos por semana (últimos 30 días)</h3>
-        <p id="promedioEntrenamientos">--</p>
-      </div>
-      <div class="box">
-        <h3>Grupo más entrenado esta semana</h3>
-        <p id="grupoMasTrabajado">--</p>
-      </div>
-    </section>
-
+    <!-- Sección de sugerencias -->
     <section class="sugerencias">
-      <h2>💡 Sugerencias de Ejercicios</h2>
+      <h2><i class="fas fa-lightbulb"></i> Sugerencias de Ejercicios</h2>
       <div class="sugerencias-contenedor">
         <div class="sugerencia-box">
-          <h3>Recomendados para ti</h3>
+          <h3><i class="fas fa-user-check"></i> Recomendados para ti</h3>
           <div id="ejerciciosRecomendados" class="ejercicios-lista">
-            <p>Cargando recomendaciones...</p>
+            <div class="ejercicio-item">
+              <i class="fas fa-dumbbell"></i>
+              <span>Press banca con mancuernas</span>
+            </div>
+            <div class="ejercicio-item">
+              <i class="fas fa-dumbbell"></i>
+              <span>Sentadilla búlgara</span>
+            </div>
+            <div class="ejercicio-item">
+              <i class="fas fa-dumbbell"></i>
+              <span>Rem con barra</span>
+            </div>
           </div>
         </div>
         <div class="sugerencia-box">
-          <h3>Ejercicios Populares</h3>
+          <h3><i class="fas fa-chart-line"></i> Ejercicios Populares</h3>
           <div id="ejerciciosPopulares" class="ejercicios-lista">
-            <p>Press banca con barra</p>
-            <p>Sentadilla libre</p>
-            <p>Peso muerto convencional</p>
-            <p>Dominadas pronas</p>
-            <p>Press militar en máquina</p>
+            <div class="ejercicio-item">
+              <i class="fas fa-dumbbell"></i>
+              <span>Press banca con barra</span>
+            </div>
+            <div class="ejercicio-item">
+              <i class="fas fa-dumbbell"></i>
+              <span>Sentadilla libre</span>
+            </div>
+            <div class="ejercicio-item">
+              <i class="fas fa-dumbbell"></i>
+              <span>Peso muerto convencional</span>
+            </div>
           </div>
         </div>
       </div>
@@ -94,13 +263,6 @@
     <section id="recomendacionesContainer" class="recomendaciones-seccion">
       <!-- Las recomendaciones se cargarán aquí dinámicamente -->
     </section>
-
-    <div class="acciones">
-      <a href="RegistroEntrenamientos.html" class="boton">Registrar Entrenamiento</a>
-      <a href="AnalisisRendimiento.html" class="boton secundario">Ver Análisis</a>
-      <a href="compararDesempeno.html" class="boton secundario">Comparar Desempeño</a>
-      <button id="exportarCSV" class="boton secundario">Exportar CSV</button>
-    </div>
   </main>
 
   <script src="../js/Auth.js"></script>
