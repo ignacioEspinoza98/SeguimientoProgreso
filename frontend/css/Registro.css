@@ -114,4 +114,83 @@ height: 100%;
 }
 }
 
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #ffa500;
+    box-shadow: 0 0 0 2px rgba(255, 165, 0, 0.2);
+}
+
+.feedback {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    min-height: 1.25rem;
+}
+
+.feedback.error {
+    color: #dc3545;
+}
+
+.feedback.success {
+    color: #28a745;
+}
+
+.feedback.warning {
+    color: #ffc107;
+}
+
+/* Estilos para los estados de validación */
+.form-control.is-valid {
+    border-color: #28a745;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+/* Animación para los mensajes de feedback */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.feedback {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Estilo para el botón de registro */
+#RegistroBtn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #ffa500;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#RegistroBtn:hover {
+    background-color: #e68a00;
+}
+
+#RegistroBtn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
 

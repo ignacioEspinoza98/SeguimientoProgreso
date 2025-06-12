@@ -24,22 +24,29 @@
 
             <form id="RegistroForm">
 
-                <label>Usuario</label>
-                <br>
-                <input type="text" id="Usuario">
-                <br>
-                <label>Correo</label>
-                <br>
-                <input type="email" id="Correo">
-                <br>
-                <label>Contraseña</label>
-                <br>
-                <input type="password" id="Contraseña">
-                <br>
-                <label>Confirmar Contraseña</label>
-                <br>
-                <input type="password" id="ConfirmarContraseña">
-                <br>
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" id="Usuario" class="form-control">
+                    <div id="usuarioFeedback" class="feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Correo</label>
+                    <input type="email" id="Correo" class="form-control">
+                    <div id="correoFeedback" class="feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="Contraseña" class="form-control">
+                    <div id="passwordFeedback" class="feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirmar Contraseña</label>
+                    <input type="password" id="ConfirmarContraseña" class="form-control">
+                    <div id="confirmPasswordFeedback" class="feedback"></div>
+                </div>
 
                 <input type="submit" value="Registrar" id="RegistroBtn">
 
