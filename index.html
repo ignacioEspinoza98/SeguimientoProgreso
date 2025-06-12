@@ -43,27 +43,15 @@
 
     // Función para obtener una frase aleatoria
     function mostrarFraseAleatoria() {
-      const frases = document.querySelectorAll('.frase-motivacional p');
-      const frasesArray = Array.from(frases);
-      const frasesVisibles = frasesArray.filter(frase => {
-        const rect = frase.getBoundingClientRect();
-        return (
-          rect.top >= 0 &&
-          rect.left >= 0 &&
-          rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-          rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
-      });
-
-      // Si hay frases visibles, cambiar su opacidad para el efecto de transición
-      frasesVisibles.forEach(frase => {
-        frase.style.opacity = '0';
+      const fraseElemento = document.getElementById('fraseTexto');
+      if (fraseElemento) {
+        const indiceAleatorio = Math.floor(Math.random() * frases.length);
+        fraseElemento.style.opacity = '0';
         setTimeout(() => {
-          const indiceAleatorio = Math.floor(Math.random() * frases.length);
-          frase.textContent = frases[indiceAleatorio];
-          frase.style.opacity = '1';
+          fraseElemento.textContent = frases[indiceAleatorio];
+          fraseElemento.style.opacity = '1';
         }, 500);
-      });
+      }
     }
 
     // Mostrar una frase aleatoria al cargar la página

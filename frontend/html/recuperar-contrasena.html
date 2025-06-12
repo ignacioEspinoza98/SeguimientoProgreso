@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recuperar Contraseña - Progreso Gym</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/recuperar-contrasena.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <style>
+    /* Estilos específicos para el tema oscuro */
+    body {
+      background-color: #0a0a0a;
+      color: #ffffff;
+    }
+    .contenedor {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .formulario {
+      background: rgba(30, 30, 30, 0.9);
+      border-radius: 15px;
+      padding: 2.5rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .logo {
+      max-width: 150px;
+      margin-bottom: 1.5rem;
+    }
+    .back-to-login {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <h1>Domina tus límites,<br>dale con intensidad<br>cada repetición</h1>
+
+    <div class="formulario">
+      <h2>Recuperar Contraseña</h2>
+      <p class="subtitulo">Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.</p>
+        
+        <form id="recuperarForm">
+          <div class="grupo-formulario">
+            <label for="email">Correo Electrónico</label>
+            <div class="input-con-icono">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="email" placeholder="tu@correo.com" required>
+            </div>
+            <p class="ayuda">Ingresa el correo electrónico con el que te registraste.</p>
+          </div>
+          
+          <button type="submit" class="boton" id="enviarBtn">
+            <span class="spinner" id="spinner"></span>
+            <span id="btnText">Enviar enlace de recuperación</span>
+          </button>
+        </form>
+        
+        <div id="mensajeExito" class="mensaje-exito d-none">
+          <i class="fas fa-check-circle"></i>
+          <span id="mensajeTexto"></span>
+        </div>
+        
+        <div id="mensajeError" class="mensaje-error d-none">
+          <i class="fas fa-exclamation-circle"></i>
+          <span id="errorTexto"></span>
+        </div>
+        
+        <div class="back-to-login">
+          <a href="InicioSesion.html">
+            <i class="fas fa-arrow-left"></i> Volver al inicio de sesión
+          </a>
+        </div>
+      </div>
+    </div>
+      </div>
+    </div>
+    
+    <!-- Efecto de partículas -->
+    <div class="particulas" id="particulas"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <!-- Configuración de Firebase -->
+  <script src="../js/firebase-config.js"></script>
+  
+  <script>
+    // Inicializar partículas
+    document.addEventListener('DOMContentLoaded', function() {
+      const particulas = document.getElementById('particulas');
+      const numParticulas = 30;
+      
+      for (let i = 0; i < numParticulas; i++) {
+        const particula = document.createElement('div');
+        particula.className = 'particula';
+        
+        // Tamaño aleatorio
+        const size = Math.random() * 15 + 5;
+        particula.style.width = `${size}px`;
+        particula.style.height = `${size}px`;
+        
+        // Posición aleatoria
+        particula.style.left = `${Math.random() * 100}%`;
+        particula.style.top = `${Math.random() * 100}%`;
+        
+        // Opacidad aleatoria
+        particula.style.opacity = Math.random() * 0.5 + 0.1;
+        
+        // Animación personalizada
+        const duration = Math.random() * 20 + 10;
+        const delay = Math.random() * -20;
+        particula.style.animation = `flotar ${duration}s linear ${delay}s infinite`;
+        
+        particulas.appendChild(particula);
+      }
+      const form = document.getElementById('recuperarForm');
+      const emailInput = document.getElementById('email');
+      const enviarBtn = document.getElementById('enviarBtn');
+      const spinner = document.getElementById('spinner');
+      const btnText = document.getElementById('btnText');
+      const mensajeExito = document.getElementById('mensajeExito');
+      const mensajeError = document.getElementById('mensajeError');
+      const mensajeTexto = document.getElementById('mensajeTexto');
+      const errorTexto = document.getElementById('errorTexto');
+      
+      // Cargar el último correo usado si existe
+      const correosGuardados = JSON.parse(localStorage.getItem('correosGuardados') || '[]');
+      if (correosGuardados.length > 0) {
+        emailInput.value = correosGuardados[0];
+      }
+      
+      // Manejar el envío del formulario
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const email = emailInput.value.trim();
+        
+        // Validar formato de correo
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          mostrarError('Por favor, ingresa un correo electrónico válido.');
+          return;
+        }
+        
+        try {
+          // Mostrar spinner y deshabilitar botón
+          spinner.classList.remove('d-none');
+          btnText.textContent = 'Enviando...';
+          enviarBtn.disabled = true;
+          
+          // Enviar correo de restablecimiento
+          await firebase.auth().sendPasswordResetEmail(email, {
+            url: window.location.origin + '/SeguimientoProgreso/frontend/html/InicioSesion.html'
+          });
+          
+          // Mostrar mensaje de éxito
+          mostrarExito(`Se ha enviado un correo a <strong>${email}</strong> con instrucciones para restablecer tu contraseña.`);
+          
+          // Limpiar formulario
+          form.reset();
+          
+        } catch (error) {
+          console.error('Error al enviar correo de recuperación:', error);
+          
+          // Mostrar mensaje de error según el código de error
+          switch (error.code) {
+            case 'auth/user-not-found':
+              mostrarError('No existe una cuenta con este correo electrónico.');
+              break;
+            case 'auth/too-many-requests':
+              mostrarError('Demasiados intentos. Por favor, inténtalo de nuevo más tarde.');
+              break;
+            case 'auth/invalid-email':
+              mostrarError('El correo electrónico no es válido.');
+              break;
+            default:
+              mostrarError('Ocurrió un error al enviar el correo. Por favor, inténtalo de nuevo.');
+          }
+        } finally {
+          // Restaurar botón
+          spinner.classList.add('d-none');
+          btnText.textContent = 'Enviar enlace de recuperación';
+          enviarBtn.disabled = false;
+        }
+      });
+      
+      // Función para mostrar mensaje de éxito
+      function mostrarExito(mensaje) {
+        mensajeTexto.innerHTML = mensaje;
+        mensajeExito.classList.remove('d-none');
+        mensajeError.classList.add('d-none');
+      }
+      
+      // Función para mostrar mensaje de error
+      function mostrarError(mensaje) {
+        errorTexto.textContent = mensaje;
+        mensajeError.classList.remove('d-none');
+        mensajeExito.classList.add('d-none');
+      }
+    });
+  </script>
+</body>
+</html>

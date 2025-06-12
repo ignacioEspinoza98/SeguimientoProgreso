@@ -167,6 +167,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
+        // Manejar clic en "¿Olvidaste tu correo o contraseña?"
+        document.getElementById('olvideUsuario').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'recuperar-acceso.html';
+        });
+
         console.log('Inicialización completada correctamente');
     } catch (error) {
         console.error('Error en la inicialización:', error);
