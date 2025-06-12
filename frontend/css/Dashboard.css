@@ -183,3 +183,42 @@ h1 {
     min-width: 100%;
   }
 }
+
+/* Estilos para la sección de recomendaciones */
+.recomendaciones-seccion {
+  margin: 2rem 0;
+  background-color: #1c1c1c;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #ffa500;
+}
+
+.recomendaciones-seccion h2 {
+  color: #ffa500;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.recomendaciones-seccion h2::before {
+  content: "💡";
+  margin-right: 0.8rem;
+  font-size: 1.6rem;
+}
+
+/* Estilos responsivos para la sección de recomendaciones */
+@media (max-width: 768px) {
+  .recomendaciones-seccion {
+    padding: 1rem;
+  }
+  
+  .recomendaciones-seccion h2 {
+    font-size: 1.3rem;
+  }
+}
+
+/* Importar estilos de recomendaciones */
+@import url('recomendaciones.css');

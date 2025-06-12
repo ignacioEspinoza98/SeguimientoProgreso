@@ -69,6 +69,11 @@
         </div>
       </div>
     </section>
+    
+    <!-- Sección de Recomendaciones Personalizadas -->
+    <section id="recomendacionesContainer" class="recomendaciones-seccion">
+      <!-- Las recomendaciones se cargarán aquí dinámicamente -->
+    </section>
 
     <div class="acciones">
       <a href="RegistroEntrenamientos.html" class="boton">Registrar Entrenamiento</a>
@@ -79,7 +84,13 @@
   </main>
 
   <script src="../js/Auth.js"></script>
-  <script src="../js/dashboard.js"></script>
+  <script src="../js/dashboard.js" type="module"></script>
   <script src="../js/CerrarSesion.js"></script>
+  <script type="module">
+    import { inicializarRecomendaciones } from '../js/recomendaciones.js';
+    document.addEventListener('DOMContentLoaded', () => {
+      inicializarRecomendaciones();
+    });
+  </script>
 </body>
 </html>

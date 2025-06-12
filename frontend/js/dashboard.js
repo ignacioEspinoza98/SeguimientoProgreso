@@ -115,7 +115,15 @@ function mostrarEjerciciosRecomendados(ejercicios) {
   });
 }
 
+// Importar funciones necesarias
+import { inicializarRecomendaciones } from './recomendaciones.js';
+
 document.addEventListener("DOMContentLoaded", () => {
+  // Inicializar recomendaciones
+  if (document.getElementById('recomendacionesContainer')) {
+    inicializarRecomendaciones();
+  }
+  
   const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
   const claveHistorial = "historial_" + usuario.nombre.toLowerCase();
   const historial = JSON.parse(localStorage.getItem(claveHistorial)) || [];
