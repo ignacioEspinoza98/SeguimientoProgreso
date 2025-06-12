@@ -3,60 +3,67 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Progreso Gym</title>
+  <title>Progreso Gym - Transforma tu Cuerpo, Mejora tu Vida</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-  <link rel="stylesheet" href="frontend/css/index.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="indexdefa.css" />
 </head>
 <body>
-  <header class="header">
-    <div class="botones animate__animated animate__fadeInDown">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="frontend/css/index.css" />
-</head>
-<body>
-  <div class="contenedor">
-    <div id="fraseMotivacional" class="frase-motivacional">
-      <i class="fas fa-quote-left"></i>
-      <p id="fraseTexto">Cargando motivación...</p>
-      <i class="fas fa-quote-right"></i>
+  <!-- Barra de Navegación -->
+  <nav class="navbar">
+    <div class="contenedor">
+      <a href="#" class="logo">ProgresoGym</a>
+      <div class="nav-buttons">
+        <a href="#inicio" class="nav-link">Inicio</a>
+        <a href="#caracteristicas" class="nav-link">Características</a>
+        <a href="#contacto" class="nav-link">Contacto</a>
+        <a href="frontend/html/InicioSesion.html" class="nav-button">Iniciar Sesión</a>
+      </div>
     </div>
-    <h1>Domina tus límites,<br>dale con intensidad<br>cada repetición</h1>
-    <div class="botones">
-      <a href="frontend/html/InicioSesion.html" class="boton">Iniciar Sesión</a>
-      <a href="frontend/html/Registro.html" class="boton secundario">Registrarse</a>
-    </div>
-  </header>
+  </nav>
 
-  <div class="contenedor">
-    <h1 class="animate__animated animate__fadeInDown">Domina tus límites,<br>dale con intensidad<br>cada repetición</h1>
-  </div>
-
-  <section class="tutorial-section">
-    <div class="tutorial-grid">
-      <div class="tutorial-card animate__animated animate__fadeInLeft">
-        <h3>1. Regístrate</h3>
-        <p>Crea tu cuenta en segundos y comienza tu viaje hacia una mejor versión de ti mismo. Solo necesitas un email y una contraseña.</p>
-      </div>
-      <div class="tutorial-card animate__animated animate__fadeInLeft animate__delay-1s">
-        <h3>2. Configura tu Perfil</h3>
-        <p>Personaliza tu perfil con tus objetivos, nivel de experiencia y preferencias de entrenamiento.</p>
-      </div>
-      <div class="tutorial-card animate__animated animate__fadeInLeft animate__delay-2s">
-        <h3>3. Registra tu Progreso</h3>
-        <p>Anota tus ejercicios, series y repeticiones. Visualiza tu evolución con gráficos detallados.</p>
-      </div>
-      <div class="tutorial-card animate__animated animate__fadeInLeft animate__delay-3s">
-        <h3>4. Sigue tu Evolución</h3>
-        <p>Mantén un registro detallado de tu progreso y celebra tus logros con estadísticas en tiempo real.</p>
-      </div>
+  <!-- Sección Hero -->
+  <section class="hero" id="inicio">
+    <div class="contenedor">
+      <h1 class="animate__animated animate__fadeInDown">Transforma tu cuerpo,<br>mejora tu vida</h1>
+      <p class="animate__animated animate__fadeInUp animate__delay-1s">La aplicación definitiva para seguir tu progreso en el gimnasio y alcanzar tus objetivos de fitness.</p>
+      <a href="frontend/html/Registro.html" class="cta-button animate__animated animate__fadeInUp animate__delay-2s">Comenzar Ahora</a>
     </div>
   </section>
 
-  <section class="cta-section">
-    <div class="cta-content animate__animated animate__fadeIn">
-      <h2>¿Listo para Transformar tu Entrenamiento?</h2>
-      <p>Únete a miles de personas que ya están alcanzando sus objetivos fitness con nuestra plataforma.</p>
-      <a href="frontend/html/Registro.html" class="cta-button animate__animated animate__pulse animate__infinite">¡Comienza Ahora!</a>
+  <section class="steps-section" id="pasos">
+    <div class="contenedor">
+      <h2 class="section-title">Comienza en 4 sencillos pasos</h2>
+      <div class="steps-grid">
+        <div class="step-card animate__animated animate__fadeInUp">
+          <div class="step-number">1</div>
+          <h3>Regístrate</h3>
+          <p>Crea tu cuenta en segundos con tu correo electrónico.</p>
+        </div>
+        <div class="step-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+          <div class="step-number">2</div>
+          <h3>Configura tu perfil</h3>
+          <p>Cuéntanos sobre ti y tus objetivos de entrenamiento.</p>
+        </div>
+        <div class="step-card animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+          <div class="step-number">3</div>
+          <h3>Registra tus entrenos</h3>
+          <p>Lleva el control de todos tus ejercicios y progresos.</p>
+        </div>
+        <div class="step-card animate__animated animate__fadeInUp" style="animation-delay: 0.6s">
+          <div class="step-number">4</div>
+          <h3>Evalúa tu progreso</h3>
+          <p>Revisa tus estadísticas y mejora continuamente.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Sección CTA -->
+  <section class="cta-section" id="contacto">
+    <div class="contenedor">
+      <h2>¿Listo para comenzar?</h2>
+      <p>Únete a nuestra comunidad y lleva tu entrenamiento al siguiente nivel.</p>
+      <a href="frontend/html/Registro.html" class="cta-button">Regístrate Gratis</a>
     </div>
   </section>
 
