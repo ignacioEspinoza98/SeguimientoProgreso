@@ -11,25 +11,37 @@ const actionCodeSettings = {
         installApp: true,
         minimumVersion: '12'
     },
-    dynamicLinkDomain: 'progresogym.page.link',
-    // Configuración adicional para el correo
-    // Estos valores se usarán si no se configura la plantilla en Firebase Console
-    // pero es mejor configurarlos directamente en Firebase Console
+    dynamicLinkDomain: 'progresogym.page.link'
 };
 
-// Inicialización de Firebase
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Variables globales para Firebase
+let auth;
+let db;
 
-// Configuración de persistencia de Firestore
-db.enablePersistence()
-  .catch((err) => {
-      if (err.code === 'failed-precondition') {
-          console.warn('La persistencia solo puede estar habilitada en una pestaña a la vez.');
-      } else if (err.code === 'unimplemented') {
-          console.warn('El navegador actual no soporta todas las características requeridas');
-      }
-  });
+// Función para inicializar Firebase
+async function inicializarFirebase() {
+    try {
+        const moduloFirebase = await import('./firebase-config.js');
+        const { auth: authInstance, db: dbInstance } = await moduloFirebase.initializeFirebase();
+        auth = authInstance;
+        db = dbInstance;
+        
+        // Configurar persistencia de Firestore
+        await db.enablePersistence()
+            .catch((err) => {
+                if (err.code === 'failed-precondition') {
+                    console.warn('La persistencia solo puede estar habilitada en una pestaña a la vez.');
+                } else if (err.code === 'unimplemented') {
+                    console.warn('El navegador actual no soporta todas las características requeridas');
+                }
+            });
+            
+        return { auth, db };
+    } catch (error) {
+        console.error('Error al inicializar Firebase:', error);
+        throw error;
+    }
+}
 
 // Función para mostrar errores con más detalles
 function mostrarError(error, contexto = '') {
@@ -138,26 +150,29 @@ async function registrarUsuario(usuario, correo, contraseña) {
 }
 
 // Esperar a que el DOM esté completamente cargado
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     console.log('DOM cargado, inicializando registro...');
-    // Elementos del formulario
-    const formRegistro = document.getElementById('RegistroForm');
-    const btnRegistrar = document.getElementById('RegistroBtn');
-    const inputContraseña = document.getElementById('Contraseña');
-    const inputConfirmarContraseña = document.getElementById('ConfirmarContraseña');
-    const togglePasswordBtns = document.querySelectorAll('.toggle-password');
     
-    // Verificar que todos los elementos necesarios existan
-    if (!formRegistro || !btnRegistrar || !inputContraseña || !inputConfirmarContraseña) {
-        console.error('No se encontraron todos los elementos necesarios');
-        return;
-    }
-    
-    // Hacer funciones disponibles globalmente
-    window.mostrarError = mostrarError;
-    
-    // Verificar si hay un usuario autenticado
-    auth.onAuthStateChanged((user) => {
+    try {
+        // Inicializar Firebase
+        await inicializarFirebase();
+        console.log('Firebase inicializado correctamente');
+        
+        // Elementos del formulario
+        const formRegistro = document.getElementById('RegistroForm');
+        const btnRegistrar = document.getElementById('RegistroBtn');
+        const inputContraseña = document.getElementById('Contraseña');
+        const inputConfirmarContraseña = document.getElementById('ConfirmarContraseña');
+        const togglePasswordBtns = document.querySelectorAll('.toggle-password');
+        const passwordMatch = document.getElementById('passwordMatch');
+        const terminosCheckbox = document.getElementById('terminos');
+        
+        if (!formRegistro || !btnRegistrar || !inputContraseña || !inputConfirmarContraseña || !terminosCheckbox) {
+            throw new Error('No se encontraron todos los elementos necesarios del formulario');
+        }
+        
+        // Verificar si hay un usuario autenticado
+        auth.onAuthStateChanged((user) => {
         if (user) {
             console.log('Usuario autenticado detectado en página de registro, cerrando sesión...');
             auth.signOut().then(() => {
@@ -321,5 +336,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
             });
-    });
+        });
+    } catch (error) {
+        console.error('Error al inicializar la aplicación:', error);
+        mostrarError(error, 'inicialización');
+    }
 });

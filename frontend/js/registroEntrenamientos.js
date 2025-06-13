@@ -67,6 +67,17 @@ document.addEventListener("DOMContentLoaded", () => {
       sessionStorage.removeItem('ejercicioSeleccionado');
     }
   }
+  
+  // Cargar ejercicios guardados en la sesión actual al iniciar
+  const sesionGuardada = localStorage.getItem("sesion_entrenamiento");
+  if (sesionGuardada) {
+    try {
+      ejerciciosSesion = JSON.parse(sesionGuardada);
+      actualizarTabla();
+    } catch (e) {
+      console.error('Error al cargar la sesión guardada:', e);
+    }
+  }
 
   const errorPeso = document.getElementById("errorPeso");
   const errorReps = document.getElementById("errorRepeticiones");
@@ -228,24 +239,93 @@ document.addEventListener("DOMContentLoaded", () => {
     actualizarTabla();
   }
 
+  // Función para formatear la fecha como YYYY-MM-DD
+  function formatearFecha(fecha) {
+    return fecha.toISOString().split('T')[0];
+  }
+
+  // Función para guardar el entrenamiento en el historial
+  function guardarEntrenamientoEnHistorial() {
+    if (ejerciciosSesion.length === 0) {
+      return false;
+    }
+    
+    const fechaActual = formatearFecha(new Date());
+    const historial = JSON.parse(localStorage.getItem(claveHistorial) || '[]');
+    
+    // Buscar si ya existe un entrenamiento para la fecha actual
+    const entrenamientoHoy = historial.find(item => item.fecha === fechaActual) || {
+      fecha: fechaActual,
+      ejercicios: []
+    };
+    
+    // Agregar los ejercicios de la sesión actual al entrenamiento del día
+    entrenamientoHoy.ejercicios.push(...ejerciciosSesion);
+    
+    // Actualizar o agregar el entrenamiento del día en el historial
+    const index = historial.findIndex(item => item.fecha === fechaActual);
+    if (index !== -1) {
+      historial[index] = entrenamientoHoy;
+    } else {
+      historial.push(entrenamientoHoy);
+    }
+    
+    // Guardar en localStorage
+    localStorage.setItem(claveHistorial, JSON.stringify(historial));
+    return true;
+  }
+
+  // Evento para el botón Finalizar Sesión
   document.getElementById("finalizarSesion").addEventListener("click", () => {
     if (ejerciciosSesion.length === 0) {
-      alert("No hay ejercicios registrados.");
+      alert("No hay ejercicios en la sesión para guardar.");
       return;
     }
-
-    const nuevaSesion = {
-      fecha: new Date().toISOString(),
-      ejercicios: ejerciciosSesion
-    };
-
-    const historial = JSON.parse(localStorage.getItem(claveHistorial)) || [];
-    historial.push(nuevaSesion);
-    localStorage.setItem(claveHistorial, JSON.stringify(historial));
-
-    ejerciciosSesion = [];
-    localStorage.removeItem("sesion_entrenamiento");
-    actualizarTabla();
-    alert("Sesión guardada con éxito.");
+    
+    if (confirm("¿Estás seguro de que deseas finalizar la sesión de entrenamiento?")) {
+      const guardadoExitoso = guardarEntrenamientoEnHistorial();
+      
+      if (guardadoExitoso) {
+        // Limpiar la sesión actual
+        ejerciciosSesion = [];
+        localStorage.removeItem("sesion_entrenamiento");
+        actualizarTabla();
+        
+        // Mostrar mensaje de éxito
+        const mensajeExito = document.createElement('div');
+        mensajeExito.className = 'mensaje-exito';
+        mensajeExito.textContent = '¡Sesión de entrenamiento guardada exitosamente!';
+        document.querySelector('.resumen-acciones').appendChild(mensajeExito);
+        
+        // Ocultar el mensaje después de 3 segundos
+        setTimeout(() => {
+          mensajeExito.style.opacity = '0';
+          setTimeout(() => mensajeExito.remove(), 500);
+        }, 3000);
+        
+        // Opcional: Redirigir al dashboard después de guardar
+        // window.location.href = "Dashboard.html";
+      } else {
+        alert("Ocurrió un error al guardar la sesión. Por favor, inténtalo de nuevo.");
+      }
+    }
   });
+  
+  // Actualizar el estado del botón Finalizar Sesión
+  function actualizarBotonFinalizar() {
+    const botonFinalizar = document.getElementById("finalizarSesion");
+    if (botonFinalizar) {
+      botonFinalizar.disabled = ejerciciosSesion.length === 0;
+    }
+  }
+  
+  // Sobrescribir la función actualizarTabla para incluir la actualización del botón
+  const actualizarTablaOriginal = actualizarTabla;
+  actualizarTabla = function() {
+    actualizarTablaOriginal();
+    actualizarBotonFinalizar();
+  };
+  
+  // Inicializar el estado del botón al cargar la página
+  actualizarBotonFinalizar();
 });

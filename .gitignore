@@ -1,0 +1,26 @@
+# Archivos de entorno
+.env
+
+# Directorios de dependencias
+/vendor/
+/node_modules/
+
+# Archivos de configuración del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de IDE
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Archivos temporales
+*.log
+*.tmp
+*.temp
+
+# Archivos de respaldo
+*.bak
+*.swp
+*~

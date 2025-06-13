@@ -1,3 +1,138 @@
+// Función para actualizar el resumen de la última sesión
+function actualizarResumenUltimaSesion() {
+  console.log('=== INICIO actualizarResumenUltimaSesion ===');
+  
+  try {
+    // Obtener información del usuario
+    const usuario = JSON.parse(sessionStorage.getItem('usuario')) || { nombre: 'default' };
+    console.log('Usuario actual:', usuario);
+    
+    // Obtener la clave del historial
+    const claveHistorial = `historial_${usuario.nombre.toLowerCase()}`;
+    console.log('Buscando historial con clave:', claveHistorial);
+    
+    // Obtener el historial del localStorage
+    const historialRaw = localStorage.getItem(claveHistorial);
+    console.log('Datos crudos del historial:', historialRaw);
+    
+    let historial = [];
+    try {
+      historial = historialRaw ? JSON.parse(historialRaw) : [];
+      // Asegurarse de que historial es un array
+      if (!Array.isArray(historial)) {
+        console.error('El historial no es un array:', historial);
+        historial = [];
+      }
+    } catch (e) {
+      console.error('Error al analizar el historial:', e);
+      historial = [];
+    }
+    
+    console.log('Historial procesado:', historial);
+    
+    // Mostrar todas las claves del localStorage para depuración
+    console.log('Todas las claves en localStorage:');
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      console.log(`- ${key}:`, localStorage.getItem(key));
+    }
+    
+    // Actualizar el DOM con valores por defecto
+    const fechaElement = document.getElementById('fechaUltimaSesion');
+    const ejerciciosElement = document.getElementById('ejerciciosUltimaSesion');
+    const seriesElement = document.getElementById('seriesUltimaSesion');
+    const volumenElement = document.getElementById('volumenUltimaSesion');
+    
+    // Función para establecer valores por defecto
+    const setValoresPorDefecto = () => {
+      if (fechaElement) fechaElement.textContent = 'No hay sesiones registradas';
+      if (ejerciciosElement) ejerciciosElement.textContent = '--';
+      if (seriesElement) seriesElement.textContent = '--';
+      if (volumenElement) volumenElement.textContent = '--';
+    };
+    
+    // Verificar si los elementos del DOM existen
+    if (!fechaElement || !ejerciciosElement || !seriesElement || !volumenElement) {
+      console.error('No se encontraron todos los elementos del DOM necesarios');
+      setValoresPorDefecto();
+      return;
+    }
+    
+    if (historial.length === 0) {
+      console.log('No se encontraron sesiones en el historial');
+      setValoresPorDefecto();
+      return;
+    }
+
+    // Ordenar historial por fecha (más reciente primero)
+    historial.sort((a, b) => {
+      try {
+        return new Date(b.fecha) - new Date(a.fecha);
+      } catch (e) {
+        console.error('Error al ordenar fechas:', e);
+        return 0;
+      }
+    });
+    
+    const ultimaSesion = historial[0];
+    const ejercicios = Array.isArray(ultimaSesion?.ejercicios) ? ultimaSesion.ejercicios : [];
+    
+    console.log('Última sesión:', ultimaSesion);
+    console.log('Ejercicios en la última sesión:', ejercicios);
+
+    // Calcular estadísticas
+    const ejerciciosRealizados = new Set(ejercicios.map(e => e?.ejercicio).filter(Boolean)).size;
+    const seriesTotales = ejercicios.reduce((total, ejercicio) => {
+      const series = parseInt(ejercicio?.series) || 1;
+      return total + series;
+    }, 0);
+    
+    const volumenTotal = ejercicios.reduce((total, ejercicio) => {
+      const peso = parseFloat(ejercicio?.peso) || 0;
+      const repeticiones = parseInt(ejercicio?.repeticiones) || 0;
+      const series = parseInt(ejercicio?.series) || 1;
+      return total + (peso * repeticiones * series);
+    }, 0);
+
+    // Formatear fecha
+    let fechaFormateada = 'Fecha no disponible';
+    try {
+      if (ultimaSesion?.fecha) {
+        const fecha = new Date(ultimaSesion.fecha);
+        if (!isNaN(fecha.getTime())) {
+          const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+          fechaFormateada = fecha.toLocaleDateString('es-ES', opcionesFecha);
+        }
+      }
+    } catch (e) {
+      console.error('Error al formatear la fecha:', e);
+    }
+
+    // Actualizar el DOM
+    fechaElement.textContent = fechaFormateada;
+    ejerciciosElement.textContent = ejerciciosRealizados;
+    seriesElement.textContent = seriesTotales;
+    volumenElement.textContent = `${volumenPromedio} kg/ejercicio`;
+    volumenElement.title = `Volumen total: ${volumenTotal} kg (${volumenPromedio} kg/ejercicio)`;
+    
+    console.log('Resumen actualizado:', { 
+      fecha: fechaFormateada,
+      ejerciciosRealizados, 
+      seriesTotales, 
+      volumenTotal: Math.round(volumenTotal * 100) / 100 
+    });
+    
+  } catch (error) {
+    console.error('Error en actualizarResumenUltimaSesion:', error);
+    // Asegurarse de que los elementos muestren algo en caso de error
+    const errorMessage = 'Error al cargar';
+    if (document.getElementById('fechaUltimaSesion')) document.getElementById('fechaUltimaSesion').textContent = errorMessage;
+    if (document.getElementById('ejerciciosUltimaSesion')) document.getElementById('ejerciciosUltimaSesion').textContent = '--';
+    if (document.getElementById('seriesUltimaSesion')) document.getElementById('seriesUltimaSesion').textContent = '--';
+    if (document.getElementById('volumenUltimaSesion')) document.getElementById('volumenUltimaSesion').textContent = '--';
+  }
+}
+
 // Función para obtener ejercicios recomendados basados en el historial
 function obtenerEjerciciosRecomendados(historial) {
   if (!historial || historial.length === 0) {
@@ -123,6 +258,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById('recomendacionesContainer')) {
     inicializarRecomendaciones();
   }
+  
+  // Actualizar el resumen de la última sesión
+  actualizarResumenUltimaSesion();
   
   const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
   const claveHistorial = "historial_" + usuario.nombre.toLowerCase();
@@ -288,40 +426,72 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Función para calcular el volumen total
   function calcularVolumenTotal(ejercicios) {
+    if (!ejercicios || !Array.isArray(ejercicios)) return 0;
+    
     return ejercicios.reduce((total, ejercicio) => {
-      return total + ejercicio.series.reduce((sum, serie) => {
-        return sum + (serie.peso * serie.repeticiones);
-      }, 0);
+      // Si el ejercicio ya tiene un cálculo de volumen directo
+      if (ejercicio.volumen) return total + ejercicio.volumen;
+      
+      // Calcular volumen basado en peso, repeticiones y series
+      const peso = parseFloat(ejercicio.peso) || 0;
+      const repeticiones = parseInt(ejercicio.repeticiones) || 0;
+      const series = parseInt(ejercicio.series) || 1;
+      
+      return total + (peso * repeticiones * series);
     }, 0);
   }
 
   // Función para actualizar el resumen de la última sesión
   function actualizarResumenUltimaSesion() {
-    const entrenamientos = JSON.parse(localStorage.getItem('entrenamientos')) || [];
+    console.log('=== INICIO actualizarResumenUltimaSesion ===');
     
-    if (entrenamientos.length === 0) {
-      document.getElementById('resumenUltimaSesion').innerHTML = `
-        <p class="fecha-ultima-sesion">No hay sesiones registradas</p>
-        <div class="detalles-ultima-sesion">
-          <p>Comienza a registrar tus entrenamientos para ver tu progreso</p>
-        </div>
-      `;
+    // Obtener información del usuario
+    const usuario = JSON.parse(sessionStorage.getItem('usuario')) || { nombre: 'default' };
+    console.log('Usuario actual:', usuario);
+    
+    // Obtener la clave del historial
+    const claveHistorial = `historial_${usuario.nombre.toLowerCase()}`;
+    console.log('Buscando historial con clave:', claveHistorial);
+    
+    // Obtener el historial del localStorage
+    const historial = JSON.parse(localStorage.getItem(claveHistorial)) || [];
+    console.log('Historial encontrado:', historial);
+    
+    // Mostrar todas las claves del localStorage para depuración
+    console.log('Todas las claves en localStorage:');
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      console.log(`- ${key}:`, localStorage.getItem(key));
+    }
+    
+    if (historial.length === 0) {
+      console.log('No se encontraron sesiones en el historial');
+      document.getElementById('fechaUltimaSesion').textContent = 'No hay sesiones registradas';
+      document.getElementById('ejerciciosUltimaSesion').textContent = '--';
+      document.getElementById('seriesUltimaSesion').textContent = '--';
+      document.getElementById('volumenUltimaSesion').textContent = '--';
       return;
     }
 
-    // Ordenar entrenamientos por fecha (más reciente primero)
-    entrenamientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-    const ultimaSesion = entrenamientos[0];
+    // Ordenar historial por fecha (más reciente primero)
+    historial.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    const ultimaSesion = historial[0];
+    const ejercicios = ultimaSesion.ejercicios || [];
 
     // Calcular estadísticas
-    const ejerciciosRealizados = ultimaSesion.ejercicios.length;
-    const seriesTotales = ultimaSesion.ejercicios.reduce((total, ejercicio) => 
-      total + ejercicio.series.length, 0);
-    const volumenTotal = calcularVolumenTotal(ultimaSesion.ejercicios);
+    const ejerciciosRealizados = new Set(ejercicios.map(e => e.ejercicio)).size; // Ejercicios únicos
+    const seriesTotales = ejercicios.reduce((total, ejercicio) => total + (ejercicio.series || 1), 0);
+    const volumenTotal = ejercicios.reduce((total, ejercicio) => {
+      return total + ((ejercicio.peso || 0) * (ejercicio.repeticiones || 0) * (ejercicio.series || 1));
+    }, 0);
+
+    // Formatear fecha
+    const fecha = new Date(ultimaSesion.fecha);
+    const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+    const fechaFormateada = fecha.toLocaleDateString('es-ES', opcionesFecha);
 
     // Actualizar el DOM
-    document.querySelector('.fecha-ultima-sesion').textContent = 
-      `Última sesión: ${formatearFecha(ultimaSesion.fecha)}`;
+    document.getElementById('fechaUltimaSesion').textContent = fechaFormateada;
     document.getElementById('ejerciciosUltimaSesion').textContent = ejerciciosRealizados;
     document.getElementById('seriesUltimaSesion').textContent = seriesTotales;
     document.getElementById('volumenUltimaSesion').textContent = `${volumenTotal} kg`;

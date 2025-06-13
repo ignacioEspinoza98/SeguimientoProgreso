@@ -130,7 +130,19 @@ function inicializarInicioSesion() {
                     
                     // Si el correo está verificado, continuar con el inicio de sesión
                     console.log('Correo verificado, redirigiendo a Dashboard.html');
+                    
+                    // Guardar información del usuario en sessionStorage
+                    const usuario = {
+                        nombre: userCredential.user.displayName || userCredential.user.email.split('@')[0],
+                        email: userCredential.user.email,
+                        emailVerificado: userCredential.user.emailVerified,
+                        uid: userCredential.user.uid
+                    };
+                    
                     sessionStorage.setItem('Logueado', 'true');
+                    sessionStorage.setItem('usuario', JSON.stringify(usuario));
+                    
+                    console.log('Usuario guardado en sessionStorage:', usuario);
                     
                     // Usar ruta absoluta desde la raíz del sitio
                     const baseUrl = window.location.origin;

@@ -1,90 +1,151 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial de Entrenamientos</title>
-    <link rel="stylesheet" href="../css/Historial.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Historial | Progreso Gym</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/shared.css" />
+  <link rel="stylesheet" href="../css/Historial.css" />
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-buttons">
-            <a href="Dashboard.html" class="boton-volver">← Volver al Dashboard</a>
-            <button id="cerrarSesion" class="boton-cerrar">Cerrar sesión</button>
-        </div>
-    </nav>
+  <!-- Barra de navegación -->
+  <nav class="navbar">
+    <div class="nav-contenedor">
+      <a href="Dashboard.html" class="nav-logo">
+        <i class="fas fa-dumbbell"></i>
+        <span>Progreso Gym</span>
+      </a>
+      <div class="nav-botones">
+        <a href="Dashboard.html" class="boton boton-secundario">
+          <i class="fas fa-arrow-left"></i> Volver
+        </a>
+        <button id="cerrarSesion" class="boton boton-primario">
+          <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </nav>
 
-    <main class="contenedor">
-        <h1>Historial de Entrenamientos</h1>
+  <main class="contenedor">
+    <section class="seccion-bienvenida">
+      <h1 class="saludo">Historial de Entrenamientos</h1>
+      <p>Revisa y analiza tu progreso a lo largo del tiempo. Filtra por fecha, grupo muscular u ordena según tus necesidades.</p>
+    </section>
 
-        <div class="filtros">
-            <div class="filtro-grupo">
-                <label for="filtroGrupo">Filtrar por grupo muscular:</label>
-                <select id="filtroGrupo">
-                    <option value="todos">Todos los grupos</option>
-                    <option value="Pecho">Pecho</option>
-                    <option value="Espalda">Espalda</option>
-                    <option value="Piernas">Piernas</option>
-                    <option value="Hombros">Hombros</option>
-                    <option value="Brazos">Brazos</option>
-                    <option value="Core">Core</option>
-                </select>
-            </div>
-
-            <div class="filtro-fecha">
-                <label for="filtroFecha">Filtrar por fecha:</label>
-                <select id="filtroFecha">
-                    <option value="todos">Todas las fechas</option>
-                    <option value="semana">Última semana</option>
-                    <option value="mes">Último mes</option>
-                    <option value="trimestre">Último trimestre</option>
-                </select>
-            </div>
-
-            <div class="ordenar">
-                <label for="ordenarPor">Ordenar por:</label>
-                <select id="ordenarPor">
-                    <option value="fecha-desc">Fecha (más reciente)</option>
-                    <option value="fecha-asc">Fecha (más antigua)</option>
-                    <option value="volumen-desc">Volumen (mayor)</option>
-                    <option value="volumen-asc">Volumen (menor)</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="estadisticas-resumen">
-            <div class="stat-box">
-                <h3>Total de Sesiones</h3>
-                <p id="totalSesiones">--</p>
-            </div>
-            <div class="stat-box">
-                <h3>Volumen Total</h3>
-                <p id="volumenTotal">--</p>
-            </div>
-            <div class="stat-box">
-                <h3>Series Totales</h3>
-                <p id="seriesTotales">--</p>
-            </div>
-            <div class="stat-box">
-                <h3>Promedio por Sesión</h3>
-                <p id="promedioSesion">--</p>
-            </div>
+    <div class="filtros">
+      <h2 class="filtros-titulo">
+        <i class="fas fa-filter"></i> Filtros
+      </h2>
+      <div class="filtros-contenedor">
+        <div class="grupo-filtro">
+          <label for="filtroGrupo">Grupo muscular</label>
+          <div class="input-con-icono">
+            <i class="fas fa-dumbbell"></i>
+            <select id="filtroGrupo" class="input-estilizado">
+              <option value="todos">Todos los grupos</option>
+              <option value="Pecho">Pecho</option>
+              <option value="Espalda">Espalda</option>
+              <option value="Piernas">Piernas</option>
+              <option value="Hombros">Hombros</option>
+              <option value="Brazos">Brazos</option>
+              <option value="Core">Core</option>
+            </select>
+          </div>
         </div>
 
-        <div class="historial-container">
-            <div id="listaEntrenamientos" class="lista-entrenamientos">
-                <!-- Los entrenamientos se cargarán dinámicamente aquí -->
-            </div>
+        <div class="grupo-filtro">
+          <label for="filtroFecha">Rango de fechas</label>
+          <div class="input-con-icono">
+            <i class="far fa-calendar"></i>
+            <select id="filtroFecha" class="input-estilizado">
+              <option value="todos">Todas las fechas</option>
+              <option value="semana">Última semana</option>
+              <option value="mes">Último mes</option>
+              <option value="trimestre">Último trimestre</option>
+            </select>
+          </div>
         </div>
 
-        <div class="acciones">
-            <button id="exportarCSV" class="boton">Exportar a CSV</button>
-            <button id="exportarJSON" class="boton secundario">Exportar a JSON</button>
+        <div class="grupo-filtro">
+          <label for="ordenarPor">Ordenar por</label>
+          <div class="input-con-icono">
+            <i class="fas fa-sort-amount-down"></i>
+            <select id="ordenarPor" class="input-estilizado">
+              <option value="fecha-desc">Fecha (más reciente)</option>
+              <option value="fecha-asc">Fecha (más antigua)</option>
+              <option value="volumen-desc">Volumen (mayor)</option>
+              <option value="volumen-asc">Volumen (menor)</option>
+            </select>
+          </div>
         </div>
-    </main>
+      </div>
+    </div>
 
-    <script src="../js/Auth.js"></script>
-    <script src="../js/Historial.js"></script>
-    <script src="../js/CerrarSesion.js"></script>
+    <section class="estadisticas">
+      <div class="estadistica-card">
+        <div class="estadistica-titulo">
+          <i class="fas fa-calendar-check"></i> Total de Sesiones
+        </div>
+        <div id="totalSesiones" class="estadistica-valor">--</div>
+        <div class="estadistica-descripcion">Sesiones registradas en total</div>
+      </div>
+
+      <div class="estadistica-card">
+        <div class="estadistica-titulo">
+          <i class="fas fa-weight-hanging"></i> Volumen Total
+        </div>
+        <div id="volumenTotal" class="estadistica-valor">--</div>
+        <div class="estadistica-descripcion">Kg levantados en total</div>
+      </div>
+
+      <div class="estadistica-card">
+        <div class="estadistica-titulo">
+          <i class="fas fa-layer-group"></i> Series Totales
+        </div>
+        <div id="seriesTotales" class="estadistica-valor">--</div>
+        <div class="estadistica-descripcion">Series completadas</div>
+      </div>
+
+      <div class="estadistica-card">
+        <div class="estadistica-titulo">
+          <i class="fas fa-chart-line"></i> Promedio por Sesión
+        </div>
+        <div id="promedioSesion" class="estadistica-valor">--</div>
+        <div class="estadistica-descripcion">Volumen promedio por entrenamiento</div>
+      </div>
+    </section>
+
+    <section class="historial">
+      <h2 class="seccion-titulo">
+        <i class="fas fa-history"></i> Tus Entrenamientos
+      </h2>
+      
+      <div id="listaEntrenamientos" class="entrenamientos-lista">
+        <!-- Los entrenamientos se cargarán dinámicamente aquí -->
+        <div class="sin-resultados">
+          <i class="fas fa-inbox"></i>
+          <h3>No hay entrenamientos registrados</h3>
+          <p>Comienza a registrar tus entrenamientos para ver tu historial aquí.</p>
+          <a href="RegistroEntrenamientos.html" class="boton boton-primario">
+            <i class="fas fa-plus"></i> Registrar Entrenamiento
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <div class="acciones-exportar">
+      <button id="exportarCSV" class="boton boton-secundario">
+        <i class="fas fa-file-csv"></i> Exportar a CSV
+      </button>
+      <button id="exportarJSON" class="boton boton-secundario">
+        <i class="fas fa-file-code"></i> Exportar a JSON
+      </button>
+    </div>
+  </main>
+
+  <script src="../js/Auth.js"></script>
+  <script src="../js/Historial.js"></script>
+  <script src="../js/CerrarSesion.js"></script>
 </body>
-</html> 
+</html>

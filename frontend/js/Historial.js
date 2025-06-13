@@ -1,6 +1,28 @@
+// Verificar autenticación
 document.addEventListener('DOMContentLoaded', () => {
-    const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { usuario: "default" };
-    const claveHistorial = "historial_" + usuario.usuario.toLowerCase();
+    console.log('Iniciando carga de Historial...');
+    // Verificar si el usuario está autenticado
+    const usuarioString = sessionStorage.getItem('usuario');
+    console.log('Datos de usuario en sessionStorage:', usuarioString);
+    
+    if (!usuarioString) {
+        console.error('No se encontró usuario en sessionStorage');
+        window.location.href = 'InicioSesion.html';
+        return;
+    }
+    
+    let usuario;
+    try {
+        usuario = JSON.parse(usuarioString);
+        console.log('Usuario parseado:', usuario);
+    } catch (error) {
+        console.error('Error al parsear usuario:', error);
+        window.location.href = 'InicioSesion.html';
+        return;
+    }
+
+    // Usar usuario.nombre en lugar de usuario.usuario
+    const claveHistorial = `historial_${usuario.nombre.toLowerCase()}`;
     let historial = JSON.parse(localStorage.getItem(claveHistorial)) || [];
 
     // Elementos del DOM
@@ -8,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const filtroGrupo = document.getElementById('filtroGrupo');
     const filtroFecha = document.getElementById('filtroFecha');
     const ordenarPor = document.getElementById('ordenarPor');
+    const btnExportarCSV = document.getElementById('exportarCSV');
+    const btnExportarJSON = document.getElementById('exportarJSON');
 
     // Funciones de utilidad
     function formatearFecha(fecha) {
@@ -16,15 +40,20 @@ document.addEventListener('DOMContentLoaded', () => {
             month: 'long', 
             day: 'numeric',
             hour: '2-digit',
-            minute: '2-digit'
+            minute: '2-digit',
+            hour12: true
         };
-        return new Date(fecha).toLocaleDateString('es-ES', opciones);
+        const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', opciones);
+        // Convertir a mayúscula la primera letra de la hora (AM/PM)
+        return fechaFormateada.replace(/\b(am|pm)\b/gi, match => match.toUpperCase());
     }
 
     function calcularVolumenTotal(ejercicios) {
         return ejercicios.reduce((total, ejercicio) => {
             return total + ejercicio.series.reduce((sum, serie) => {
-                return sum + (serie.peso * serie.repeticiones);
+                const peso = parseFloat(serie.peso) || 0;
+                const repeticiones = parseInt(serie.repeticiones) || 0;
+                return sum + (peso * repeticiones);
             }, 0);
         }, 0);
     }
@@ -40,12 +69,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const seriesTotales = entrenamientos.reduce((total, sesion) => 
             total + calcularSeriesTotales(sesion.ejercicios), 0);
         const promedioSesion = totalSesiones > 0 ? 
-            (volumenTotal / totalSesiones).toFixed(2) : 0;
+            Math.round(volumenTotal / totalSesiones) : 0;
 
-        document.getElementById('totalSesiones').textContent = totalSesiones;
-        document.getElementById('volumenTotal').textContent = `${volumenTotal.toLocaleString()} kg`;
-        document.getElementById('seriesTotales').textContent = seriesTotales;
-        document.getElementById('promedioSesion').textContent = `${promedioSesion} kg`;
+        // Actualizar las tarjetas de estadísticas
+        document.getElementById('totalSesiones').textContent = totalSesiones.toLocaleString();
+        document.getElementById('volumenTotal').textContent = volumenTotal.toLocaleString();
+        document.getElementById('seriesTotales').textContent = seriesTotales.toLocaleString();
+        document.getElementById('promedioSesion').textContent = promedioSesion.toLocaleString();
+        
+        // Mostrar u ocultar mensaje de sin resultados
+        const sinResultados = document.querySelector('.sin-resultados');
+        if (sinResultados) {
+            if (totalSesiones > 0) {
+                sinResultados.style.display = 'none';
+            } else {
+                sinResultados.style.display = 'block';
+            }
+        }
     }
 
     function filtrarEntrenamientos() {
@@ -147,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ordenarPor.addEventListener('change', actualizarVista);
 
     // Exportar a CSV
-    document.getElementById('exportarCSV').addEventListener('click', () => {
+    btnExportarCSV.addEventListener('click', () => {
         const entrenamientosFiltrados = filtrarEntrenamientos();
         const filas = [['Fecha', 'Ejercicio', 'Grupo Muscular', 'Peso', 'Reps', 'Series']];
         
@@ -179,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Exportar a JSON
-    document.getElementById('exportarJSON').addEventListener('click', () => {
+    btnExportarJSON.addEventListener('click', () => {
         const entrenamientosFiltrados = filtrarEntrenamientos();
         const json = JSON.stringify(entrenamientosFiltrados, null, 2);
         const blob = new Blob([json], { type: 'application/json' });
@@ -193,6 +233,11 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url);
     });
 
-    // Inicializar vista
+    // Inicializar la vista
     actualizarVista();
-}); 
+    
+    // Mostrar notificación de bienvenida
+    setTimeout(() => {
+        mostrarNotificacion('Bienvenido a tu historial de entrenamientos', 'exito');
+    }, 1000);
+});

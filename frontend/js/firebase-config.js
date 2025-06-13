@@ -1,12 +1,8 @@
-// Configuración de Firebase para ProgresoGym
-const firebaseConfig = {
-    apiKey: "AIzaSyByrdHaP_yKxZqqJ-knXXPaet--KB2GlRQ",
-    authDomain: "progresogym-7a7a9.firebaseapp.com",
-    projectId: "progresogym-7a7a9",
-    storageBucket: "progresogym-7a7a9.appspot.com",
-    messagingSenderId: "563354960322",
-    appId: "1:563354960322:web:b9b196460d811cdaf4965b"
-};
+// Variables globales para Firebase
+let firebaseApp;
+let auth;
+let db;
+let googleProvider;
 
 // Configuración para los correos de verificación
 const actionCodeSettings = {
@@ -16,13 +12,44 @@ const actionCodeSettings = {
     handleCodeInApp: true
 };
 
-// Inicializar Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Función para inicializar Firebase de forma segura
+async function initializeFirebase() {
+    try {
+        // Obtener configuración desde el endpoint seguro
+        const response = await fetch('../../firebase-config.php');
+        if (!response.ok) {
+            throw new Error('Error al cargar la configuración de Firebase');
+        }
+        
+        const firebaseConfig = await response.json();
+        
+        // Inicializar Firebase
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+        googleProvider = new firebase.auth.GoogleAuthProvider();
+        
+        console.log('Firebase inicializado correctamente');
+        return { firebaseApp, auth, db, googleProvider };
+    } catch (error) {
+        console.error('Error al inicializar Firebase:', error);
+        throw error;
+    }
+}
 
-// Habilitar autenticación con Google
-const googleProvider = new firebase.auth.GoogleAuthProvider();
+// Inicializar Firebase cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await initializeFirebase();
+        // Aquí puedes agregar código que dependa de Firebase
+    } catch (error) {
+        console.error('Error al inicializar la aplicación:', error);
+        mostrarError({
+            code: 'firebase/initialization-error',
+            message: 'No se pudo conectar con el servidor. Por favor, recarga la página.'
+        });
+    }
+});
 
 // Función global para mostrar errores
 window.mostrarError = function(error) {
@@ -115,8 +142,19 @@ window.loginWithGoogle = async function() {
             // Continuar con el flujo aunque falle Firestore
         }
         
-        // 3. Establecer la variable de sesión
+        // 3. Guardar información del usuario en sessionStorage
+        const usuario = {
+            nombre: result.user.displayName || result.user.email.split('@')[0],
+            email: result.user.email,
+            emailVerificado: result.user.emailVerified,
+            uid: result.user.uid,
+            fotoURL: result.user.photoURL || ''
+        };
+        
         sessionStorage.setItem('Logueado', 'true');
+        sessionStorage.setItem('usuario', JSON.stringify(usuario));
+        
+        console.log('Usuario guardado en sessionStorage:', usuario);
         
         // 4. Redirigir al dashboard
         console.log('Redirigiendo a Dashboard.html');
