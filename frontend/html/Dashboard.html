@@ -507,9 +507,18 @@
     </section>
   </main>
 
+  <!-- Scripts de Firebase primero -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  
+  <!-- Configuración de Firebase -->
+  <script src="../js/firebase-config.js"></script>
+  
+  <!-- Scripts de la aplicación -->
   <script src="../js/Auth.js"></script>
-  <script src="../js/dashboard.js" type="module"></script>
   <script src="../js/CerrarSesion.js"></script>
+  <script src="../js/dashboard.js"></script>
   <script type="module">
     import { inicializarRecomendaciones } from '../js/recomendaciones.js';
     document.addEventListener('DOMContentLoaded', () => {

@@ -1,4 +1,24 @@
-const ejerciciosPorGrupo = {
+// Variables globales
+let ejerciciosSesion = [];
+let editando = false;
+let indexEditando = null;
+let ejerciciosPorGrupo = {};
+
+// Usar las funciones de firebase-config.js
+const firebaseGuardarSesion = window.guardarSesion;
+const firebaseMostrarError = window.mostrarError;
+
+// Verificar si las funciones están disponibles
+if (typeof firebaseGuardarSesion !== 'function') {
+  console.error('La función guardarSesion no está disponible');
+}
+
+if (typeof firebaseMostrarError !== 'function') {
+  console.error('La función mostrarError no está disponible');
+}
+
+// Inicializar ejerciciosPorGrupo con valores por defecto
+const ejerciciosPorGrupoDefault = {
   Pecho: [
     "Press en máquina", "Press banca con mancuernas", "Press banca con barra",
     "Press inclinado en Smith", "Press inclinado mancuernas", "Aperturas en máquina"
@@ -31,15 +51,147 @@ const ejerciciosPorGrupo = {
   ]
 };
 
-// Guardar la lista de ejercicios por grupo en localStorage si no existe
-if (!localStorage.getItem('ejerciciosPorGrupo')) {
-  localStorage.setItem('ejerciciosPorGrupo', JSON.stringify(ejerciciosPorGrupo));
+// Función para cargar los ejercicios por grupo
+function cargarEjerciciosPorGrupo() {
+  console.log('Iniciando carga de ejercicios por grupo...');
+  try {
+    // Verificar si el selector existe
+    const selectGrupo = document.getElementById('grupoMuscular');
+    console.log('Selector de grupo encontrado:', !!selectGrupo);
+    
+    if (!selectGrupo) {
+      console.error('No se encontró el selector de grupo muscular');
+      return;
+    }
+    // Usar directamente los valores por defecto
+    console.log('Definiendo ejercicios por grupo...');
+    ejerciciosPorGrupo = {
+      Pecho: [
+        "Press en máquina", "Press banca con mancuernas", "Press banca con barra",
+        "Press inclinado en Smith", "Press inclinado mancuernas", "Aperturas en máquina"
+      ],
+      Espalda: [
+        "Remo con barra", "Remo en máquina", "Remo bajo supino unilateral", "Remo en T prono",
+        "Dominadas pronas", "Jalón con agarre supino", "Jalón en máquina neutro", "Jalón al pecho prono"
+      ],
+      Hombros: [
+        "Press Arnold", "Press militar en máquina", "Elevaciones frontales", "Elevaciones laterales",
+        "Aperturas inversas", "Laterales en máquina", "Laterales en polea"
+      ],
+      Bíceps: [
+        "Curl con barra recta", "Curl concentración", "Curl martillo en polea",
+        "Curl bayesiano en polea", "Curl en banco inclinado"
+      ],
+      Tríceps: [
+        "Extensión tríceps unilateral", "Extensión de tríceps en cuerda", "Fondos en paralelas", "Press francés"
+      ],
+      Piernas: [
+        "Sentadilla libre", "Sentadilla hack", "Peso muerto convencional", "Peso muerto rumano",
+        "Prensa unilateral", "Extensión de cuádriceps", "Curl isquio sentado", "Step-up con mancuernas",
+        "Zancadas caminando", "Buenos días", "Hip thrust con barra", "Aductores"
+      ],
+      Gemelos: [
+        "Gemelos de pie con barra", "Gemelos en prensa", "Gemelos (gastrocnemio)"
+      ],
+      Abdomen: [
+        "Crunch en máquina", "Plancha abdominal", "Rueda abdominal"
+      ]
+    };
+    
+    console.log('Ejercicios cargados correctamente. Grupos disponibles:', Object.keys(ejerciciosPorGrupo));
+    
+    // Usar el selector que ya tenemos
+    if (selectGrupo) {
+      // Limpiar opciones existentes
+      selectGrupo.innerHTML = '<option value="">Selecciona un grupo muscular</option>';
+      
+      // Llenar con los grupos musculares disponibles
+      Object.keys(ejerciciosPorGrupo).forEach(grupo => {
+        const opt = document.createElement('option');
+        opt.value = grupo;
+        opt.textContent = grupo;
+        selectGrupo.appendChild(opt);
+      });
+      
+      // Configurar el evento change
+      selectGrupo.addEventListener('change', function() {
+        const grupo = this.value;
+        const selectEjercicio = document.getElementById('ejercicio');
+        
+        if (!selectEjercicio) return;
+        
+        selectEjercicio.innerHTML = '<option value="">Selecciona un ejercicio</option>';
+        
+        if (!grupo) {
+          selectEjercicio.disabled = true;
+          return;
+        }
+        
+        ejerciciosPorGrupo[grupo].forEach(nombre => {
+          const opt = document.createElement('option');
+          opt.value = nombre;
+          opt.textContent = nombre;
+          selectEjercicio.appendChild(opt);
+        });
+        
+        selectEjercicio.disabled = false;
+      });
+      
+      // Activar el evento change para cargar los ejercicios del primer grupo
+      if (selectGrupo.options.length > 1) {
+        selectGrupo.dispatchEvent(new Event('change'));
+      }
+    }
+  } catch (error) {
+    console.error('Error al cargar los ejercicios:', error);
+  }
 }
 
+// Función para llenar los selectores de grupos musculares y ejercicios
+function llenarSelectores() {
+  const selectGrupo = document.getElementById('grupoMuscular');
+  if (!selectGrupo) return;
+  
+  // Limpiar opciones existentes
+  selectGrupo.innerHTML = '<option value="">Selecciona un grupo muscular</option>';
+  
+  // Llenar con los grupos musculares disponibles
+  Object.keys(ejerciciosPorGrupo).forEach(grupo => {
+    const opt = document.createElement('option');
+    opt.value = grupo;
+    opt.textContent = grupo;
+    selectGrupo.appendChild(opt);
+  });
+  
+  // Activar el evento de cambio para cargar los ejercicios del primer grupo
+  if (selectGrupo.options.length > 1) {
+    selectGrupo.dispatchEvent(new Event('change'));
+  }
+}
+
+// Función para configurar la aplicación
+console.log('Script registroEntrenamientos.js cargado');
+
 document.addEventListener("DOMContentLoaded", () => {
+  console.log('Evento DOMContentLoaded disparado');
+  console.log('DOM completamente cargado');
+  // Cargar ejercicios por grupo
+  cargarEjerciciosPorGrupo();
+  
+  // Configurar el resto de la aplicación
   const formulario = document.getElementById("formulario-entrenamiento");
+  if (!formulario) {
+    console.error('No se encontró el formulario');
+    return;
+  }
+  
   const selectGrupo = document.getElementById("grupoMuscular");
   const selectEjercicio = document.getElementById("ejercicio");
+  
+  if (!selectGrupo || !selectEjercicio) {
+    console.error('No se encontraron los selectores de grupo o ejercicio');
+    return;
+  }
   const pesoInput = document.getElementById("peso");
   const repeticionesInput = document.getElementById("repeticiones");
   const seriesInput = document.getElementById("series");
@@ -73,7 +225,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (sesionGuardada) {
     try {
       ejerciciosSesion = JSON.parse(sesionGuardada);
-      actualizarTabla();
+      // Mover la llamada a actualizarTabla después de que se haya definido
+      setTimeout(() => actualizarTabla(), 0);
     } catch (e) {
       console.error('Error al cargar la sesión guardada:', e);
     }
@@ -83,12 +236,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const errorReps = document.getElementById("errorRepeticiones");
   const errorSeries = document.getElementById("errorSeries");
 
-  for (const grupo in ejerciciosPorGrupo) {
-    const opt = document.createElement("option");
+  console.log('Configurando selectores...');
+  
+  // Llenar el selector de grupos musculares
+  selectGrupo.innerHTML = '<option value="">Selecciona un grupo muscular</option>';
+  
+  // Llenar con los grupos musculares disponibles
+  Object.keys(ejerciciosPorGrupo).forEach(grupo => {
+    const opt = document.createElement('option');
     opt.value = grupo;
     opt.textContent = grupo;
     selectGrupo.appendChild(opt);
-  }
+  });
+  
+  console.log('Grupos musculares cargados:', Object.keys(ejerciciosPorGrupo));
 
   selectGrupo.addEventListener("change", () => {
     const grupo = selectGrupo.value;
@@ -151,9 +312,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
   const claveHistorial = "historial_" + usuario.nombre.toLowerCase();
 
-  let ejerciciosSesion = [];
-  let editando = false;
-  let indexEditando = null;
+  // Inicializar ejerciciosSesion si no existe
+  if (!ejerciciosSesion || !Array.isArray(ejerciciosSesion)) {
+    ejerciciosSesion = [];
+  }
+  
+  // Restaurar la sesión guardada si existe
+  try {
+    const sesionGuardada = localStorage.getItem("sesion_entrenamiento");
+    if (sesionGuardada) {
+      ejerciciosSesion = JSON.parse(sesionGuardada);
+    }
+  } catch (error) {
+    console.error('Error al cargar la sesión guardada:', error);
+    ejerciciosSesion = [];
+  }
 
   formulario.addEventListener("submit", e => {
     e.preventDefault();
@@ -244,69 +417,133 @@ document.addEventListener("DOMContentLoaded", () => {
     return fecha.toISOString().split('T')[0];
   }
 
-  // Función para guardar el entrenamiento en el historial
-  function guardarEntrenamientoEnHistorial() {
-    if (ejerciciosSesion.length === 0) {
+  // Función para guardar el entrenamiento en Firestore
+  async function guardarEntrenamientoEnHistorial() {
+    try {
+      if (ejerciciosSesion.length === 0) {
+        console.log('No hay ejercicios para guardar');
+        return false;
+      }
+      
+      console.log('Iniciando guardado de sesión...');
+      
+      // Verificar si la función de guardar está disponible
+      if (typeof firebaseGuardarSesion !== 'function') {
+        const errorMsg = 'La función guardarSesion no está disponible';
+        console.error(errorMsg);
+        throw new Error(errorMsg);
+      }
+      
+      // Crear el objeto de sesión con los ejercicios
+      const sesion = {
+        fecha: new Date().toISOString().split('T')[0], // Formato YYYY-MM-DD
+        ejercicios: ejerciciosSesion.map(ejercicio => ({
+          nombre: ejercicio.nombre || 'Ejercicio sin nombre',
+          grupo: ejercicio.grupo || 'Sin grupo',
+          peso: parseFloat(ejercicio.peso) || 0,
+          repeticiones: parseInt(ejercicio.repeticiones) || 0,
+          series: parseInt(ejercicio.series) || 0
+        })),
+        volumenTotal: ejerciciosSesion.reduce((total, ejercicio) => {
+          const peso = parseFloat(ejercicio.peso) || 0;
+          const repeticiones = parseInt(ejercicio.repeticiones) || 0;
+          const series = parseInt(ejercicio.series) || 0;
+          return total + (peso * repeticiones * series);
+        }, 0)
+      };
+      
+      console.log('Datos de la sesión a guardar:', JSON.stringify(sesion, null, 2));
+      
+      // Guardar en Firestore (el ID del usuario se obtendrá automáticamente)
+      await firebaseGuardarSesion(null, sesion);
+      console.log('Sesión guardada exitosamente en Firestore');
+      
+      // Limpiar la sesión actual después de guardar
+      ejerciciosSesion = [];
+      localStorage.removeItem("sesion_entrenamiento");
+      actualizarTabla();
+      
+      // Mostrar mensaje de éxito
+      if (typeof firebaseMostrarError === 'function') {
+        firebaseMostrarError({ message: 'Sesión guardada exitosamente' });
+      } else {
+        alert('Sesión guardada exitosamente');
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error al guardar la sesión en Firestore:', error);
+      
+      // Mostrar error al guardar
+      const errorMessage = 'Error al guardar la sesión: ' + (error.message || 'Error desconocido');
+      if (typeof firebaseMostrarError === 'function') {
+        firebaseMostrarError({
+          code: 'firebase/save-error',
+          message: errorMessage
+        });
+      } else {
+        console.error(errorMessage);
+        alert(errorMessage);
+      }
+      
       return false;
     }
-    
-    const fechaActual = formatearFecha(new Date());
-    const historial = JSON.parse(localStorage.getItem(claveHistorial) || '[]');
-    
-    // Buscar si ya existe un entrenamiento para la fecha actual
-    const entrenamientoHoy = historial.find(item => item.fecha === fechaActual) || {
-      fecha: fechaActual,
-      ejercicios: []
-    };
-    
-    // Agregar los ejercicios de la sesión actual al entrenamiento del día
-    entrenamientoHoy.ejercicios.push(...ejerciciosSesion);
-    
-    // Actualizar o agregar el entrenamiento del día en el historial
-    const index = historial.findIndex(item => item.fecha === fechaActual);
-    if (index !== -1) {
-      historial[index] = entrenamientoHoy;
-    } else {
-      historial.push(entrenamientoHoy);
-    }
-    
-    // Guardar en localStorage
-    localStorage.setItem(claveHistorial, JSON.stringify(historial));
-    return true;
   }
 
   // Evento para el botón Finalizar Sesión
-  document.getElementById("finalizarSesion").addEventListener("click", () => {
+  document.getElementById("finalizarSesion")?.addEventListener("click", async () => {
     if (ejerciciosSesion.length === 0) {
       alert("No hay ejercicios en la sesión para guardar.");
       return;
     }
     
     if (confirm("¿Estás seguro de que deseas finalizar la sesión de entrenamiento?")) {
-      const guardadoExitoso = guardarEntrenamientoEnHistorial();
+      const botonFinalizar = document.getElementById("finalizarSesion");
+      botonFinalizar.disabled = true;
+      botonFinalizar.textContent = 'Guardando...';
       
-      if (guardadoExitoso) {
-        // Limpiar la sesión actual
-        ejerciciosSesion = [];
-        localStorage.removeItem("sesion_entrenamiento");
-        actualizarTabla();
+      try {
+        const guardadoExitoso = await guardarEntrenamientoEnHistorial();
         
-        // Mostrar mensaje de éxito
-        const mensajeExito = document.createElement('div');
-        mensajeExito.className = 'mensaje-exito';
-        mensajeExito.textContent = '¡Sesión de entrenamiento guardada exitosamente!';
-        document.querySelector('.resumen-acciones').appendChild(mensajeExito);
+        if (guardadoExitoso) {
+          // Limpiar la sesión actual
+          ejerciciosSesion = [];
+          localStorage.removeItem("sesion_entrenamiento");
+          actualizarTabla();
+          
+          // Mostrar mensaje de éxito
+          const mensajeExito = document.createElement('div');
+          
+          // Habilitar el botón nuevamente
+          botonFinalizar.disabled = false;
+          botonFinalizar.textContent = 'Finalizar Sesión';
+          mensajeExito.className = 'mensaje-exito';
+          mensajeExito.textContent = '¡Sesión de entrenamiento guardada exitosamente!';
+          document.querySelector('.resumen-acciones').appendChild(mensajeExito);
+          
+          // Redirigir después de 1.5 segundos
+          setTimeout(() => {
+            window.location.href = 'Dashboard.html';
+          }, 1500);
+          
+          // Ocultar el mensaje después de 0.5 segundos
+          setTimeout(() => {
+            mensajeExito.style.opacity = '0';
+            setTimeout(() => mensajeExito.remove(), 500);
+          }, 500);
+        } else {
+          throw new Error('No se pudo guardar la sesión');
+        }
+      } catch (error) {
+        console.error('Error al guardar la sesión:', error);
+        // Habilitar el botón en caso de error
+        botonFinalizar.disabled = false;
+        botonFinalizar.textContent = 'Finalizar Sesión';
         
-        // Ocultar el mensaje después de 3 segundos
-        setTimeout(() => {
-          mensajeExito.style.opacity = '0';
-          setTimeout(() => mensajeExito.remove(), 500);
-        }, 3000);
-        
-        // Opcional: Redirigir al dashboard después de guardar
-        // window.location.href = "Dashboard.html";
-      } else {
-        alert("Ocurrió un error al guardar la sesión. Por favor, inténtalo de nuevo.");
+        mostrarError({
+          code: 'firebase/error',
+          message: 'Error al guardar la sesión. Intenta nuevamente.'
+        });
       }
     }
   });
@@ -328,4 +565,6 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Inicializar el estado del botón al cargar la página
   actualizarBotonFinalizar();
+  
+  console.log('Aplicación configurada correctamente');
 });
