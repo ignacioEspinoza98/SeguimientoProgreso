@@ -3,6 +3,7 @@ let firebaseApp;
 let auth;
 let db;
 let googleProvider;
+let firebaseInitialized = false;
 
 // Configuración para los correos de verificación
 const actionCodeSettings = {
@@ -12,35 +13,48 @@ const actionCodeSettings = {
     handleCodeInApp: true
 };
 
-// Función para inicializar Firebase de forma segura
-async function initializeFirebase() {
-    try {
-        // Obtener configuración desde el endpoint seguro
-        const response = await fetch('../../firebase-config.php');
-        if (!response.ok) {
-            throw new Error('Error al cargar la configuración de Firebase');
-        }
-        
-        const firebaseConfig = await response.json();
-        
-        // Inicializar Firebase
-        firebaseApp = firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
-        db = firebase.firestore();
-        googleProvider = new firebase.auth.GoogleAuthProvider();
-        
-        console.log('Firebase inicializado correctamente');
-        return { firebaseApp, auth, db, googleProvider };
-    } catch (error) {
-        console.error('Error al inicializar Firebase:', error);
-        throw error;
-    }
+// Configuración directa de Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyByrdHaP_yKxZqqJ-knXXPaet--KB2GlRQ",
+  authDomain: "progresogym-7a7a9.firebaseapp.com",
+  databaseURL: "https://progresogym-7a7a9-default-rtdb.firebaseio.com",
+  projectId: "progresogym-7a7a9",
+  storageBucket: "progresogym-7a7a9.firebasestorage.app",
+  messagingSenderId: "563354960322",
+  appId: "1:563354960322:web:b9b196460d811cdaf4965b",
+  measurementId: "G-E0ZXJQ6P66"
+};
+
+// Inicialización inmediata
+try {
+  if (typeof firebase === 'undefined') {
+    throw new Error('Firebase SDK no está cargado');
+  }
+  
+  firebaseApp = firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  db = firebase.firestore();
+  googleProvider = new firebase.auth.GoogleAuthProvider();
+  
+  console.log('Firebase inicializado correctamente');
+  
+  // Exportar servicios
+  window.firebaseServices = {
+    auth,
+    db,
+    googleProvider
+  };
+  
+  firebaseInitialized = true;
+  
+} catch (error) {
+  console.error('Error al inicializar Firebase:', error);
+  throw error;
 }
 
 // Inicializar Firebase cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        await initializeFirebase();
         // Aquí puedes agregar código que dependa de Firebase
     } catch (error) {
         console.error('Error al inicializar la aplicación:', error);

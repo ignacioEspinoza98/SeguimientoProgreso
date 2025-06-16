@@ -1,53 +1,26 @@
 <?php
-require_once __DIR__ . '/config.php';
-
-// Validar origen de la petición
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-$allowedOrigins = ALLOWED_ORIGINS;
-
-// Configurar cabeceras CORS
-if (in_array($origin, $allowedOrigins)) {
-    header("Access-Control-Allow-Origin: $origin");
-    header('Access-Control-Allow-Methods: GET, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type');
-    header('Access-Control-Allow-Credentials: true');
-}
-
-// Manejar solicitudes OPTIONS (preflight)
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204);
-    exit;
-}
-
-// Validar método de la petición
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-    http_response_code(405);
-    header('Content-Type: application/json');
-    echo json_encode(['error' => 'Método no permitido']);
-    exit;
-}
-
-// Validar origen
-if (!in_array($origin, $allowedOrigins)) {
-    http_response_code(403);
-    header('Content-Type: application/json');
-    echo json_encode(['error' => 'Origen no autorizado']);
-    exit;
-}
-
-// Obtener la configuración de Firebase
-$firebaseConfig = FIREBASE_CONFIG;
-
-// Devolver solo la configuración necesaria para el cliente
-$response = [
-    'apiKey' => $firebaseConfig['apiKey'],
-    'authDomain' => $firebaseConfig['authDomain'],
-    'projectId' => $firebaseConfig['projectId'],
-    'storageBucket' => $firebaseConfig['storageBucket'],
-    'messagingSenderId' => $firebaseConfig['messagingSenderId'],
-    'appId' => $firebaseConfig['appId']
-];
-
-// Enviar respuesta
 header('Content-Type: application/json');
-echo json_encode($response);
+
+try {
+    require_once __DIR__ . '/config.php';
+    
+    if (!defined('FIREBASE_API_KEY')) {
+        throw new Exception('Configuración de Firebase no definida');
+    }
+    
+    echo json_encode([
+        'apiKey' => FIREBASE_API_KEY,
+        'authDomain' => FIREBASE_AUTH_DOMAIN,
+        'databaseURL' => FIREBASE_DATABASE_URL,
+        'projectId' => FIREBASE_PROJECT_ID,
+        'storageBucket' => FIREBASE_STORAGE_BUCKET,
+        'messagingSenderId' => FIREBASE_MESSAGING_SENDER_ID,
+        'appId' => FIREBASE_APP_ID,
+        'measurementId' => FIREBASE_MEASUREMENT_ID
+    ]);
+    
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
+}
+?>

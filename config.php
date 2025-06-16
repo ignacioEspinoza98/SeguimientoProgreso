@@ -20,15 +20,15 @@ if (file_exists(ENV_FILE)) {
 }
 
 // Configuración de Firebase
-define('FIREBASE_CONFIG', [
-    'apiKey' => getenv('FIREBASE_API_KEY'),
-    'authDomain' => getenv('FIREBASE_AUTH_DOMAIN'),
-    'projectId' => getenv('FIREBASE_PROJECT_ID'),
-    'storageBucket' => getenv('FIREBASE_STORAGE_BUCKET'),
-    'messagingSenderId' => getenv('FIREBASE_MESSAGING_SENDER_ID'),
-    'appId' => getenv('FIREBASE_APP_ID')
-]);
+define('FIREBASE_API_KEY', getenv('FIREBASE_API_KEY'));
+define('FIREBASE_AUTH_DOMAIN', getenv('FIREBASE_AUTH_DOMAIN'));
+define('FIREBASE_DATABASE_URL', getenv('FIREBASE_DATABASE_URL'));
+define('FIREBASE_PROJECT_ID', getenv('FIREBASE_PROJECT_ID'));
+define('FIREBASE_STORAGE_BUCKET', getenv('FIREBASE_STORAGE_BUCKET'));
+define('FIREBASE_MESSAGING_SENDER_ID', getenv('FIREBASE_MESSAGING_SENDER_ID'));
+define('FIREBASE_APP_ID', getenv('FIREBASE_APP_ID'));
+define('FIREBASE_MEASUREMENT_ID', getenv('FIREBASE_MEASUREMENT_ID'));
 
 // Dominios permitidos
-$allowedOrigins = array_map('trim', explode(',', getenv('ALLOWED_ORIGINS')));
+$allowedOrigins = explode(',', getenv('ALLOWED_ORIGINS'));
 define('ALLOWED_ORIGINS', $allowedOrigins);
