@@ -1,3 +1,14 @@
+document.addEventListener("DOMContentLoaded", () => {
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user) {
+      console.warn("Usuario no autenticado, redirigiendo al login...");
+      window.location.href = "/SeguimientoProgreso/frontend/html/InicioSesion.html";
+    } else {
+      console.log("Usuario autenticado al cargar la página:", user.uid);
+    }
+  });
+});
+
 // Variables globales
 let ejerciciosSesion = [];
 let editando = false;
@@ -418,133 +429,100 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Función para guardar el entrenamiento en Firestore
-  async function guardarEntrenamientoEnHistorial() {
-    try {
-      if (ejerciciosSesion.length === 0) {
-        console.log('No hay ejercicios para guardar');
-        return false;
-      }
-      
-      console.log('Iniciando guardado de sesión...');
-      
-      // Verificar si la función de guardar está disponible
-      if (typeof firebaseGuardarSesion !== 'function') {
-        const errorMsg = 'La función guardarSesion no está disponible';
-        console.error(errorMsg);
-        throw new Error(errorMsg);
-      }
-      
-      // Crear el objeto de sesión con los ejercicios
-      const sesion = {
-        fecha: new Date().toISOString().split('T')[0], // Formato YYYY-MM-DD
-        ejercicios: ejerciciosSesion.map(ejercicio => ({
-          nombre: ejercicio.nombre || 'Ejercicio sin nombre',
-          grupo: ejercicio.grupo || 'Sin grupo',
-          peso: parseFloat(ejercicio.peso) || 0,
-          repeticiones: parseInt(ejercicio.repeticiones) || 0,
-          series: parseInt(ejercicio.series) || 0
-        })),
-        volumenTotal: ejerciciosSesion.reduce((total, ejercicio) => {
-          const peso = parseFloat(ejercicio.peso) || 0;
-          const repeticiones = parseInt(ejercicio.repeticiones) || 0;
-          const series = parseInt(ejercicio.series) || 0;
-          return total + (peso * repeticiones * series);
-        }, 0)
-      };
-      
-      console.log('Datos de la sesión a guardar:', JSON.stringify(sesion, null, 2));
-      
-      // Guardar en Firestore (el ID del usuario se obtendrá automáticamente)
-      await firebaseGuardarSesion(null, sesion);
-      console.log('Sesión guardada exitosamente en Firestore');
-      
-      // Limpiar la sesión actual después de guardar
-      ejerciciosSesion = [];
-      localStorage.removeItem("sesion_entrenamiento");
-      actualizarTabla();
-      
-      // Mostrar mensaje de éxito
-      if (typeof firebaseMostrarError === 'function') {
-        firebaseMostrarError({ message: 'Sesión guardada exitosamente' });
-      } else {
-        alert('Sesión guardada exitosamente');
-      }
-      
-      return true;
-    } catch (error) {
-      console.error('Error al guardar la sesión en Firestore:', error);
-      
-      // Mostrar error al guardar
-      const errorMessage = 'Error al guardar la sesión: ' + (error.message || 'Error desconocido');
-      if (typeof firebaseMostrarError === 'function') {
-        firebaseMostrarError({
-          code: 'firebase/save-error',
-          message: errorMessage
-        });
-      } else {
-        console.error(errorMessage);
-        alert(errorMessage);
-      }
-      
-      return false;
+  function guardarEntrenamientoEnHistorial() {
+    if (ejerciciosSesion.length === 0) {
+      alert('No hay ejercicios para guardar');
+      return;
     }
+
+    const botonFinalizar = document.getElementById("finalizarSesion");
+    botonFinalizar.disabled = true;
+    botonFinalizar.textContent = 'Guardando...';
+
+    const sesion = {
+      fecha: new Date().toISOString().split('T')[0],
+      ejercicios: ejerciciosSesion.map(ejercicio => ({
+        nombre: ejercicio.nombre || 'Ejercicio sin nombre',
+        grupo: ejercicio.grupo || 'Sin grupo',
+        peso: parseFloat(ejercicio.peso) || 0,
+        repeticiones: parseInt(ejercicio.repeticiones) || 0,
+        series: parseInt(ejercicio.series) || 0
+      })),
+      volumenTotal: ejerciciosSesion.reduce((total, ejercicio) => {
+        const peso = parseFloat(ejercicio.peso) || 0;
+        const repeticiones = parseInt(ejercicio.repeticiones) || 0;
+        const series = parseInt(ejercicio.series) || 0;
+        return total + (peso * repeticiones * series);
+      }, 0)
+    };
+
+    console.log('Datos de la sesión a guardar:', JSON.stringify(sesion, null, 2));
+
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        console.log("Usuario autenticado por onAuthStateChanged:", user.uid);
+
+        try {
+          await firebaseGuardarSesion(user.uid, sesion);
+          console.log('Sesión guardada exitosamente en Firestore');
+
+          // Limpiar la sesión
+          ejerciciosSesion = [];
+          localStorage.removeItem("sesion_entrenamiento");
+          actualizarTabla();
+
+          // Mostrar mensaje de éxito
+          if (typeof Swal !== 'undefined') {
+            await Swal.fire({
+              icon: 'success',
+              title: 'Éxito',
+              text: 'Sesión guardada exitosamente',
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#0d6efd'
+            });
+          } else {
+            alert('Sesión guardada exitosamente');
+          }
+
+          // Redirigir al dashboard
+          window.location.href = 'Dashboard.html';
+
+        } catch (error) {
+          console.error('Error al guardar la sesión con usuario activo:', error);
+          const errorMessage = 'Error al guardar la sesión: ' + (error.message || 'Error desconocido');
+          botonFinalizar.disabled = false;
+          botonFinalizar.textContent = 'Finalizar Sesión';
+
+          if (typeof firebaseMostrarError === 'function') {
+            firebaseMostrarError({ code: 'firebase/save-error', message: errorMessage });
+          } else {
+            alert(errorMessage);
+          }
+        }
+      } else {
+        console.error("No hay usuario autenticado (onAuthStateChanged)");
+        const errorMessage = "No se pudo guardar la sesión porque no hay usuario autenticado.";
+        botonFinalizar.disabled = false;
+        botonFinalizar.textContent = 'Finalizar Sesión';
+
+        if (typeof firebaseMostrarError === 'function') {
+          firebaseMostrarError({ code: 'firebase/no-auth', message: errorMessage });
+        } else {
+          alert(errorMessage);
+        }
+      }
+    });
   }
 
   // Evento para el botón Finalizar Sesión
-  document.getElementById("finalizarSesion")?.addEventListener("click", async () => {
+  document.getElementById("finalizarSesion")?.addEventListener("click", () => {
     if (ejerciciosSesion.length === 0) {
       alert("No hay ejercicios en la sesión para guardar.");
       return;
     }
-    
+
     if (confirm("¿Estás seguro de que deseas finalizar la sesión de entrenamiento?")) {
-      const botonFinalizar = document.getElementById("finalizarSesion");
-      botonFinalizar.disabled = true;
-      botonFinalizar.textContent = 'Guardando...';
-      
-      try {
-        const guardadoExitoso = await guardarEntrenamientoEnHistorial();
-        
-        if (guardadoExitoso) {
-          // Limpiar la sesión actual
-          ejerciciosSesion = [];
-          localStorage.removeItem("sesion_entrenamiento");
-          actualizarTabla();
-          
-          // Mostrar mensaje de éxito
-          const mensajeExito = document.createElement('div');
-          
-          // Habilitar el botón nuevamente
-          botonFinalizar.disabled = false;
-          botonFinalizar.textContent = 'Finalizar Sesión';
-          mensajeExito.className = 'mensaje-exito';
-          mensajeExito.textContent = '¡Sesión de entrenamiento guardada exitosamente!';
-          document.querySelector('.resumen-acciones').appendChild(mensajeExito);
-          
-          // Redirigir después de 1.5 segundos
-          setTimeout(() => {
-            window.location.href = 'Dashboard.html';
-          }, 1500);
-          
-          // Ocultar el mensaje después de 0.5 segundos
-          setTimeout(() => {
-            mensajeExito.style.opacity = '0';
-            setTimeout(() => mensajeExito.remove(), 500);
-          }, 500);
-        } else {
-          throw new Error('No se pudo guardar la sesión');
-        }
-      } catch (error) {
-        console.error('Error al guardar la sesión:', error);
-        // Habilitar el botón en caso de error
-        botonFinalizar.disabled = false;
-        botonFinalizar.textContent = 'Finalizar Sesión';
-        
-        mostrarError({
-          code: 'firebase/error',
-          message: 'Error al guardar la sesión. Intenta nuevamente.'
-        });
-      }
+      guardarEntrenamientoEnHistorial();
     }
   });
   

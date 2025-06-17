@@ -219,17 +219,14 @@ function loginWithEmail(email, password) {
 async function guardarSesion(usuarioId, sesion) {
     try {
         console.log('Iniciando guardado de sesión...');
-        
-        // Obtener el ID del usuario del sessionStorage
+
         const usuarioLogueado = sessionStorage.getItem('usuario');
         let idUsuario = usuarioId;
-        
-        // Si no se proporciona un ID de usuario, usar el del sessionStorage
+
         if (!idUsuario && usuarioLogueado) {
             try {
                 const usuarioInfo = JSON.parse(usuarioLogueado);
-                // Usar el email como ID del usuario si está disponible
-                idUsuario = usuarioInfo.email || usuarioInfo.uid || 'usuario_desconocido';
+                idUsuario = usuarioInfo.uid || 'usuario_desconocido'; // usa el UID
                 console.log('Usuario logueado (sessionStorage):', idUsuario);
             } catch (e) {
                 console.error('Error al parsear usuario del sessionStorage:', e);
@@ -240,39 +237,51 @@ async function guardarSesion(usuarioId, sesion) {
             console.log('Contenido de sessionStorage:', JSON.stringify(sessionStorage, null, 2));
             idUsuario = 'usuario_desconocido';
         }
-        
-        console.log('Usuario ID a usar:', idUsuario);
-        
-        // Preparar los datos según la estructura de la base de datos
+
+        console.log('Usuario ID a usar (UID):', idUsuario);
+
+        // Preparar datos de la sesión
         const datosSesion = {
             ejercicios: sesion.ejercicios || [],
             fecha: sesion.fecha || new Date().toISOString().split('T')[0],
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             usuarioId: idUsuario,
-            email: idUsuario !== 'usuario_desconocido' ? idUsuario : null
+            email: sesion.email || null  // solo si lo necesitas
         };
-        
+
         console.log('Datos de la sesión a guardar:', JSON.stringify(datosSesion, null, 2));
-        
+
         if (!firebaseInitialized) {
             const error = new Error('Firebase no está inicializado');
             console.error('Error en guardarSesion:', error);
             throw error;
         }
-        
-        // Verificar que db esté definido
+
         if (!db) {
             const error = new Error('La instancia de Firestore no está disponible');
             console.error('Error en guardarSesion:', error);
             throw error;
         }
-        
+
+        // ✅ Verificar autenticación activa y coincidencia de UID
+        if (!auth.currentUser) {
+            const error = new Error("No hay usuario autenticado en auth.currentUser");
+            console.error(error);
+            throw error;
+        }
+
+        if (auth.currentUser.uid !== idUsuario) {
+            const error = new Error("El UID del usuario no coincide con el usuarioId que se quiere guardar");
+            console.error(error);
+            throw error;
+        }
+
         console.log('Intentando guardar en Firestore...');
         const docRef = await db.collection('SesionesEntrenamiento').add(datosSesion);
-            
+
         console.log('Sesión guardada con ID:', docRef.id);
-        console.log('Colección: SesionesEntrenamiento');
         return docRef.id;
+
     } catch (error) {
         console.error('Error al guardar la sesión:', error);
         throw error;
@@ -285,16 +294,14 @@ async function obtenerHistorial(usuarioId, limite = 30) {
         if (!firebaseInitialized) {
             throw new Error('Firebase no está inicializado');
         }
-        
-        // Obtener el ID del usuario del sessionStorage si no se proporciona un ID
+
         let idUsuario = usuarioId;
         if (!idUsuario) {
             const usuarioLogueado = sessionStorage.getItem('usuario');
             if (usuarioLogueado) {
                 try {
                     const usuarioInfo = JSON.parse(usuarioLogueado);
-                    // Usar el email como ID del usuario si está disponible
-                    idUsuario = usuarioInfo.email || usuarioInfo.uid || 'usuario_desconocido';
+                    idUsuario = usuarioInfo.uid || 'usuario_desconocido'; // usa el UID
                     console.log('Usuario logueado (sessionStorage):', idUsuario);
                 } catch (e) {
                     console.error('Error al parsear usuario del sessionStorage:', e);
@@ -302,20 +309,18 @@ async function obtenerHistorial(usuarioId, limite = 30) {
                 }
             } else {
                 console.warn('No se encontró usuario en sessionStorage');
-                console.log('Contenido de sessionStorage:', JSON.stringify(sessionStorage, null, 2));
                 idUsuario = 'usuario_desconocido';
             }
         }
-        
-        console.log('Obteniendo historial para usuario:', idUsuario);
-        
-        // Obtener las sesiones del usuario ordenadas por fecha descendente
+
+        console.log('Obteniendo historial para usuario (UID):', idUsuario);
+
         const querySnapshot = await db.collection('SesionesEntrenamiento')
             .where('usuarioId', '==', idUsuario)
             .orderBy('timestamp', 'desc')
             .limit(limite)
             .get();
-            
+
         const sesiones = [];
         querySnapshot.forEach(doc => {
             sesiones.push({
@@ -323,26 +328,13 @@ async function obtenerHistorial(usuarioId, limite = 30) {
                 ...doc.data()
             });
         });
-        
+
         console.log(`Se encontraron ${sesiones.length} sesiones para el usuario ${idUsuario}`);
         return sesiones;
+
     } catch (error) {
         console.error('Error al obtener el historial:', error);
         throw error;
     }
 }
 
-// Función global para cerrar sesión
-window.cerrarSesion = function() {
-    return auth.signOut()
-        .then(() => {
-            console.log('Sesión cerrada correctamente');
-            // Limpiar cualquier estado de la aplicación si es necesario
-            localStorage.clear();
-            sessionStorage.clear();
-        })
-        .catch((error) => {
-            console.error('Error al cerrar sesión:', error);
-            throw error;
-        });
-};
