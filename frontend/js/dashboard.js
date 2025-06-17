@@ -1,3 +1,10 @@
+const db = window.firebaseServices?.db;
+const auth = window.firebaseServices?.auth;
+
+if (!auth || !db) {
+  console.error("Firebase no está correctamente inicializado");
+}
+
 // Función para actualizar el resumen de la última sesión
 async function actualizarResumenUltimaSesion() {
   console.log('=== INICIO actualizarResumenUltimaSesion ===');

@@ -15,14 +15,13 @@ const actionCodeSettings = {
 
 // Configuración directa de Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyByrdHaP_yKxZqqJ-knXXPaet--KB2GlRQ",
-  authDomain: "progresogym-7a7a9.firebaseapp.com",
-  databaseURL: "https://progresogym-7a7a9-default-rtdb.firebaseio.com",
-  projectId: "progresogym-7a7a9",
-  storageBucket: "progresogym-7a7a9.firebasestorage.app",
-  messagingSenderId: "563354960322",
-  appId: "1:563354960322:web:b9b196460d811cdaf4965b",
-  measurementId: "G-E0ZXJQ6P66"
+    apiKey: "AIzaSyBTN3BZblwUYqqejsSMIArMs-SNxnkaIL4",
+    authDomain: "seguimientoprogreso.firebaseapp.com",
+    projectId: "seguimientoprogreso",
+    storageBucket: "seguimientoprogreso.appspot.com",
+    messagingSenderId: "563354960322",
+    appId: "1:563354960322:web:b9b196460d811cdaf4965b",
+    measurementId: "G-E0ZXJQ6P66"
 };
 
 // Inicialización inmediata
@@ -51,19 +50,6 @@ try {
   console.error('Error al inicializar Firebase:', error);
   throw error;
 }
-
-// Inicializar Firebase cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        // Aquí puedes agregar código que dependa de Firebase
-    } catch (error) {
-        console.error('Error al inicializar la aplicación:', error);
-        mostrarError({
-            code: 'firebase/initialization-error',
-            message: 'No se pudo conectar con el servidor. Por favor, recarga la página.'
-        });
-    }
-});
 
 // Función global para mostrar errores
 window.mostrarError = function(error) {
@@ -159,6 +145,7 @@ window.loginWithGoogle = async function() {
         // 3. Guardar información del usuario en sessionStorage
         const usuario = {
             nombre: result.user.displayName || result.user.email.split('@')[0],
+            usuario: user.displayName || user.email.split('@')[0],
             email: result.user.email,
             emailVerificado: result.user.emailVerified,
             uid: result.user.uid,
@@ -359,19 +346,3 @@ window.cerrarSesion = function() {
             throw error;
         });
 };
-
-// Verificar y cerrar sesión al cargar las páginas de autenticación
-if (window.location.pathname.includes('InicioSesion.html') || 
-    window.location.pathname.includes('Registro.html') ||
-    window.location.pathname === '/') {
-    
-    // Cerrar sesión si hay un usuario autenticado
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            console.log('Usuario autenticado detectado en página de autenticación, cerrando sesión...');
-            cerrarSesion().catch(error => {
-                console.error('Error al forzar cierre de sesión:', error);
-            });
-        }
-    });
-}
