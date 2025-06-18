@@ -88,19 +88,6 @@ html {
   font-size: 16px;
 }
 
-body {
-  margin: 0;
-  background-color: var(--color-fondo);
-  color: var(--color-texto);
-  font-family: var(--fuente-principal);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--fuente-secundaria);
   font-weight: 700;
@@ -251,42 +238,6 @@ main {
   line-height: 1.2;
 }
 
-.seccion-bienvenida p {
-  color: var(--color-texto-secundario);
-  font-size: 1.1rem;
-  line-height: 1.6;
-  opacity: 0.9;
-}
-
-/* Filtros */
-.filtros {
-  background-color: var(--color-fondo-secundario);
-  border-radius: var(--borde-radio);
-  padding: var(--espaciado-lg);
-  margin-bottom: var(--espaciado-xl);
-  border: var(--borde);
-  box-shadow: var(--sombra);
-}
-
-.filtros-titulo {
-  font-size: 1.25rem;
-  margin-bottom: var(--espaciado-md);
-  color: var(--color-texto);
-  display: flex;
-  align-items: center;
-  gap: var(--espaciado-xs);
-}
-
-.filtros-titulo i {
-  color: var(--color-primario);
-}
-
-.filtros-contenedor {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--espaciado-md);
-}
-
 .grupo-filtro {
   margin-bottom: 0;
 }
@@ -429,9 +380,15 @@ select:disabled, input:disabled {
 
 /* Lista de entrenamientos */
 .entrenamientos-lista {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  max-height: 600px; 
+  overflow-y: auto;
+  padding-right: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  background-color: var(--color-fondo-secundario);
 }
 
 /* Training item styles */
@@ -450,7 +407,7 @@ select:disabled, input:disabled {
 .entrenamiento-fecha {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #333;
+  color: #fff;
   margin-bottom: 1rem;
 }
 
@@ -542,7 +499,6 @@ h1 {
     font-weight: 700;
     letter-spacing: -0.5px;
     position: relative;
-    display: inline-block;
     left: 50%;
     transform: translateX(-50%);
     padding-bottom: 0.8rem;
@@ -559,19 +515,6 @@ h1::after {
     border-radius: 3px;
 }
 
-/* Filtros */
-.filtros {
-    display: flex;
-    gap: 1.2rem;
-    margin-bottom: 2.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    background-color: var(--color-secundario);
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: var(--sombra);
-}
-
 .filtro-grupo, .filtro-fecha, .ordenar {
     flex: 1;
     min-width: 200px;
@@ -583,24 +526,6 @@ label {
     color: var(--color-acento);
     font-weight: 500;
     font-size: 0.95rem;
-}
-
-select {
-    width: 100%;
-    padding: 0.7rem 1rem;
-    border: 1px solid var(--color-borde);
-    background-color: var(--color-primario);
-    color: var(--color-texto);
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff6b00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 0.7em top 50%;
-    background-size: 1.2em;
-    padding-right: 2.5em;
 }
 
 select:focus {
@@ -705,4 +630,200 @@ select:hover {
   .entrenamiento-detalles {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+/* ===== HISTORIAL DE ENTRENAMIENTOS ===== */
+:root {
+  --espaciado-xs: 0.5rem;
+  --espaciado-sm: 1rem;
+  --espaciado-md: 1.5rem;
+  --espaciado-lg: 2rem;
+  --espaciado-xl: 3rem;
+  --borde-radio: 10px;
+  --borde: 1px solid rgba(255, 255, 255, 0.05);
+  --sombra: 0 4px 20px rgba(0, 0, 0, 0.2);
+  --color-fondo: #0d0d0d;
+  --color-fondo-secundario: #1a1a1a;
+  --color-fondo-terciario: #222;
+  --color-texto: #f5f5f5;
+  --color-texto-secundario: #ccc;
+  --color-texto-terciario: #888;
+  --color-primario: #f57c00;
+  --color-secundario: #ffb74d;
+  --gradiente: linear-gradient(135deg, #f57c00, #ffb74d);
+}
+
+body {
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--espaciado-lg);
+  padding-top: calc(70px + var(--espaciado-lg));
+}
+
+.seccion-bienvenida {
+  text-align: center;
+  margin-bottom: var(--espaciado-xl);
+}
+
+.seccion-bienvenida .saludo {
+  font-size: 2.5rem;
+  font-weight: bold;
+  background: var(--gradiente);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: var(--espaciado-sm);
+}
+
+.seccion-bienvenida p {
+  color: var(--color-texto-secundario);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.filtros {
+  background-color: var(--color-fondo-secundario);
+  padding: var(--espaciado-lg);
+  border-radius: var(--borde-radio);
+  box-shadow: var(--sombra);
+  margin-bottom: var(--espaciado-xl);
+}
+
+.filtros-contenedor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--espaciado-md);
+}
+
+.filtros-titulo {
+  font-size: 1.2rem;
+  margin-bottom: var(--espaciado-md);
+  color: var(--color-primario);
+}
+
+select {
+  background-color: var(--color-fondo-terciario);
+  color: var(--color-texto);
+  border: var(--borde);
+  padding: 0.6rem 1rem;
+  border-radius: var(--borde-radio);
+  width: 100%;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23f57c00' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(245, 124, 0, 0.2);
+}
+
+.estadisticas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--espaciado-md);
+  margin-bottom: var(--espaciado-xl);
+}
+
+.estadistica-card {
+  background-color: var(--color-fondo-secundario);
+  padding: var(--espaciado-md);
+  border-radius: var(--borde-radio);
+  box-shadow: var(--sombra);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.estadistica-card:hover {
+  transform: translateY(-4px);
+}
+
+.estadistica-titulo {
+  color: var(--color-primario);
+  font-size: 0.9rem;
+  margin-bottom: var(--espaciado-xs);
+}
+
+.estadistica-valor {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.estadistica-descripcion {
+  color: var(--color-texto-secundario);
+  font-size: 0.85rem;
+}
+
+.entrenamientos-lista {
+  max-height: 500px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaciado-md);
+  padding-right: 10px;
+}
+
+.entrenamiento-card {
+  background-color: var(--color-fondo-secundario);
+  border: var(--borde);
+  padding: var(--espaciado-md);
+  border-radius: var(--borde-radio);
+  box-shadow: var(--sombra);
+  transition: transform 0.2s ease;
+}
+
+.entrenamiento-card:hover {
+  transform: translateY(-3px);
+}
+
+.entrenamiento-header {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-texto);
+  margin-bottom: var(--espaciado-sm);
+  font-weight: bold;
+}
+
+.ejercicios-lista {
+  list-style: none;
+  padding-left: 1rem;
+  color: var(--color-texto-secundario);
+}
+
+.ejercicio-item strong {
+  color: var(--color-primario);
+}
+
+.sin-resultados {
+  text-align: center;
+  padding: var(--espaciado-xl);
+  color: var(--color-texto-terciario);
+}
+
+.sin-resultados i {
+  font-size: 2.5rem;
+  opacity: 0.5;
+  margin-bottom: var(--espaciado-sm);
+}
+
+.acciones-exportar {
+  display: flex;
+  justify-content: center;
+  gap: var(--espaciado-md);
+}
+
+.acciones-exportar .boton {
+  font-size: 0.9rem;
+  padding: 0.75rem 1.25rem;
 }
