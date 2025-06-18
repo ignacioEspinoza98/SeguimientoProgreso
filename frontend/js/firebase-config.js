@@ -41,7 +41,8 @@ try {
   window.firebaseServices = {
     auth,
     db,
-    googleProvider
+    googleProvider,
+    obtenerHistorial 
   };
   
   firebaseInitialized = true;

@@ -350,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!ejercicio || isNaN(peso) || isNaN(repeticiones) || isNaN(series)) return;
 
-    const nuevoEjercicio = { grupoMuscular, ejercicio, peso, repeticiones, series };
+    const nuevoEjercicio = { nombre: ejercicio, grupo: grupoMuscular, peso, repeticiones, series };
 
     if (editando) {
       ejerciciosSesion[indexEditando] = nuevoEjercicio;
