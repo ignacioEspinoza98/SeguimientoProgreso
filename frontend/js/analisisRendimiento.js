@@ -59,8 +59,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const vista = selectVista.value;
       const filtroDias = selectTiempo.value;
 
-      if (!ejercicioSeleccionado) return;
+      // Limpiar gráfico si se selecciona "Todos los ejercicios"
+      if (ejercicioSeleccionado === "Todos los ejercicios") {
+        if (chart) {
+          chart.destroy();
+          chart = null;
+        }
 
+        // Limpiar los elementos de texto
+        document.getElementById("contadorSesiones").textContent = "Selecciona un ejercicio para ver el gráfico.";
+        document.getElementById("evolucionPorcentual").innerHTML = "";
+
+        return; // No seguir procesando
+      }
+
+      // Resto de la lógica (sin cambios)
       const datosFiltrados = [];
       const ahora = new Date();
       const limiteDias = filtroDias === "historial" ? null : parseInt(filtroDias);
