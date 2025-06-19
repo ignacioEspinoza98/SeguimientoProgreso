@@ -180,178 +180,101 @@ function llenarSelectores() {
   }
 }
 
-// Función para configurar la aplicación
-console.log('Script registroEntrenamientos.js cargado');
-
 document.addEventListener("DOMContentLoaded", () => {
   console.log('Evento DOMContentLoaded disparado');
   console.log('DOM completamente cargado');
-  // Cargar ejercicios por grupo
   cargarEjerciciosPorGrupo();
-  
-  // Configurar el resto de la aplicación
+
   const formulario = document.getElementById("formulario-entrenamiento");
-  if (!formulario) {
-    console.error('No se encontró el formulario');
-    return;
-  }
-  
   const selectGrupo = document.getElementById("grupoMuscular");
   const selectEjercicio = document.getElementById("ejercicio");
-  
-  if (!selectGrupo || !selectEjercicio) {
-    console.error('No se encontraron los selectores de grupo o ejercicio');
-    return;
-  }
-  const pesoInput = document.getElementById("peso");
-  const repeticionesInput = document.getElementById("repeticiones");
   const seriesInput = document.getElementById("series");
+  const contenedorSeries = document.getElementById("series-dinamicas");
   const botonAgregar = formulario.querySelector("button[type='submit']");
-  
-  // Verificar si hay un ejercicio seleccionado previamente
-  const ejercicioSeleccionado = sessionStorage.getItem('ejercicioSeleccionado');
-  if (ejercicioSeleccionado) {
-    try {
-      const ejercicio = JSON.parse(ejercicioSeleccionado);
-      // Seleccionar el grupo muscular
-      selectGrupo.value = ejercicio.grupo;
-      // Disparar el evento change para cargar los ejercicios
-      const event = new Event('change');
-      selectGrupo.dispatchEvent(event);
-      
-      // Esperar un momento para que se carguen los ejercicios
-      setTimeout(() => {
-        selectEjercicio.value = ejercicio.nombre;
-        // Limpiar el ejercicio seleccionado para futuras cargas
-        sessionStorage.removeItem('ejercicioSeleccionado');
-      }, 100);
-    } catch (e) {
-      console.error('Error al cargar el ejercicio seleccionado:', e);
-      sessionStorage.removeItem('ejercicioSeleccionado');
-    }
-  }
-  
-  // Cargar ejercicios guardados en la sesión actual al iniciar
-  const sesionGuardada = localStorage.getItem("sesion_entrenamiento");
-  if (sesionGuardada) {
-    try {
-      ejerciciosSesion = JSON.parse(sesionGuardada);
-      // Mover la llamada a actualizarTabla después de que se haya definido
-      setTimeout(() => actualizarTabla(), 0);
-    } catch (e) {
-      console.error('Error al cargar la sesión guardada:', e);
-    }
-  }
+  const tabla = document.getElementById("tabla-resumen").querySelector("tbody");
+  const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
+  const claveHistorial = "historial_" + usuario.nombre.toLowerCase();
 
-  const errorPeso = document.getElementById("errorPeso");
-  const errorReps = document.getElementById("errorRepeticiones");
-  const errorSeries = document.getElementById("errorSeries");
+  if (!formulario || !selectGrupo || !selectEjercicio || !seriesInput || !contenedorSeries) return;
 
-  console.log('Configurando selectores...');
-  
-  // Llenar el selector de grupos musculares
+  let ejerciciosSesion = [];
+  let editando = false;
+  let indexEditando = null;
+
   selectGrupo.innerHTML = '<option value="">Selecciona un grupo muscular</option>';
-  
-  // Llenar con los grupos musculares disponibles
   Object.keys(ejerciciosPorGrupo).forEach(grupo => {
     const opt = document.createElement('option');
     opt.value = grupo;
     opt.textContent = grupo;
     selectGrupo.appendChild(opt);
   });
-  
-  console.log('Grupos musculares cargados:', Object.keys(ejerciciosPorGrupo));
 
   selectGrupo.addEventListener("change", () => {
     const grupo = selectGrupo.value;
     selectEjercicio.innerHTML = '<option value="">Selecciona un ejercicio</option>';
-
     if (!grupo) {
       selectEjercicio.disabled = true;
       return;
     }
-
     ejerciciosPorGrupo[grupo].forEach(nombre => {
       const opt = document.createElement("option");
       opt.value = nombre;
       opt.textContent = nombre;
       selectEjercicio.appendChild(opt);
     });
-
     selectEjercicio.disabled = false;
-    verificarFormulario();
   });
-
-  function validarCampo(input, errorElement, nombreCampo) {
-    const valor = input.value.trim();
-
-    if (valor === "") {
-      input.classList.remove("error", "validado");
-      errorElement.textContent = "";
-      return false;
-    }
-
-    const numero = Number(valor);
-    if (isNaN(numero) || numero <= 0) {
-      input.classList.add("error");
-      input.classList.remove("validado");
-      errorElement.textContent = `${nombreCampo} debe ser mayor a 0`;
-      return false;
-    } else {
-      input.classList.remove("error");
-      input.classList.add("validado");
-      errorElement.textContent = "";
-      return true;
-    }
-  }
 
   function verificarFormulario() {
-    const pesoValido = validarCampo(pesoInput, errorPeso, "Peso");
-    const repValido = validarCampo(repeticionesInput, errorReps, "Repeticiones");
-    const seriesValido = validarCampo(seriesInput, errorSeries, "Series");
+    const grupoValido = selectGrupo.value.trim() !== "";
     const ejercicioValido = selectEjercicio.value.trim() !== "";
 
-    botonAgregar.disabled = !(pesoValido && repValido && seriesValido && ejercicioValido);
+    const seriesValidas = Array.from(contenedorSeries.querySelectorAll(".peso-serie")).every(input => input.value > 0) &&
+                          Array.from(contenedorSeries.querySelectorAll(".reps-serie")).every(input => input.value > 0);
+
+    botonAgregar.disabled = !(grupoValido && ejercicioValido && seriesValidas);
   }
 
-  [pesoInput, repeticionesInput, seriesInput, selectEjercicio].forEach(input => {
-    input.addEventListener("input", verificarFormulario);
-    input.addEventListener("change", verificarFormulario);
-  });
+  seriesInput.addEventListener("input", () => {
+    const cantidad = parseInt(seriesInput.value);
+    contenedorSeries.innerHTML = "";
+    if (isNaN(cantidad) || cantidad <= 0) return;
 
-  const tabla = document.getElementById("tabla-resumen").querySelector("tbody");
-  const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
-  const claveHistorial = "historial_" + usuario.nombre.toLowerCase();
-
-  // Inicializar ejerciciosSesion si no existe
-  if (!ejerciciosSesion || !Array.isArray(ejerciciosSesion)) {
-    ejerciciosSesion = [];
-  }
-  
-  // Restaurar la sesión guardada si existe
-  try {
-    const sesionGuardada = localStorage.getItem("sesion_entrenamiento");
-    if (sesionGuardada) {
-      ejerciciosSesion = JSON.parse(sesionGuardada);
+    for (let i = 0; i < cantidad; i++) {
+      const grupo = document.createElement("div");
+      grupo.className = "input-grupo-serie";
+      grupo.innerHTML = `
+        <div class="input-contenedor">
+          <label>Peso (kg) - Serie ${i + 1}</label>
+          <input type="number" class="peso-serie" required min="0" step="0.5" />
+        </div>
+        <div class="input-contenedor">
+          <label>Repeticiones - Serie ${i + 1}</label>
+          <input type="number" class="reps-serie" required min="1" />
+        </div>
+      `;
+      contenedorSeries.appendChild(grupo);
     }
-  } catch (error) {
-    console.error('Error al cargar la sesión guardada:', error);
-    ejerciciosSesion = [];
-  }
+
+    agregarListenersDinamicos();
+    verificarFormulario(); // Se vuelve a evaluar si el botón se puede activar
+  });
 
   formulario.addEventListener("submit", e => {
     e.preventDefault();
+    const grupo = selectGrupo.value;
+    const ejercicio = selectEjercicio.value;
+    const seriesDOM = contenedorSeries.querySelectorAll(".input-grupo-serie");
 
-    const grupoMuscular = selectGrupo.value;
-    const ejercicio = selectEjercicio.value.trim();
-    const peso = parseFloat(pesoInput.value);
-    const repeticiones = parseInt(repeticionesInput.value);
-    const series = parseInt(seriesInput.value);
+    const series = Array.from(seriesDOM).map(serie => {
+      const peso = parseFloat(serie.querySelector(".peso-serie").value);
+      const repeticiones = parseInt(serie.querySelector(".reps-serie").value);
+      return { peso, repeticiones };
+    }).filter(s => !isNaN(s.peso) && !isNaN(s.repeticiones));
 
-    if (!ejercicio || isNaN(peso) || isNaN(repeticiones) || isNaN(series)) return;
+    if (!grupo || !ejercicio || series.length === 0) return;
 
-    const nuevoEjercicio = { nombre: ejercicio, grupo: grupoMuscular, peso, repeticiones, series };
-
+    const nuevoEjercicio = { grupo, nombre: ejercicio, series };
     if (editando) {
       ejerciciosSesion[indexEditando] = nuevoEjercicio;
       editando = false;
@@ -360,23 +283,32 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       ejerciciosSesion.push(nuevoEjercicio);
     }
-
-    actualizarTabla();
     localStorage.setItem("sesion_entrenamiento", JSON.stringify(ejerciciosSesion));
+    actualizarTabla();
     formulario.reset();
-    document.querySelectorAll("input").forEach(i => i.classList.remove("validado", "error"));
+    contenedorSeries.innerHTML = "";
     botonAgregar.disabled = true;
   });
 
+  function agregarListenersDinamicos() {
+    contenedorSeries.querySelectorAll("input").forEach(input => {
+      input.addEventListener("input", verificarFormulario);
+      input.addEventListener("change", verificarFormulario);
+    });
+  }
+
   function actualizarTabla() {
     tabla.innerHTML = "";
-    ejerciciosSesion.forEach((e, index) => {
+    ejerciciosSesion.forEach((ej, index) => {
+      const repsTotal = ej.series.reduce((acc, s) => acc + s.repeticiones, 0);
+      const volumenTotal = ej.series.reduce((acc, s) => acc + (s.peso * s.repeticiones), 0);
       const fila = document.createElement("tr");
       fila.innerHTML = `
-        <td>${e.grupoMuscular} - ${e.ejercicio}</td>
-        <td>${e.peso} kg</td>
-        <td>${e.repeticiones}</td>
-        <td>${e.series}</td>
+        <td>${ej.nombre} (${ej.grupo})</td>
+        <td>${ej.series.map(s => s.peso).join(", ")} kg</td>
+        <td>${ej.series.map(s => s.repeticiones).join(", ")}</td>
+        <td>${ej.series.length}</td>
+        <td>${volumenTotal.toFixed(2)} kg</td>
         <td>
           <button onclick="editarEjercicio(${index})">Editar</button>
           <button onclick="eliminarEjercicio(${index})">Eliminar</button>
@@ -384,29 +316,34 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
       tabla.appendChild(fila);
     });
+    document.getElementById("finalizarSesion").disabled = ejerciciosSesion.length === 0;
   }
+
+  window.editarEjercicio = function(index) {
+    const ej = ejerciciosSesion[index];
+    selectGrupo.value = ej.grupo;
+    selectGrupo.dispatchEvent(new Event("change"));
+    setTimeout(() => {
+      selectEjercicio.value = ej.nombre;
+    }, 100);
+    seriesInput.value = ej.series.length;
+    seriesInput.dispatchEvent(new Event("input"));
+    setTimeout(() => {
+      ej.series.forEach((s, i) => {
+        const grupo = contenedorSeries.children[i];
+        grupo.querySelector(".peso-serie").value = s.peso;
+        grupo.querySelector(".reps-serie").value = s.repeticiones;
+      });
+    }, 100);
+    editando = true;
+    indexEditando = index;
+    botonAgregar.textContent = "Actualizar ejercicio";
+  };
 
   window.eliminarEjercicio = function(index) {
     ejerciciosSesion.splice(index, 1);
     localStorage.setItem("sesion_entrenamiento", JSON.stringify(ejerciciosSesion));
     actualizarTabla();
-  };
-
-  window.editarEjercicio = function(index) {
-    const e = ejerciciosSesion[index];
-    selectGrupo.value = e.grupoMuscular;
-    selectGrupo.dispatchEvent(new Event("change"));
-    setTimeout(() => {
-      selectEjercicio.value = e.ejercicio;
-    }, 100);
-
-    pesoInput.value = e.peso;
-    repeticionesInput.value = e.repeticiones;
-    seriesInput.value = e.series;
-
-    editando = true;
-    indexEditando = index;
-    botonAgregar.textContent = "Actualizar ejercicio";
   };
 
   document.getElementById("vaciarSesion").addEventListener("click", () => {
@@ -417,102 +354,49 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const datosPrevios = JSON.parse(localStorage.getItem("sesion_entrenamiento"));
-  if (datosPrevios) {
-    ejerciciosSesion = datosPrevios;
-    actualizarTabla();
-  }
-
-  // Función para formatear la fecha como YYYY-MM-DD
-  function formatearFecha(fecha) {
-    return fecha.toISOString().split('T')[0];
-  }
-
-  // Función para guardar el entrenamiento en Firestore
-  function guardarEntrenamientoEnHistorial() {
+  document.getElementById("finalizarSesion")?.addEventListener("click", () => {
     if (ejerciciosSesion.length === 0) {
-      alert('No hay ejercicios para guardar');
+      alert("No hay ejercicios en la sesión para guardar.");
       return;
     }
-
-    const botonFinalizar = document.getElementById("finalizarSesion");
-    botonFinalizar.disabled = true;
-    botonFinalizar.textContent = 'Guardando...';
+    const boton = document.getElementById("finalizarSesion");
+    boton.disabled = true;
+    boton.textContent = "Guardando...";
 
     const sesion = {
       fecha: new Date().toISOString().split('T')[0],
-      ejercicios: ejerciciosSesion.map(ejercicio => ({
-        nombre: ejercicio.nombre || 'Ejercicio sin nombre',
-        grupo: ejercicio.grupo || 'Sin grupo',
-        peso: parseFloat(ejercicio.peso) || 0,
-        repeticiones: parseInt(ejercicio.repeticiones) || 0,
-        series: parseInt(ejercicio.series) || 0
+      ejercicios: ejerciciosSesion.map(ej => ({
+        nombre: ej.nombre,
+        grupo: ej.grupo,
+        series: ej.series.map(s => ({ peso: s.peso, repeticiones: s.repeticiones }))
       })),
-      volumenTotal: ejerciciosSesion.reduce((total, ejercicio) => {
-        const peso = parseFloat(ejercicio.peso) || 0;
-        const repeticiones = parseInt(ejercicio.repeticiones) || 0;
-        const series = parseInt(ejercicio.series) || 0;
-        return total + (peso * repeticiones * series);
-      }, 0)
+      volumenTotal: ejerciciosSesion.reduce((acc, ej) => acc + ej.series.reduce((a, s) => a + (s.peso * s.repeticiones), 0), 0)
     };
 
-    console.log('Datos de la sesión a guardar:', JSON.stringify(sesion, null, 2));
-
-    firebase.auth().onAuthStateChanged(async (user) => {
+    firebase.auth().onAuthStateChanged(async user => {
       if (user) {
-        console.log("Usuario autenticado por onAuthStateChanged:", user.uid);
-
         try {
-          await firebaseGuardarSesion(user.uid, sesion);
-          console.log('Sesión guardada exitosamente en Firestore');
-
-          // Limpiar la sesión
+          await window.guardarSesion(user.uid, sesion);
           ejerciciosSesion = [];
           localStorage.removeItem("sesion_entrenamiento");
           actualizarTabla();
-
-          // Mostrar mensaje de éxito
           if (typeof Swal !== 'undefined') {
-            await Swal.fire({
-              icon: 'success',
-              title: 'Éxito',
-              text: 'Sesión guardada exitosamente',
-              confirmButtonText: 'Aceptar',
-              confirmButtonColor: '#0d6efd'
-            });
-          } else {
-            alert('Sesión guardada exitosamente');
+            await Swal.fire({ icon: 'success', title: 'Éxito', text: 'Sesión guardada exitosamente' });
           }
-
-          // Redirigir al dashboard
-          window.location.href = 'Dashboard.html';
-
+          window.location.href = "Dashboard.html";
         } catch (error) {
-          console.error('Error al guardar la sesión con usuario activo:', error);
-          const errorMessage = 'Error al guardar la sesión: ' + (error.message || 'Error desconocido');
-          botonFinalizar.disabled = false;
-          botonFinalizar.textContent = 'Finalizar Sesión';
-
-          if (typeof firebaseMostrarError === 'function') {
-            firebaseMostrarError({ code: 'firebase/save-error', message: errorMessage });
-          } else {
-            alert(errorMessage);
-          }
+          console.error("Error al guardar sesión:", error);
+          alert("Ocurrió un error al guardar la sesión");
+          boton.disabled = false;
+          boton.textContent = "Finalizar Sesión";
         }
       } else {
-        console.error("No hay usuario autenticado (onAuthStateChanged)");
-        const errorMessage = "No se pudo guardar la sesión porque no hay usuario autenticado.";
-        botonFinalizar.disabled = false;
-        botonFinalizar.textContent = 'Finalizar Sesión';
-
-        if (typeof firebaseMostrarError === 'function') {
-          firebaseMostrarError({ code: 'firebase/no-auth', message: errorMessage });
-        } else {
-          alert(errorMessage);
-        }
+        alert("No estás autenticado.");
+        boton.disabled = false;
+        boton.textContent = "Finalizar Sesión";
       }
     });
-  }
+  });
 
   // Evento para el botón Finalizar Sesión
   document.getElementById("finalizarSesion")?.addEventListener("click", () => {
@@ -543,6 +427,5 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Inicializar el estado del botón al cargar la página
   actualizarBotonFinalizar();
-  
-  console.log('Aplicación configurada correctamente');
+
 });

@@ -19,26 +19,22 @@ document.addEventListener("DOMContentLoaded", () => {
     let chart;
     const ejerciciosUnicos = new Set();
     const recordsPorEjercicio = {};
-    let pesoMaximo = 0, entrenamientoTotal = 0, totalReps = 0, totalSeries = 0;
+    const historialPorEjercicio = {};
 
     historial.forEach(sesion => {
-      entrenamientoTotal++;
       sesion.ejercicios.forEach(e => {
         ejerciciosUnicos.add(e.nombre);
-        if (e.peso > pesoMaximo) pesoMaximo = e.peso;
-        totalReps += (parseInt(e.repeticiones) || 0) * (parseInt(e.series) || 0);
-        totalSeries += parseInt(e.series) || 0;
-        if (!recordsPorEjercicio[e.nombre] || e.peso > recordsPorEjercicio[e.nombre]) {
-          recordsPorEjercicio[e.nombre] = e.peso;
-        }
+        if (!historialPorEjercicio[e.nombre]) historialPorEjercicio[e.nombre] = [];
+        historialPorEjercicio[e.nombre].push({ fecha: sesion.fecha, series: e.series });
+
+        e.series.forEach(s => {
+          const peso = parseFloat(s.peso) || 0;
+          if (peso > (recordsPorEjercicio[e.nombre] || 0)) {
+            recordsPorEjercicio[e.nombre] = peso;
+          }
+        });
       });
     });
-
-    document.getElementById("pesoMaxAnalisis").textContent = `${pesoMaximo} kg`;
-    document.getElementById("entrenamientosTotal").textContent = entrenamientoTotal;
-    document.getElementById("promedioReps").textContent = totalSeries > 0
-      ? (totalReps / totalSeries).toFixed(1)
-      : "0";
 
     const lista = document.getElementById("lista-records");
     for (const ejercicio in recordsPorEjercicio) {
@@ -59,43 +55,43 @@ document.addEventListener("DOMContentLoaded", () => {
       const vista = selectVista.value;
       const filtroDias = selectTiempo.value;
 
-      // Limpiar gráfico si se selecciona "Todos los ejercicios"
-      if (ejercicioSeleccionado === "Todos los ejercicios") {
-        if (chart) {
-          chart.destroy();
-          chart = null;
-        }
-
-        // Limpiar los elementos de texto
+      if (!ejercicioSeleccionado || !historialPorEjercicio[ejercicioSeleccionado]) {
+        if (chart) chart.destroy();
         document.getElementById("contadorSesiones").textContent = "Selecciona un ejercicio para ver el gráfico.";
         document.getElementById("evolucionPorcentual").innerHTML = "";
-
-        return; // No seguir procesando
+        document.getElementById("pesoMaxAnalisis").textContent = "-- kg";
+        document.getElementById("entrenamientosTotal").textContent = "--";
+        document.getElementById("promedioReps").textContent = "--";
+        return;
       }
 
-      // Resto de la lógica (sin cambios)
-      const datosFiltrados = [];
       const ahora = new Date();
       const limiteDias = filtroDias === "historial" ? null : parseInt(filtroDias);
+      const datosFiltrados = [];
 
-      historial.forEach(sesion => {
-        const fechaSesion = new Date(sesion.fecha);
+      historialPorEjercicio[ejercicioSeleccionado].forEach(ej => {
+        const fechaSesion = new Date(ej.fecha);
         const diferenciaDias = (ahora - fechaSesion) / (1000 * 60 * 60 * 24);
         if (limiteDias === null || diferenciaDias <= limiteDias) {
-          sesion.ejercicios.forEach(e => {
-            if (e.nombre === ejercicioSeleccionado) {
-              datosFiltrados.push({
-                fecha: fechaSesion.toLocaleDateString(),
-                peso: e.peso,
-                series: e.series,
-                repeticiones: e.repeticiones
-              });
-            }
+          const totalSeries = ej.series.length;
+          const pesoPromedio = ej.series.reduce((acc, s) => acc + (parseFloat(s.peso) || 0), 0) / totalSeries;
+          const repsPromedio = ej.series.reduce((acc, s) => acc + (parseInt(s.repeticiones) || 0), 0) / totalSeries;
+          const volumen = ej.series.reduce((acc, s) => acc + ((parseFloat(s.peso) || 0) * (parseInt(s.repeticiones) || 0)), 0);
+
+          datosFiltrados.push({
+            fecha: fechaSesion,
+            label: fechaSesion.toLocaleDateString(),
+            peso: pesoPromedio,
+            series: totalSeries,
+            repeticiones: repsPromedio,
+            volumen
           });
         }
       });
 
-      const labels = datosFiltrados.map(d => d.fecha);
+      datosFiltrados.sort((a, b) => a.fecha - b.fecha);
+
+      const labels = datosFiltrados.map(d => d.label);
       const valoresY = datosFiltrados.map(d => vista === "series" ? d.series : d.peso);
       const maxValor = Math.max(...valoresY);
       const indexMax = valoresY.indexOf(maxValor);
@@ -122,13 +118,8 @@ document.addEventListener("DOMContentLoaded", () => {
         options: {
           responsive: true,
           scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { color: '#fff' }
-            },
-            x: {
-              ticks: { color: '#fff' }
-            }
+            y: { beginAtZero: true, ticks: { color: '#fff' } },
+            x: { ticks: { color: '#fff' } }
           },
           plugins: {
             legend: {
@@ -152,24 +143,31 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("contadorSesiones").textContent =
         `Has entrenado ${ejercicioSeleccionado} en ${contador} sesión${contador !== 1 ? 'es' : ''}`;
 
-      const evolucionElement = document.getElementById("evolucionPorcentual");
       const primer = datosFiltrados[0];
       const ultimo = datosFiltrados[datosFiltrados.length - 1];
 
-      const primerValor = primer ? primer.peso * (primer.repeticiones || 1) : null;
-      const ultimoValor = ultimo ? ultimo.peso * (ultimo.repeticiones || 1) : null;
+      const primerValor = primer ? primer.volumen : null;
+      const ultimoValor = ultimo ? ultimo.volumen : null;
 
+      const evolucionElement = document.getElementById("evolucionPorcentual");
       if (datosFiltrados.length >= 2 && primerValor > 0 && ultimoValor !== null) {
         const diferencia = ultimoValor - primerValor;
         const porcentaje = ((diferencia / primerValor) * 100).toFixed(1);
         const signo = porcentaje >= 0 ? "+" : "";
         const emoji = porcentaje >= 0 ? "📈" : "📉";
         evolucionElement.innerHTML =
-          `${emoji} ${signo}${porcentaje}% en ${ejercicioSeleccionado}<br><small style="font-size: 0.8em; color: #aaa;">Basado en potencia estimada (kg × reps)</small>`;
+          `${emoji} ${signo}${porcentaje}% en ${ejercicioSeleccionado}<br><small style="font-size: 0.8em; color: #aaa;">Basado en volumen total (peso × reps)</small>`;
       } else {
         evolucionElement.innerHTML =
-          "Sin datos suficientes<br><small style='font-size: 0.8em; color: #aaa;'>Basado en potencia estimada (kg × reps)</small>";
+          "Sin datos suficientes<br><small style='font-size: 0.8em; color: #aaa;'>Basado en volumen total (peso × reps)</small>";
       }
+
+      const pesos = datosFiltrados.map(d => d.peso);
+      const reps = datosFiltrados.map(d => d.repeticiones);
+
+      document.getElementById("pesoMaxAnalisis").textContent = `${Math.max(...pesos).toFixed(1)} kg`;
+      document.getElementById("entrenamientosTotal").textContent = contador;
+      document.getElementById("promedioReps").textContent = (reps.reduce((a, b) => a + b, 0) / reps.length).toFixed(1);
     }
 
     selectEjercicio.addEventListener("change", renderizarGrafico);
