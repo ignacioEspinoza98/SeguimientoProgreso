@@ -2,22 +2,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('Iniciando carga de Historial...');
 
   const usuarioString = sessionStorage.getItem('usuario');
-  console.log('Datos de usuario en sessionStorage:', usuarioString);
-
-  if (!usuarioString) {
-    console.error('No se encontró usuario en sessionStorage');
-    window.location.href = 'InicioSesion.html';
-    return;
-  }
+  if (!usuarioString) return (window.location.href = 'InicioSesion.html');
 
   let usuario;
   try {
     usuario = JSON.parse(usuarioString);
-    console.log('Usuario parseado:', usuario);
-  } catch (error) {
-    console.error('Error al parsear usuario:', error);
-    window.location.href = 'InicioSesion.html';
-    return;
+  } catch {
+    return (window.location.href = 'InicioSesion.html');
   }
 
   const obtenerHistorial = window.firebaseServices?.obtenerHistorial;
@@ -26,15 +17,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (typeof obtenerHistorial === 'function') {
     try {
       historial = await obtenerHistorial(usuario.uid);
-      console.log("Historial obtenido desde Firebase:", historial);
     } catch (e) {
       console.error("Error al obtener historial desde Firebase:", e);
     }
-  } else {
-    console.error("obtenerHistorial no está disponible.");
   }
-
-  // El resto de tu código permanece igual — comienza aquí:
 
   const listaEntrenamientos = document.getElementById('listaEntrenamientos');
   const filtroGrupo = document.getElementById('filtroGrupo');
@@ -50,15 +36,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function calcularVolumenTotal(ejercicios) {
     return ejercicios.reduce((total, e) => {
-      const p = parseFloat(e.peso) || 0;
-      const r = parseInt(e.repeticiones) || 0;
-      const s = parseInt(e.series) || 0;
-      return total + (p * r * s);
+      return total + e.series.reduce((suma, serie) => suma + (serie.peso * serie.repeticiones), 0);
     }, 0);
   }
 
   function calcularSeriesTotales(ejercicios) {
-    return ejercicios.reduce((total, e) => total + (parseInt(e.series) || 0), 0);
+    return ejercicios.reduce((total, e) => total + e.series.length, 0);
   }
 
   function actualizarEstadisticas(entrenamientos) {
@@ -139,7 +122,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           ${sesion.ejercicios.map(e => `
             <li class="ejercicio-item">
               <strong>${e.nombre}</strong> (${e.grupo})<br>
-              ${e.series} series de ${e.repeticiones} reps × ${e.peso} kg
+              ${e.series.map((s, i) => `Serie ${i + 1}: ${s.repeticiones} reps × ${s.peso} kg`).join('<br>')}
             </li>`).join('')}
         </ul>
       `;
@@ -157,20 +140,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   filtroFecha.addEventListener('change', actualizarVista);
   ordenarPor.addEventListener('change', actualizarVista);
 
-  // Exportar a CSV
   btnExportarCSV.addEventListener('click', () => {
     const filtrados = filtrarEntrenamientos();
-    const filas = [['Fecha', 'Ejercicio', 'Grupo', 'Peso', 'Reps', 'Series']];
+    const filas = [['Fecha', 'Ejercicio', 'Grupo', 'Peso', 'Reps']];
     filtrados.forEach(sesion => {
       sesion.ejercicios.forEach(e => {
-        filas.push([
-          formatearFecha(sesion.fecha),
-          e.nombre,
-          e.grupo,
-          e.peso,
-          e.repeticiones,
-          e.series
-        ]);
+        e.series.forEach(s => {
+          filas.push([
+            formatearFecha(sesion.fecha),
+            e.nombre,
+            e.grupo,
+            s.peso,
+            s.repeticiones
+          ]);
+        });
       });
     });
     const csv = filas.map(fila => fila.join(',')).join('\n');
@@ -185,7 +168,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     URL.revokeObjectURL(url);
   });
 
-  // Exportar a JSON
   btnExportarJSON.addEventListener('click', () => {
     const filtrados = filtrarEntrenamientos();
     const json = JSON.stringify(filtrados, null, 2);

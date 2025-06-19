@@ -1,136 +1,105 @@
-if (!auth || !db) {
-  console.error("Firebase no está correctamente inicializado");
-}
+document.addEventListener("DOMContentLoaded", async () => {
+  const usuario = JSON.parse(sessionStorage.getItem("usuario"));
+  if (!usuario) {
+    window.location.href = "InicioSesion.html";
+    return;
+  }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const { auth, db } = window.firebaseServices;
-  auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-      console.error("Usuario no autenticado");
-      return;
-    }
+  const saludo = document.getElementById("saludoUsuario");
+  saludo.textContent = `¡Hola, ${usuario.nombre}!`;
 
-    const usuario = user;
-    const historial = await obtenerHistorial(usuario.uid);
-    console.log("Historial desde Firestore:", historial);
+  const obtenerHistorial = window.firebaseServices?.obtenerHistorial;
+  if (typeof obtenerHistorial !== "function") {
+    console.error("No se puede acceder a obtenerHistorial");
+    return;
+  }
 
-    actualizarResumenUltimaSesion(historial);
-    mostrarEstadisticas(historial, usuario);
+  let historial = [];
+  try {
+    historial = await obtenerHistorial(usuario.uid);
+  } catch (e) {
+    console.error("Error al obtener historial:", e);
+    return;
+  }
 
-    const saludo = document.querySelector("h1");
-    if (saludo) {
-      saludo.textContent = `Hola, ${usuario.displayName || usuario.email || "Usuario"}!`;
-      saludo.innerHTML += `<br>Domina tus límites con cada repetición.`;
-    }
-
-    document.getElementById("cerrarSesion")?.addEventListener("click", () => {
-      sessionStorage.clear();
-      auth.signOut().then(() => window.location.href = "index.html");
-    });
-
-    document.getElementById("exportarCSV")?.addEventListener("click", () => {
-      exportarHistorialComoCSV(historial, usuario.uid);
-    });
-  });
-});
-
-function actualizarResumenUltimaSesion(historial) {
-  if (!historial || historial.length === 0) {
-    document.getElementById('fechaUltimaSesion').textContent = 'No hay sesiones registradas';
-    document.getElementById('ejerciciosUltimaSesion').textContent = '--';
-    document.getElementById('seriesUltimaSesion').textContent = '--';
-    document.getElementById('volumenUltimaSesion').textContent = '--';
+  if (!Array.isArray(historial) || historial.length === 0) {
+    document.getElementById("fechaUltimaSesion").textContent = "Sin sesiones";
     return;
   }
 
   historial.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
   const ultimaSesion = historial[0];
-  const ejercicios = ultimaSesion.ejercicios || [];
 
-  const ejerciciosUnicos = new Set(ejercicios.map(e => e.nombre)).size;
-  const seriesTotales = ejercicios.reduce((s, e) => s + (parseInt(e.series) || 0), 0);
-  const volumenTotal = ejercicios.reduce((v, e) => {
-    const p = parseFloat(e.peso) || 0;
-    const r = parseInt(e.repeticiones) || 0;
-    const s = parseInt(e.series) || 0;
-    return v + (p * r * s);
-  }, 0);
-
-  const fecha = new Date(ultimaSesion.fecha);
-  const fechaFormateada = fecha.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
-
-  document.getElementById('fechaUltimaSesion').textContent = fechaFormateada;
-  document.getElementById('ejerciciosUltimaSesion').textContent = ejerciciosUnicos;
-  document.getElementById('seriesUltimaSesion').textContent = seriesTotales;
-  document.getElementById('volumenUltimaSesion').textContent = `${volumenTotal.toFixed(2)} kg`;
-}
-
-function mostrarEstadisticas(historial, usuario) {
-  const ahora = new Date();
-  const unaSemanaMs = 7 * 24 * 60 * 60 * 1000;
-
-  let totalSeriesSemana = 0;
-  let totalSeriesSemanaAnterior = 0;
+  const ejerciciosRealizados = ultimaSesion.ejercicios.length;
+  let seriesTotales = 0;
+  let volumenTotal = 0;
   let pesoMaximo = 0;
-  let ejercicioPesoMax = "N/A";
-  let ultimaFecha = null;
-
+  let ejercicioPesoMax = "-";
   const seriesPorGrupo = {};
   const volumenPorGrupo = {};
 
+  const ahora = new Date();
+  const unaSemanaMs = 7 * 24 * 60 * 60 * 1000;
+  const hace7dias = new Date(ahora.getTime() - unaSemanaMs);
+  const hace14dias = new Date(ahora.getTime() - 2 * unaSemanaMs);
+
+  let seriesSemanaActual = 0;
+  let seriesSemanaAnterior = 0;
+
   historial.forEach(sesion => {
     const fechaSesion = new Date(sesion.fecha);
-    const diferencia = ahora - fechaSesion;
+    const enSemanaActual = fechaSesion >= hace7dias;
+    const enSemanaAnterior = fechaSesion >= hace14dias && fechaSesion < hace7dias;
 
-    if (!ultimaFecha || fechaSesion > new Date(ultimaFecha)) {
-      ultimaFecha = sesion.fecha;
-    }
+    sesion.ejercicios.forEach(ej => {
+      const grupo = ej.grupo || "Otro";
+      ej.series.forEach(s => {
+        const peso = parseFloat(s.peso) || 0;
+        const repes = parseInt(s.repeticiones) || 0;
 
-    sesion.ejercicios.forEach(e => {
-      const grupo = e.grupo || "Otro";
-      const series = parseInt(e.series) || 0;
-      const repes = parseInt(e.repeticiones) || 0;
-      const peso = parseFloat(e.peso) || 0;
-
-      if (diferencia <= unaSemanaMs) {
-        seriesPorGrupo[grupo] = (seriesPorGrupo[grupo] || 0) + series;
-        volumenPorGrupo[grupo] = (volumenPorGrupo[grupo] || 0) + (series * repes * peso);
-        totalSeriesSemana += series;
+        const volumen = peso * repes;
+        volumenTotal += volumen;
+        seriesTotales += 1;
 
         if (peso > pesoMaximo) {
           pesoMaximo = peso;
-          ejercicioPesoMax = e.nombre;
+          ejercicioPesoMax = ej.nombre;
         }
-      } else if (diferencia <= unaSemanaMs * 2) {
-        totalSeriesSemanaAnterior += series;
-      }
+
+        if (enSemanaActual) {
+          seriesSemanaActual++;
+          seriesPorGrupo[grupo] = (seriesPorGrupo[grupo] || 0) + 1;
+          volumenPorGrupo[grupo] = (volumenPorGrupo[grupo] || 0) + volumen;
+        } else if (enSemanaAnterior) {
+          seriesSemanaAnterior++;
+        }
+      });
     });
   });
 
-  // Mostrar comparación de series
-  const comparacionTexto = document.getElementById("comparacionSemanal");
-  const diferencia = totalSeriesSemana - totalSeriesSemanaAnterior;
-  if (comparacionTexto) {
+  const nombreUltimoEjercicio = ultimaSesion.ejercicios[ultimaSesion.ejercicios.length - 1]?.nombre || "-";
+  const fechaUltima = new Date(ultimaSesion.fecha).toLocaleDateString("es-ES", {
+    day: "numeric", month: "long", year: "numeric"
+  });
+
+  document.getElementById("fechaUltimaSesion").textContent = fechaUltima;
+  document.getElementById("ejerciciosUltimaSesion").textContent = ejerciciosRealizados;
+  document.getElementById("seriesUltimaSesion").textContent = seriesTotales;
+  document.getElementById("volumenUltimaSesion").textContent = volumenTotal.toFixed(2) + " kg";
+
+  document.getElementById("pesoMaximo").textContent = `${ejercicioPesoMax} - ${pesoMaximo} kg`;
+
+  const diferencia = seriesSemanaActual - seriesSemanaAnterior;
+  const comparacion = document.getElementById("comparacionSemanal");
+  if (comparacion) {
     if (diferencia > 0) {
-      comparacionTexto.textContent = `📈 +${diferencia} series respecto a la semana pasada`;
+      comparacion.textContent = `📈 +${diferencia} series respecto a la semana pasada`;
     } else if (diferencia < 0) {
-      comparacionTexto.textContent = `📉 ${diferencia} series respecto a la semana pasada`;
+      comparacion.textContent = `📉 ${diferencia} series respecto a la semana pasada`;
     } else {
-      comparacionTexto.textContent = `⚖️ Mismo número de series que la semana pasada`;
+      comparacion.textContent = `⚖️ Mismo número de series que la semana pasada`;
     }
   }
-
-  document.getElementById("pesoMaximo").innerHTML = `<strong>${ejercicioPesoMax}</strong><br>${pesoMaximo} kg`;
-
-  if (ultimaFecha) {
-    const fechaFormateada = new Date(ultimaFecha).toLocaleDateString();
-    const ultimaSesion = historial.find(s => s.fecha === ultimaFecha);
-    const primerEjercicio = ultimaSesion?.ejercicios?.[0];
-    const infoExtra = primerEjercicio ? `${primerEjercicio.nombre} - ${primerEjercicio.peso}kg` : "Ejercicio no disponible";
-    document.getElementById("ultimoEntreno").innerHTML = `<strong>${fechaFormateada}</strong><br>${infoExtra}`;
-  }
-
-  document.getElementById("seriesSemana").innerHTML = `<strong>${totalSeriesSemana}</strong>`;
 
   const listaGrupos = document.getElementById("seriesPorGrupo");
   if (listaGrupos) {
@@ -147,69 +116,35 @@ function mostrarEstadisticas(historial, usuario) {
     listaVolumen.innerHTML = "";
     for (const grupo in volumenPorGrupo) {
       const li = document.createElement("li");
-      li.textContent = `${grupo}: ${volumenPorGrupo[grupo].toLocaleString()} kg totales`;
+      li.textContent = `${grupo}: ${volumenPorGrupo[grupo].toLocaleString()} kg`;
       listaVolumen.appendChild(li);
     }
   }
 
-  mostrarGrupoMasTrabajado(seriesPorGrupo);
-  calcularPromedioEntrenamientosMensual(historial);
-}
+  const grupoMas = Object.entries(seriesPorGrupo).reduce((max, [grupo, series]) => {
+    return series > max.series ? { grupo, series } : max;
+  }, { grupo: "-", series: 0 });
 
-function mostrarGrupoMasTrabajado(seriesPorGrupo) {
-  let grupoMas = null;
-  let maxSeries = 0;
-  for (const grupo in seriesPorGrupo) {
-    if (seriesPorGrupo[grupo] > maxSeries) {
-      maxSeries = seriesPorGrupo[grupo];
-      grupoMas = grupo;
-    }
+  const grupoMasElem = document.getElementById("grupoMasTrabajado");
+  if (grupoMasElem) {
+    grupoMasElem.textContent = `${grupoMas.grupo} (${grupoMas.series} series)`;
+  } else {
+    console.warn("Elemento grupoMasTrabajado no encontrado en el DOM");
   }
 
-  const grupoTexto = grupoMas
-    ? `${grupoMas} (${maxSeries} series)`
-    : "No hay datos esta semana";
-
-  document.getElementById("grupoMasTrabajado").textContent = grupoTexto;
-}
-
-function calcularPromedioEntrenamientosMensual(historial) {
-  const hoy = new Date();
   const hace30dias = new Date();
-  hace30dias.setDate(hoy.getDate() - 30);
+  hace30dias.setDate(hace30dias.getDate() - 30);
+  const sesionesUltimoMes = historial.filter(s => new Date(s.fecha) >= hace30dias);
+  const promedioMensual = (sesionesUltimoMes.length / 4.3).toFixed(2);
+  document.getElementById("promedioEntrenamientos").textContent = `${promedioMensual} sesiones/semana`;
 
-  const sesionesUltimoMes = historial.filter(sesion => {
-    const fecha = new Date(sesion.fecha);
-    return fecha >= hace30dias && fecha <= hoy;
-  });
+  // Mostrar fecha y nombre del último ejercicio en #ultimoEntreno
+  const primerEjercicio = ultimaSesion?.ejercicios?.[0];
+  const infoExtra = primerEjercicio?.series?.length
+    ? `${primerEjercicio.nombre} - ${primerEjercicio.series[0].peso}kg`
+    : primerEjercicio?.nombre || "Ejercicio no disponible";
+  document.getElementById("ultimoEntreno").textContent = `${fechaUltima}\n${infoExtra}`;
 
-  const promedio = (sesionesUltimoMes.length / 4.3).toFixed(2);
-  document.getElementById("promedioEntrenamientos").textContent = `${promedio} sesiones/semana`;
-}
-
-function exportarHistorialComoCSV(historial, nombreUsuario) {
-  const filas = [["Fecha", "Ejercicio", "Grupo Muscular", "Peso", "Reps", "Series"]];
-  historial.forEach(sesion => {
-    sesion.ejercicios.forEach(e => {
-      filas.push([
-        new Date(sesion.fecha).toLocaleDateString(),
-        e.nombre,
-        e.grupo,
-        e.peso,
-        e.repeticiones,
-        e.series
-      ]);
-    });
-  });
-
-  const csv = filas.map(fila => fila.join(",")).join("\n");
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `historial_${nombreUsuario}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
+  // Mostrar total de series esta semana en #seriesSemana
+  document.getElementById("seriesSemana").textContent = seriesSemanaActual;
+});
