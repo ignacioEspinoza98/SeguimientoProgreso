@@ -1,12 +1,9 @@
-// Configuración de Firebase para ProgresoGym
-const firebaseConfig = {
-    apiKey: "AIzaSyByrdHaP_yKxZqqJ-knXXPaet--KB2GlRQ",
-    authDomain: "progresogym-7a7a9.firebaseapp.com",
-    projectId: "progresogym-7a7a9",
-    storageBucket: "progresogym-7a7a9.appspot.com",
-    messagingSenderId: "563354960322",
-    appId: "1:563354960322:web:b9b196460d811cdaf4965b"
-};
+// Variables globales para Firebase
+let firebaseApp;
+let auth;
+let db;
+let googleProvider;
+let firebaseInitialized = false;
 
 // Configuración para los correos de verificación
 const actionCodeSettings = {
@@ -16,13 +13,44 @@ const actionCodeSettings = {
     handleCodeInApp: true
 };
 
-// Inicializar Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Configuración directa de Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyBTN3BZblwUYqqejsSMIArMs-SNxnkaIL4",
+    authDomain: "seguimientoprogreso.firebaseapp.com",
+    projectId: "seguimientoprogreso",
+    storageBucket: "seguimientoprogreso.appspot.com",
+    messagingSenderId: "563354960322",
+    appId: "1:563354960322:web:b9b196460d811cdaf4965b",
+    measurementId: "G-E0ZXJQ6P66"
+};
 
-// Habilitar autenticación con Google
-const googleProvider = new firebase.auth.GoogleAuthProvider();
+// Inicialización inmediata
+try {
+  if (typeof firebase === 'undefined') {
+    throw new Error('Firebase SDK no está cargado');
+  }
+  
+  firebaseApp = firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  db = firebase.firestore();
+  googleProvider = new firebase.auth.GoogleAuthProvider();
+  
+  console.log('Firebase inicializado correctamente');
+  
+  // Exportar servicios
+  window.firebaseServices = {
+    auth,
+    db,
+    googleProvider,
+    obtenerHistorial 
+  };
+  
+  firebaseInitialized = true;
+  
+} catch (error) {
+  console.error('Error al inicializar Firebase:', error);
+  throw error;
+}
 
 // Función global para mostrar errores
 window.mostrarError = function(error) {
@@ -115,8 +143,20 @@ window.loginWithGoogle = async function() {
             // Continuar con el flujo aunque falle Firestore
         }
         
-        // 3. Establecer la variable de sesión
+        // 3. Guardar información del usuario en sessionStorage
+        const usuario = {
+            nombre: result.user.displayName || result.user.email.split('@')[0],
+            usuario: user.displayName || user.email.split('@')[0],
+            email: result.user.email,
+            emailVerificado: result.user.emailVerified,
+            uid: result.user.uid,
+            fotoURL: result.user.photoURL || ''
+        };
+        
         sessionStorage.setItem('Logueado', 'true');
+        sessionStorage.setItem('usuario', JSON.stringify(usuario));
+        
+        console.log('Usuario guardado en sessionStorage:', usuario);
         
         // 4. Redirigir al dashboard
         console.log('Redirigiendo a Dashboard.html');
@@ -176,33 +216,126 @@ function loginWithEmail(email, password) {
         });
 }
 
-// Función global para cerrar sesión
-window.cerrarSesion = function() {
-    return auth.signOut()
-        .then(() => {
-            console.log('Sesión cerrada correctamente');
-            // Limpiar cualquier estado de la aplicación si es necesario
-            localStorage.clear();
-            sessionStorage.clear();
-        })
-        .catch((error) => {
-            console.error('Error al cerrar sesión:', error);
-            throw error;
-        });
-};
+// Función para guardar una sesión de entrenamiento
+async function guardarSesion(usuarioId, sesion) {
+    try {
+        console.log('Iniciando guardado de sesión...');
 
-// Verificar y cerrar sesión al cargar las páginas de autenticación
-if (window.location.pathname.includes('InicioSesion.html') || 
-    window.location.pathname.includes('Registro.html') ||
-    window.location.pathname === '/') {
-    
-    // Cerrar sesión si hay un usuario autenticado
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            console.log('Usuario autenticado detectado en página de autenticación, cerrando sesión...');
-            cerrarSesion().catch(error => {
-                console.error('Error al forzar cierre de sesión:', error);
-            });
+        const usuarioLogueado = sessionStorage.getItem('usuario');
+        let idUsuario = usuarioId;
+
+        if (!idUsuario && usuarioLogueado) {
+            try {
+                const usuarioInfo = JSON.parse(usuarioLogueado);
+                idUsuario = usuarioInfo.uid || 'usuario_desconocido'; // usa el UID
+                console.log('Usuario logueado (sessionStorage):', idUsuario);
+            } catch (e) {
+                console.error('Error al parsear usuario del sessionStorage:', e);
+                idUsuario = 'usuario_desconocido';
+            }
+        } else if (!idUsuario) {
+            console.warn('No se encontró usuario en sessionStorage');
+            console.log('Contenido de sessionStorage:', JSON.stringify(sessionStorage, null, 2));
+            idUsuario = 'usuario_desconocido';
         }
-    });
+
+        console.log('Usuario ID a usar (UID):', idUsuario);
+
+        // Preparar datos de la sesión
+        const datosSesion = {
+            ejercicios: sesion.ejercicios || [],
+            fecha: sesion.fecha || new Date().toISOString().split('T')[0],
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            usuarioId: idUsuario,
+            email: sesion.email || null  // solo si lo necesitas
+        };
+
+        console.log('Datos de la sesión a guardar:', JSON.stringify(datosSesion, null, 2));
+
+        if (!firebaseInitialized) {
+            const error = new Error('Firebase no está inicializado');
+            console.error('Error en guardarSesion:', error);
+            throw error;
+        }
+
+        if (!db) {
+            const error = new Error('La instancia de Firestore no está disponible');
+            console.error('Error en guardarSesion:', error);
+            throw error;
+        }
+
+        // ✅ Verificar autenticación activa y coincidencia de UID
+        if (!auth.currentUser) {
+            const error = new Error("No hay usuario autenticado en auth.currentUser");
+            console.error(error);
+            throw error;
+        }
+
+        if (auth.currentUser.uid !== idUsuario) {
+            const error = new Error("El UID del usuario no coincide con el usuarioId que se quiere guardar");
+            console.error(error);
+            throw error;
+        }
+
+        console.log('Intentando guardar en Firestore...');
+        const docRef = await db.collection('SesionesEntrenamiento').add(datosSesion);
+
+        console.log('Sesión guardada con ID:', docRef.id);
+        return docRef.id;
+
+    } catch (error) {
+        console.error('Error al guardar la sesión:', error);
+        throw error;
+    }
 }
+
+// Función para obtener el historial de sesiones
+async function obtenerHistorial(usuarioId, limite = 30) {
+    try {
+        if (!firebaseInitialized) {
+            throw new Error('Firebase no está inicializado');
+        }
+
+        let idUsuario = usuarioId;
+        if (!idUsuario) {
+            const usuarioLogueado = sessionStorage.getItem('usuario');
+            if (usuarioLogueado) {
+                try {
+                    const usuarioInfo = JSON.parse(usuarioLogueado);
+                    idUsuario = usuarioInfo.uid || 'usuario_desconocido'; // usa el UID
+                    console.log('Usuario logueado (sessionStorage):', idUsuario);
+                } catch (e) {
+                    console.error('Error al parsear usuario del sessionStorage:', e);
+                    idUsuario = 'usuario_desconocido';
+                }
+            } else {
+                console.warn('No se encontró usuario en sessionStorage');
+                idUsuario = 'usuario_desconocido';
+            }
+        }
+
+        console.log('Obteniendo historial para usuario (UID):', idUsuario);
+
+        const querySnapshot = await db.collection('SesionesEntrenamiento')
+            .where('usuarioId', '==', idUsuario)
+            .orderBy('timestamp', 'desc')
+            .limit(limite)
+            .get();
+
+        const sesiones = [];
+        querySnapshot.forEach(doc => {
+            sesiones.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        console.log(`Se encontraron ${sesiones.length} sesiones para el usuario ${idUsuario}`);
+        return sesiones;
+
+    } catch (error) {
+        console.error('Error al obtener el historial:', error);
+        throw error;
+    }
+}
+

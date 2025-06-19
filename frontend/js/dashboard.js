@@ -1,151 +1,71 @@
-// Función para obtener ejercicios recomendados basados en el historial
-function obtenerEjerciciosRecomendados(historial) {
-  if (!historial || historial.length === 0) {
-    return [];
-  }
-
-  // Contar la frecuencia de cada grupo muscular
-  const frecuenciaGrupos = {};
-  const fechaActual = new Date();
-  const ultimos30Dias = new Date();
-  ultimos30Dias.setDate(ultimos30Dias.getDate() - 30);
-
-  historial.forEach(sesion => {
-    const fechaSesion = new Date(sesion.fecha);
-    if (fechaSesion < ultimos30Dias) return;
-
-    sesion.ejercicios.forEach(ejercicio => {
-      if (!ejercicio.grupoMuscular || ejercicio.grupoMuscular === "Otro") return;
-      
-      if (!frecuenciaGrupos[ejercicio.grupoMuscular]) {
-        frecuenciaGrupos[ejercicio.grupoMuscular] = 0;
-      }
-      frecuenciaGrupos[ejercicio.grupoMuscular]++;
-    });
-  });
-
-  // Ordenar grupos por frecuencia (de menor a mayor para priorizar los menos trabajados)
-  const gruposOrdenados = Object.keys(frecuenciaGrupos).sort(
-    (a, b) => (frecuenciaGrupos[a] || 0) - (frecuenciaGrupos[b] || 0)
-  );
-
-  // Tomar los 2-3 grupos menos trabajados
-  const gruposARecomendar = gruposOrdenados.slice(0, 3);
-  
-  // Si no hay suficientes datos, usar grupos por defecto
-  if (gruposARecomendar.length === 0) {
-    return [
-      { nombre: "Press banca con barra", grupo: "Pecho" },
-      { nombre: "Sentadilla libre", grupo: "Piernas" },
-      { nombre: "Remo con barra", grupo: "Espalda" },
-      { nombre: "Press militar en máquina", grupo: "Hombros" },
-      { nombre: "Curl con barra recta", grupo: "Bíceps" }
-    ];
-  }
-
-
-  // Obtener ejercicios de los grupos recomendados
-  const ejerciciosRecomendados = [];
-  const ejerciciosPorGrupo = JSON.parse(localStorage.getItem('ejerciciosPorGrupo')) || {};
-  
-  gruposARecomendar.forEach(grupo => {
-    if (ejerciciosPorGrupo[grupo]) {
-      // Tomar hasta 2 ejercicios por grupo, evitando duplicados
-      const ejerciciosDelGrupo = ejerciciosPorGrupo[grupo]
-        .filter(ej => !ejerciciosRecomendados.some(e => e.nombre === ej))
-        .slice(0, 2);
-      
-      ejerciciosDelGrupo.forEach(nombre => {
-        ejerciciosRecomendados.push({
-          nombre,
-          grupo
-        });
-      });
-    }
-  });
-
-  // Si no hay suficientes ejercicios, añadir algunos populares
-  const ejerciciosPopulares = [
-    { nombre: "Press banca con barra", grupo: "Pecho" },
-    { nombre: "Sentadilla libre", grupo: "Piernas" },
-    { nombre: "Peso muerto convencional", grupo: "Piernas" },
-    { nombre: "Dominadas pronas", grupo: "Espalda" },
-    { nombre: "Press militar en máquina", grupo: "Hombros" }
-  ];
-
-  while (ejerciciosRecomendados.length < 5) {
-    const ejercicio = ejerciciosPopulares.find(
-      e => !ejerciciosRecomendados.some(er => er.nombre === e.nombre)
-    );
-    if (ejercicio) {
-      ejerciciosRecomendados.push(ejercicio);
-    } else {
-      break;
-    }
-  }
-
-  return ejerciciosRecomendados.slice(0, 5); // Limitar a 5 ejercicios
+if (!auth || !db) {
+  console.error("Firebase no está correctamente inicializado");
 }
 
-// Función para mostrar los ejercicios recomendados
-function mostrarEjerciciosRecomendados(ejercicios) {
-  const contenedor = document.getElementById('ejerciciosRecomendados');
-  if (!contenedor) return;
+document.addEventListener("DOMContentLoaded", () => {
+  const { auth, db } = window.firebaseServices;
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      console.error("Usuario no autenticado");
+      return;
+    }
 
-  if (ejercicios.length === 0) {
-    contenedor.innerHTML = '<p>Comienza a registrar entrenamientos para obtener recomendaciones personalizadas.</p>';
+    const usuario = user;
+    const historial = await obtenerHistorial(usuario.uid);
+    console.log("Historial desde Firestore:", historial);
+
+    actualizarResumenUltimaSesion(historial);
+    mostrarEstadisticas(historial, usuario);
+
+    const saludo = document.querySelector("h1");
+    if (saludo) {
+      saludo.textContent = `Hola, ${usuario.displayName || usuario.email || "Usuario"}!`;
+      saludo.innerHTML += `<br>Domina tus límites con cada repetición.`;
+    }
+
+    document.getElementById("cerrarSesion")?.addEventListener("click", () => {
+      sessionStorage.clear();
+      auth.signOut().then(() => window.location.href = "index.html");
+    });
+
+    document.getElementById("exportarCSV")?.addEventListener("click", () => {
+      exportarHistorialComoCSV(historial, usuario.uid);
+    });
+  });
+});
+
+function actualizarResumenUltimaSesion(historial) {
+  if (!historial || historial.length === 0) {
+    document.getElementById('fechaUltimaSesion').textContent = 'No hay sesiones registradas';
+    document.getElementById('ejerciciosUltimaSesion').textContent = '--';
+    document.getElementById('seriesUltimaSesion').textContent = '--';
+    document.getElementById('volumenUltimaSesion').textContent = '--';
     return;
   }
 
-  contenedor.innerHTML = ''; // Limpiar contenedor
-  
-  ejercicios.forEach(ejercicio => {
-    const elemento = document.createElement('p');
-    elemento.textContent = ejercicio.nombre;
-    elemento.title = `Grupo: ${ejercicio.grupo}`;
-    elemento.addEventListener('click', () => {
-      // Redirigir a la página de registro con el ejercicio seleccionado
-      sessionStorage.setItem('ejercicioSeleccionado', JSON.stringify({
-        grupo: ejercicio.grupo,
-        nombre: ejercicio.nombre
-      }));
-      window.location.href = 'RegistroEntrenamientos.html';
-    });
-    contenedor.appendChild(elemento);
-  });
+  historial.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  const ultimaSesion = historial[0];
+  const ejercicios = ultimaSesion.ejercicios || [];
+
+  const ejerciciosUnicos = new Set(ejercicios.map(e => e.nombre)).size;
+  const seriesTotales = ejercicios.reduce((s, e) => s + (parseInt(e.series) || 0), 0);
+  const volumenTotal = ejercicios.reduce((v, e) => {
+    const p = parseFloat(e.peso) || 0;
+    const r = parseInt(e.repeticiones) || 0;
+    const s = parseInt(e.series) || 0;
+    return v + (p * r * s);
+  }, 0);
+
+  const fecha = new Date(ultimaSesion.fecha);
+  const fechaFormateada = fecha.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  document.getElementById('fechaUltimaSesion').textContent = fechaFormateada;
+  document.getElementById('ejerciciosUltimaSesion').textContent = ejerciciosUnicos;
+  document.getElementById('seriesUltimaSesion').textContent = seriesTotales;
+  document.getElementById('volumenUltimaSesion').textContent = `${volumenTotal.toFixed(2)} kg`;
 }
 
-// Importar funciones necesarias
-import { inicializarRecomendaciones } from './recomendaciones.js';
-
-document.addEventListener("DOMContentLoaded", () => {
-  // Inicializar recomendaciones
-  if (document.getElementById('recomendacionesContainer')) {
-    inicializarRecomendaciones();
-  }
-  
-  const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
-  const claveHistorial = "historial_" + usuario.nombre.toLowerCase();
-  const historial = JSON.parse(localStorage.getItem(claveHistorial)) || [];
-
-  // Actualizar el saludo
-  const saludo = document.querySelector("h1");
-  console.log("Elemento h1:", saludo);
-  if (saludo) {
-    const nombreUsuario = usuario.usuario || "Usuario";
-    console.log("Nombre de usuario a mostrar:", nombreUsuario);
-    saludo.textContent = `Hola, ${nombreUsuario}!`;
-    saludo.innerHTML += `<br>Domina tus límites con cada repetición.`;
-  } else {
-    console.error("No se encontró el elemento h1");
-  }
-
-  // Cargar ejercicios recomendados
-  const ejerciciosRecomendados = obtenerEjerciciosRecomendados(historial);
-  mostrarEjerciciosRecomendados(ejerciciosRecomendados);
-
-  if (historial.length === 0) return;
-
+function mostrarEstadisticas(historial, usuario) {
   const ahora = new Date();
   const unaSemanaMs = 7 * 24 * 60 * 60 * 1000;
 
@@ -158,52 +78,38 @@ document.addEventListener("DOMContentLoaded", () => {
   const seriesPorGrupo = {};
   const volumenPorGrupo = {};
 
-  // Calcular series de la semana anterior
   historial.forEach(sesion => {
     const fechaSesion = new Date(sesion.fecha);
     const diferencia = ahora - fechaSesion;
-
-    if (diferencia > unaSemanaMs && diferencia <= unaSemanaMs * 2) {
-      sesion.ejercicios.forEach(e => {
-        if (!e.grupoMuscular || e.grupoMuscular === "Otro") return;
-        totalSeriesSemanaAnterior += parseInt(e.series) || 0;
-      });
-    }
-  });
-
-  // Calcular datos actuales (semana actual, último entreno, etc.)
-  historial.forEach(sesion => {
-    const fechaSesion = new Date(sesion.fecha);
 
     if (!ultimaFecha || fechaSesion > new Date(ultimaFecha)) {
       ultimaFecha = sesion.fecha;
     }
 
-    if (ahora - fechaSesion <= unaSemanaMs) {
-      sesion.ejercicios.forEach(e => {
-        if (!e.grupoMuscular || e.grupoMuscular === "Otro") return;
+    sesion.ejercicios.forEach(e => {
+      const grupo = e.grupo || "Otro";
+      const series = parseInt(e.series) || 0;
+      const repes = parseInt(e.repeticiones) || 0;
+      const peso = parseFloat(e.peso) || 0;
 
-        const grupo = e.grupoMuscular;
-        const series = parseInt(e.series) || 0;
-        const repes = parseInt(e.repeticiones) || 0;
-        const peso = parseFloat(e.peso) || 0;
-
+      if (diferencia <= unaSemanaMs) {
         seriesPorGrupo[grupo] = (seriesPorGrupo[grupo] || 0) + series;
         volumenPorGrupo[grupo] = (volumenPorGrupo[grupo] || 0) + (series * repes * peso);
         totalSeriesSemana += series;
 
         if (peso > pesoMaximo) {
           pesoMaximo = peso;
-          ejercicioPesoMax = e.ejercicio;
+          ejercicioPesoMax = e.nombre;
         }
-      });
-    }
+      } else if (diferencia <= unaSemanaMs * 2) {
+        totalSeriesSemanaAnterior += series;
+      }
+    });
   });
 
-  // Comparación de series con la semana pasada
+  // Mostrar comparación de series
   const comparacionTexto = document.getElementById("comparacionSemanal");
   const diferencia = totalSeriesSemana - totalSeriesSemanaAnterior;
-
   if (comparacionTexto) {
     if (diferencia > 0) {
       comparacionTexto.textContent = `📈 +${diferencia} series respecto a la semana pasada`;
@@ -214,35 +120,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Mostrar peso máximo
   document.getElementById("pesoMaximo").innerHTML = `<strong>${ejercicioPesoMax}</strong><br>${pesoMaximo} kg`;
 
-  // Mostrar último entrenamiento
   if (ultimaFecha) {
     const fechaFormateada = new Date(ultimaFecha).toLocaleDateString();
     const ultimaSesion = historial.find(s => s.fecha === ultimaFecha);
     const primerEjercicio = ultimaSesion?.ejercicios?.[0];
-    const infoExtra = primerEjercicio
-      ? `${primerEjercicio.ejercicio} - ${primerEjercicio.peso}kg`
-      : "Ejercicio no disponible";
-
-    document.getElementById("ultimoEntreno").innerHTML =
-      `<strong>${fechaFormateada}</strong><br>${infoExtra}`;
+    const infoExtra = primerEjercicio ? `${primerEjercicio.nombre} - ${primerEjercicio.peso}kg` : "Ejercicio no disponible";
+    document.getElementById("ultimoEntreno").innerHTML = `<strong>${fechaFormateada}</strong><br>${infoExtra}`;
   }
 
-  // Mostrar total de series esta semana
   document.getElementById("seriesSemana").innerHTML = `<strong>${totalSeriesSemana}</strong>`;
 
-  // Mostrar resumen por grupo muscular (series)
   const listaGrupos = document.getElementById("seriesPorGrupo");
-  listaGrupos.innerHTML = "";
-  for (const grupo in seriesPorGrupo) {
-    const li = document.createElement("li");
-    li.textContent = `${grupo}: ${seriesPorGrupo[grupo]} series`;
-    listaGrupos.appendChild(li);
+  if (listaGrupos) {
+    listaGrupos.innerHTML = "";
+    for (const grupo in seriesPorGrupo) {
+      const li = document.createElement("li");
+      li.textContent = `${grupo}: ${seriesPorGrupo[grupo]} series`;
+      listaGrupos.appendChild(li);
+    }
   }
 
-  // Mostrar volumen por grupo muscular
   const listaVolumen = document.getElementById("volumenPorGrupo");
   if (listaVolumen) {
     listaVolumen.innerHTML = "";
@@ -253,104 +152,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Mostrar promedio de entrenamientos por semana (últimos 30 días)
-  calcularPromedioEntrenamientosMensual(historial);
-
-  // Mostrar grupo más trabajado de la semana
   mostrarGrupoMasTrabajado(seriesPorGrupo);
-
-  // Botones de exportación
-// document.getElementById("exportarJSON").addEventListener("click", () => {
-//   exportarHistorialComoJSON(historial, usuario.nombre.toLowerCase());
-// });
-
-  document.getElementById("exportarCSV").addEventListener("click", () => {
-    exportarHistorialComoCSV(historial, usuario.usuario.toLowerCase());
-  });
-
-  // Cerrar sesión
-  document.getElementById("cerrarSesion").addEventListener("click", () => {
-    sessionStorage.clear();
-    window.location.href = "index.html";
-  });
-
-  // Función para formatear la fecha
-  function formatearFecha(fecha) {
-    const opciones = { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    };
-    return new Date(fecha).toLocaleDateString('es-ES', opciones);
-  }
-
-  // Función para calcular el volumen total
-  function calcularVolumenTotal(ejercicios) {
-    return ejercicios.reduce((total, ejercicio) => {
-      return total + ejercicio.series.reduce((sum, serie) => {
-        return sum + (serie.peso * serie.repeticiones);
-      }, 0);
-    }, 0);
-  }
-
-  // Función para actualizar el resumen de la última sesión
-  function actualizarResumenUltimaSesion() {
-    const entrenamientos = JSON.parse(localStorage.getItem('entrenamientos')) || [];
-    
-    if (entrenamientos.length === 0) {
-      document.getElementById('resumenUltimaSesion').innerHTML = `
-        <p class="fecha-ultima-sesion">No hay sesiones registradas</p>
-        <div class="detalles-ultima-sesion">
-          <p>Comienza a registrar tus entrenamientos para ver tu progreso</p>
-        </div>
-      `;
-      return;
-    }
-
-    // Ordenar entrenamientos por fecha (más reciente primero)
-    entrenamientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-    const ultimaSesion = entrenamientos[0];
-
-    // Calcular estadísticas
-    const ejerciciosRealizados = ultimaSesion.ejercicios.length;
-    const seriesTotales = ultimaSesion.ejercicios.reduce((total, ejercicio) => 
-      total + ejercicio.series.length, 0);
-    const volumenTotal = calcularVolumenTotal(ultimaSesion.ejercicios);
-
-    // Actualizar el DOM
-    document.querySelector('.fecha-ultima-sesion').textContent = 
-      `Última sesión: ${formatearFecha(ultimaSesion.fecha)}`;
-    document.getElementById('ejerciciosUltimaSesion').textContent = ejerciciosRealizados;
-    document.getElementById('seriesUltimaSesion').textContent = seriesTotales;
-    document.getElementById('volumenUltimaSesion').textContent = `${volumenTotal} kg`;
-  }
-
-  // Llamar a la función cuando se carga la página
-  actualizarResumenUltimaSesion();
-});
-
-function calcularPromedioEntrenamientosMensual(historial) {
-  const hoy = new Date();
-  const hace30dias = new Date();
-  hace30dias.setDate(hoy.getDate() - 30);
-
-  const sesionesUltimoMes = historial.filter(sesion => {
-    const fecha = new Date(sesion.fecha);
-    return fecha >= hace30dias && fecha <= hoy;
-  });
-
-  const promedio = (sesionesUltimoMes.length / 4.3).toFixed(2);
-
-  document.getElementById("promedioEntrenamientos").textContent =
-    `${promedio} sesiones/semana`;
+  calcularPromedioEntrenamientosMensual(historial);
 }
 
 function mostrarGrupoMasTrabajado(seriesPorGrupo) {
   let grupoMas = null;
   let maxSeries = 0;
-
   for (const grupo in seriesPorGrupo) {
     if (seriesPorGrupo[grupo] > maxSeries) {
       maxSeries = seriesPorGrupo[grupo];
@@ -365,22 +173,28 @@ function mostrarGrupoMasTrabajado(seriesPorGrupo) {
   document.getElementById("grupoMasTrabajado").textContent = grupoTexto;
 }
 
-// Exportar JSON
-function exportarHistorialComoJSON(historial, nombreUsuario) {
-  const blob = new Blob([JSON.stringify(historial, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  descargarArchivo(url, `historial_${nombreUsuario}.json`);
+function calcularPromedioEntrenamientosMensual(historial) {
+  const hoy = new Date();
+  const hace30dias = new Date();
+  hace30dias.setDate(hoy.getDate() - 30);
+
+  const sesionesUltimoMes = historial.filter(sesion => {
+    const fecha = new Date(sesion.fecha);
+    return fecha >= hace30dias && fecha <= hoy;
+  });
+
+  const promedio = (sesionesUltimoMes.length / 4.3).toFixed(2);
+  document.getElementById("promedioEntrenamientos").textContent = `${promedio} sesiones/semana`;
 }
 
-// Exportar CSV
 function exportarHistorialComoCSV(historial, nombreUsuario) {
   const filas = [["Fecha", "Ejercicio", "Grupo Muscular", "Peso", "Reps", "Series"]];
   historial.forEach(sesion => {
     sesion.ejercicios.forEach(e => {
       filas.push([
         new Date(sesion.fecha).toLocaleDateString(),
-        e.ejercicio,
-        e.grupoMuscular,
+        e.nombre,
+        e.grupo,
         e.peso,
         e.repeticiones,
         e.series
@@ -391,14 +205,9 @@ function exportarHistorialComoCSV(historial, nombreUsuario) {
   const csv = filas.map(fila => fila.join(",")).join("\n");
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
-  descargarArchivo(url, `historial_${nombreUsuario}.csv`);
-}
-
-// Utilidad común para descargar
-function descargarArchivo(url, nombreArchivo) {
   const a = document.createElement("a");
   a.href = url;
-  a.download = nombreArchivo;
+  a.download = `historial_${nombreUsuario}.csv`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

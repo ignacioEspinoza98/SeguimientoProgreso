@@ -1,4 +1,35 @@
-const ejerciciosPorGrupo = {
+document.addEventListener("DOMContentLoaded", () => {
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user) {
+      console.warn("Usuario no autenticado, redirigiendo al login...");
+      window.location.href = "/SeguimientoProgreso/frontend/html/InicioSesion.html";
+    } else {
+      console.log("Usuario autenticado al cargar la página:", user.uid);
+    }
+  });
+});
+
+// Variables globales
+let ejerciciosSesion = [];
+let editando = false;
+let indexEditando = null;
+let ejerciciosPorGrupo = {};
+
+// Usar las funciones de firebase-config.js
+const firebaseGuardarSesion = window.guardarSesion;
+const firebaseMostrarError = window.mostrarError;
+
+// Verificar si las funciones están disponibles
+if (typeof firebaseGuardarSesion !== 'function') {
+  console.error('La función guardarSesion no está disponible');
+}
+
+if (typeof firebaseMostrarError !== 'function') {
+  console.error('La función mostrarError no está disponible');
+}
+
+// Inicializar ejerciciosPorGrupo con valores por defecto
+const ejerciciosPorGrupoDefault = {
   Pecho: [
     "Press en máquina", "Press banca con mancuernas", "Press banca con barra",
     "Press inclinado en Smith", "Press inclinado mancuernas", "Aperturas en máquina"
@@ -31,15 +62,147 @@ const ejerciciosPorGrupo = {
   ]
 };
 
-// Guardar la lista de ejercicios por grupo en localStorage si no existe
-if (!localStorage.getItem('ejerciciosPorGrupo')) {
-  localStorage.setItem('ejerciciosPorGrupo', JSON.stringify(ejerciciosPorGrupo));
+// Función para cargar los ejercicios por grupo
+function cargarEjerciciosPorGrupo() {
+  console.log('Iniciando carga de ejercicios por grupo...');
+  try {
+    // Verificar si el selector existe
+    const selectGrupo = document.getElementById('grupoMuscular');
+    console.log('Selector de grupo encontrado:', !!selectGrupo);
+    
+    if (!selectGrupo) {
+      console.error('No se encontró el selector de grupo muscular');
+      return;
+    }
+    // Usar directamente los valores por defecto
+    console.log('Definiendo ejercicios por grupo...');
+    ejerciciosPorGrupo = {
+      Pecho: [
+        "Press en máquina", "Press banca con mancuernas", "Press banca con barra",
+        "Press inclinado en Smith", "Press inclinado mancuernas", "Aperturas en máquina"
+      ],
+      Espalda: [
+        "Remo con barra", "Remo en máquina", "Remo bajo supino unilateral", "Remo en T prono",
+        "Dominadas pronas", "Jalón con agarre supino", "Jalón en máquina neutro", "Jalón al pecho prono"
+      ],
+      Hombros: [
+        "Press Arnold", "Press militar en máquina", "Elevaciones frontales", "Elevaciones laterales",
+        "Aperturas inversas", "Laterales en máquina", "Laterales en polea"
+      ],
+      Bíceps: [
+        "Curl con barra recta", "Curl concentración", "Curl martillo en polea",
+        "Curl bayesiano en polea", "Curl en banco inclinado"
+      ],
+      Tríceps: [
+        "Extensión tríceps unilateral", "Extensión de tríceps en cuerda", "Fondos en paralelas", "Press francés"
+      ],
+      Piernas: [
+        "Sentadilla libre", "Sentadilla hack", "Peso muerto convencional", "Peso muerto rumano",
+        "Prensa unilateral", "Extensión de cuádriceps", "Curl isquio sentado", "Step-up con mancuernas",
+        "Zancadas caminando", "Buenos días", "Hip thrust con barra", "Aductores"
+      ],
+      Gemelos: [
+        "Gemelos de pie con barra", "Gemelos en prensa", "Gemelos (gastrocnemio)"
+      ],
+      Abdomen: [
+        "Crunch en máquina", "Plancha abdominal", "Rueda abdominal"
+      ]
+    };
+    
+    console.log('Ejercicios cargados correctamente. Grupos disponibles:', Object.keys(ejerciciosPorGrupo));
+    
+    // Usar el selector que ya tenemos
+    if (selectGrupo) {
+      // Limpiar opciones existentes
+      selectGrupo.innerHTML = '<option value="">Selecciona un grupo muscular</option>';
+      
+      // Llenar con los grupos musculares disponibles
+      Object.keys(ejerciciosPorGrupo).forEach(grupo => {
+        const opt = document.createElement('option');
+        opt.value = grupo;
+        opt.textContent = grupo;
+        selectGrupo.appendChild(opt);
+      });
+      
+      // Configurar el evento change
+      selectGrupo.addEventListener('change', function() {
+        const grupo = this.value;
+        const selectEjercicio = document.getElementById('ejercicio');
+        
+        if (!selectEjercicio) return;
+        
+        selectEjercicio.innerHTML = '<option value="">Selecciona un ejercicio</option>';
+        
+        if (!grupo) {
+          selectEjercicio.disabled = true;
+          return;
+        }
+        
+        ejerciciosPorGrupo[grupo].forEach(nombre => {
+          const opt = document.createElement('option');
+          opt.value = nombre;
+          opt.textContent = nombre;
+          selectEjercicio.appendChild(opt);
+        });
+        
+        selectEjercicio.disabled = false;
+      });
+      
+      // Activar el evento change para cargar los ejercicios del primer grupo
+      if (selectGrupo.options.length > 1) {
+        selectGrupo.dispatchEvent(new Event('change'));
+      }
+    }
+  } catch (error) {
+    console.error('Error al cargar los ejercicios:', error);
+  }
 }
 
+// Función para llenar los selectores de grupos musculares y ejercicios
+function llenarSelectores() {
+  const selectGrupo = document.getElementById('grupoMuscular');
+  if (!selectGrupo) return;
+  
+  // Limpiar opciones existentes
+  selectGrupo.innerHTML = '<option value="">Selecciona un grupo muscular</option>';
+  
+  // Llenar con los grupos musculares disponibles
+  Object.keys(ejerciciosPorGrupo).forEach(grupo => {
+    const opt = document.createElement('option');
+    opt.value = grupo;
+    opt.textContent = grupo;
+    selectGrupo.appendChild(opt);
+  });
+  
+  // Activar el evento de cambio para cargar los ejercicios del primer grupo
+  if (selectGrupo.options.length > 1) {
+    selectGrupo.dispatchEvent(new Event('change'));
+  }
+}
+
+// Función para configurar la aplicación
+console.log('Script registroEntrenamientos.js cargado');
+
 document.addEventListener("DOMContentLoaded", () => {
+  console.log('Evento DOMContentLoaded disparado');
+  console.log('DOM completamente cargado');
+  // Cargar ejercicios por grupo
+  cargarEjerciciosPorGrupo();
+  
+  // Configurar el resto de la aplicación
   const formulario = document.getElementById("formulario-entrenamiento");
+  if (!formulario) {
+    console.error('No se encontró el formulario');
+    return;
+  }
+  
   const selectGrupo = document.getElementById("grupoMuscular");
   const selectEjercicio = document.getElementById("ejercicio");
+  
+  if (!selectGrupo || !selectEjercicio) {
+    console.error('No se encontraron los selectores de grupo o ejercicio');
+    return;
+  }
   const pesoInput = document.getElementById("peso");
   const repeticionesInput = document.getElementById("repeticiones");
   const seriesInput = document.getElementById("series");
@@ -67,17 +230,37 @@ document.addEventListener("DOMContentLoaded", () => {
       sessionStorage.removeItem('ejercicioSeleccionado');
     }
   }
+  
+  // Cargar ejercicios guardados en la sesión actual al iniciar
+  const sesionGuardada = localStorage.getItem("sesion_entrenamiento");
+  if (sesionGuardada) {
+    try {
+      ejerciciosSesion = JSON.parse(sesionGuardada);
+      // Mover la llamada a actualizarTabla después de que se haya definido
+      setTimeout(() => actualizarTabla(), 0);
+    } catch (e) {
+      console.error('Error al cargar la sesión guardada:', e);
+    }
+  }
 
   const errorPeso = document.getElementById("errorPeso");
   const errorReps = document.getElementById("errorRepeticiones");
   const errorSeries = document.getElementById("errorSeries");
 
-  for (const grupo in ejerciciosPorGrupo) {
-    const opt = document.createElement("option");
+  console.log('Configurando selectores...');
+  
+  // Llenar el selector de grupos musculares
+  selectGrupo.innerHTML = '<option value="">Selecciona un grupo muscular</option>';
+  
+  // Llenar con los grupos musculares disponibles
+  Object.keys(ejerciciosPorGrupo).forEach(grupo => {
+    const opt = document.createElement('option');
     opt.value = grupo;
     opt.textContent = grupo;
     selectGrupo.appendChild(opt);
-  }
+  });
+  
+  console.log('Grupos musculares cargados:', Object.keys(ejerciciosPorGrupo));
 
   selectGrupo.addEventListener("change", () => {
     const grupo = selectGrupo.value;
@@ -140,9 +323,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const usuario = JSON.parse(sessionStorage.getItem("usuario")) || { nombre: "default" };
   const claveHistorial = "historial_" + usuario.nombre.toLowerCase();
 
-  let ejerciciosSesion = [];
-  let editando = false;
-  let indexEditando = null;
+  // Inicializar ejerciciosSesion si no existe
+  if (!ejerciciosSesion || !Array.isArray(ejerciciosSesion)) {
+    ejerciciosSesion = [];
+  }
+  
+  // Restaurar la sesión guardada si existe
+  try {
+    const sesionGuardada = localStorage.getItem("sesion_entrenamiento");
+    if (sesionGuardada) {
+      ejerciciosSesion = JSON.parse(sesionGuardada);
+    }
+  } catch (error) {
+    console.error('Error al cargar la sesión guardada:', error);
+    ejerciciosSesion = [];
+  }
 
   formulario.addEventListener("submit", e => {
     e.preventDefault();
@@ -155,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!ejercicio || isNaN(peso) || isNaN(repeticiones) || isNaN(series)) return;
 
-    const nuevoEjercicio = { grupoMuscular, ejercicio, peso, repeticiones, series };
+    const nuevoEjercicio = { nombre: ejercicio, grupo: grupoMuscular, peso, repeticiones, series };
 
     if (editando) {
       ejerciciosSesion[indexEditando] = nuevoEjercicio;
@@ -228,24 +423,126 @@ document.addEventListener("DOMContentLoaded", () => {
     actualizarTabla();
   }
 
-  document.getElementById("finalizarSesion").addEventListener("click", () => {
+  // Función para formatear la fecha como YYYY-MM-DD
+  function formatearFecha(fecha) {
+    return fecha.toISOString().split('T')[0];
+  }
+
+  // Función para guardar el entrenamiento en Firestore
+  function guardarEntrenamientoEnHistorial() {
     if (ejerciciosSesion.length === 0) {
-      alert("No hay ejercicios registrados.");
+      alert('No hay ejercicios para guardar');
       return;
     }
 
-    const nuevaSesion = {
-      fecha: new Date().toISOString(),
-      ejercicios: ejerciciosSesion
+    const botonFinalizar = document.getElementById("finalizarSesion");
+    botonFinalizar.disabled = true;
+    botonFinalizar.textContent = 'Guardando...';
+
+    const sesion = {
+      fecha: new Date().toISOString().split('T')[0],
+      ejercicios: ejerciciosSesion.map(ejercicio => ({
+        nombre: ejercicio.nombre || 'Ejercicio sin nombre',
+        grupo: ejercicio.grupo || 'Sin grupo',
+        peso: parseFloat(ejercicio.peso) || 0,
+        repeticiones: parseInt(ejercicio.repeticiones) || 0,
+        series: parseInt(ejercicio.series) || 0
+      })),
+      volumenTotal: ejerciciosSesion.reduce((total, ejercicio) => {
+        const peso = parseFloat(ejercicio.peso) || 0;
+        const repeticiones = parseInt(ejercicio.repeticiones) || 0;
+        const series = parseInt(ejercicio.series) || 0;
+        return total + (peso * repeticiones * series);
+      }, 0)
     };
 
-    const historial = JSON.parse(localStorage.getItem(claveHistorial)) || [];
-    historial.push(nuevaSesion);
-    localStorage.setItem(claveHistorial, JSON.stringify(historial));
+    console.log('Datos de la sesión a guardar:', JSON.stringify(sesion, null, 2));
 
-    ejerciciosSesion = [];
-    localStorage.removeItem("sesion_entrenamiento");
-    actualizarTabla();
-    alert("Sesión guardada con éxito.");
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        console.log("Usuario autenticado por onAuthStateChanged:", user.uid);
+
+        try {
+          await firebaseGuardarSesion(user.uid, sesion);
+          console.log('Sesión guardada exitosamente en Firestore');
+
+          // Limpiar la sesión
+          ejerciciosSesion = [];
+          localStorage.removeItem("sesion_entrenamiento");
+          actualizarTabla();
+
+          // Mostrar mensaje de éxito
+          if (typeof Swal !== 'undefined') {
+            await Swal.fire({
+              icon: 'success',
+              title: 'Éxito',
+              text: 'Sesión guardada exitosamente',
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#0d6efd'
+            });
+          } else {
+            alert('Sesión guardada exitosamente');
+          }
+
+          // Redirigir al dashboard
+          window.location.href = 'Dashboard.html';
+
+        } catch (error) {
+          console.error('Error al guardar la sesión con usuario activo:', error);
+          const errorMessage = 'Error al guardar la sesión: ' + (error.message || 'Error desconocido');
+          botonFinalizar.disabled = false;
+          botonFinalizar.textContent = 'Finalizar Sesión';
+
+          if (typeof firebaseMostrarError === 'function') {
+            firebaseMostrarError({ code: 'firebase/save-error', message: errorMessage });
+          } else {
+            alert(errorMessage);
+          }
+        }
+      } else {
+        console.error("No hay usuario autenticado (onAuthStateChanged)");
+        const errorMessage = "No se pudo guardar la sesión porque no hay usuario autenticado.";
+        botonFinalizar.disabled = false;
+        botonFinalizar.textContent = 'Finalizar Sesión';
+
+        if (typeof firebaseMostrarError === 'function') {
+          firebaseMostrarError({ code: 'firebase/no-auth', message: errorMessage });
+        } else {
+          alert(errorMessage);
+        }
+      }
+    });
+  }
+
+  // Evento para el botón Finalizar Sesión
+  document.getElementById("finalizarSesion")?.addEventListener("click", () => {
+    if (ejerciciosSesion.length === 0) {
+      alert("No hay ejercicios en la sesión para guardar.");
+      return;
+    }
+
+    if (confirm("¿Estás seguro de que deseas finalizar la sesión de entrenamiento?")) {
+      guardarEntrenamientoEnHistorial();
+    }
   });
+  
+  // Actualizar el estado del botón Finalizar Sesión
+  function actualizarBotonFinalizar() {
+    const botonFinalizar = document.getElementById("finalizarSesion");
+    if (botonFinalizar) {
+      botonFinalizar.disabled = ejerciciosSesion.length === 0;
+    }
+  }
+  
+  // Sobrescribir la función actualizarTabla para incluir la actualización del botón
+  const actualizarTablaOriginal = actualizarTabla;
+  actualizarTabla = function() {
+    actualizarTablaOriginal();
+    actualizarBotonFinalizar();
+  };
+  
+  // Inicializar el estado del botón al cargar la página
+  actualizarBotonFinalizar();
+  
+  console.log('Aplicación configurada correctamente');
 });
