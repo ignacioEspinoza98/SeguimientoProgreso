@@ -8,7 +8,7 @@ let firebaseInitialized = false;
 // Configuración para los correos de verificación
 const actionCodeSettings = {
     // URL que se abrirá después de que el usuario haga clic en el enlace de verificación
-    url: window.location.origin + '/frontend/html/verificacion.html',
+    url: window.location.origin + '/../html/verificacion.html',
     // Esto asegura que el enlace solo funcione en el contexto de la aplicación
     handleCodeInApp: true
 };

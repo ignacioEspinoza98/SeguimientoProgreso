@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const usuario = JSON.parse(sessionStorage.getItem("usuario"));
   if (!usuario) {
-    window.location.href = "/frontend/html/InicioSesion.html";
+    window.location.href = "../html/InicioSesion.html";
     return;
   }
 

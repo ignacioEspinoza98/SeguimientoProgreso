@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     botonCerrar.addEventListener("click", () => {
       sessionStorage.clear();
       alert("Sesión cerrada correctamente");
-      window.location.href = "../../index.html"; // sube dos niveles
+      window.location.href = "../index.html"; // sube un nivel
     });
   }
 });

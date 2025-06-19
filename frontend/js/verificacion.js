@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', function () {
             `;
 
             if (user.emailVerified) {
-                window.location.href = '/frontend/html/Dashboard.html';
+                window.location.href = '../html/Dashboard.html';
             }
         } else {
-            window.location.href = 'InicioSesion.html';
+            window.location.href = '../html/InicioSesion.html';
         }
     });
 
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function reenviarCorreoVerificacion() {
         const user = auth.currentUser;
         if (!user) {
-            window.location.href = 'InicioSesion.html';
+            window.location.href = '../html/InicioSesion.html';
             return;
         }
 

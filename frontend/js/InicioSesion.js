@@ -83,7 +83,7 @@ function inicializarInicioSesion() {
             console.log('Usuario guardado en sessionStorage:', JSON.parse(sessionStorage.getItem('usuario')));
 
             const baseUrl = window.location.origin;
-            window.location.replace('/frontend/html/Dashboard.html');
+            window.location.replace('../html/Dashboard.html');
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
             if (typeof window.mostrarError === 'function') {
@@ -108,7 +108,7 @@ function inicializarInicioSesion() {
     if (enlaceOlvidePassword) {
         enlaceOlvidePassword.addEventListener('click', e => {
             e.preventDefault();
-            window.location.href = 'recuperar-contrasena.html';
+            window.location.href = '../html/recuperar-contrasena.html';
         });
     }
 

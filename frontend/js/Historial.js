@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('Iniciando carga de Historial...');
 
   const usuarioString = sessionStorage.getItem('usuario');
-  if (!usuarioString) return (window.location.href = 'InicioSesion.html');
+  if (!usuarioString) return (window.location.href = '../html/InicioSesion.html');
 
   let usuario;
   try {

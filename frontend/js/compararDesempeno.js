@@ -351,7 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Event Listeners
   btnVolver.addEventListener('click', () => {
-    window.location.href = 'Dashboard.html';
+    window.location.href = '../html/Dashboard.html';
   });
 
   btnComparar.addEventListener('click', () => {
