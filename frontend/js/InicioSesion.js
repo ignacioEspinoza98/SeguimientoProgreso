@@ -83,7 +83,7 @@ function inicializarInicioSesion() {
             console.log('Usuario guardado en sessionStorage:', JSON.parse(sessionStorage.getItem('usuario')));
 
             const baseUrl = window.location.origin;
-            window.location.replace(`${baseUrl}/SeguimientoProgreso/frontend/html/Dashboard.html`);
+            window.location.replace('/seguimientoProgreso/frontend/html/Dashboard.html');
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
             if (typeof window.mostrarError === 'function') {

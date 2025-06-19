@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard | Progreso Gym</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="../css/Dashboard.css" />
+  <link rel="stylesheet" href="/seguimientoProgreso/css/Dashboard.css">
 </head>
 <body>
   <!-- Barra de navegación -->
@@ -404,14 +404,14 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   
   <!-- Configuración de Firebase -->
-  <script src="../js/firebase-config.js"></script>
+  <script src="/seguimientoProgreso/js/firebase-config.js"></script>
   
   <!-- Scripts de la aplicación -->
-  <script src="../js/Auth.js"></script>
-  <script src="../js/CerrarSesion.js"></script>
-  <script src="../js/dashboard.js"></script>
+  <script src="/seguimientoProgreso/js/Auth.js"></script>
+  <script src="/seguimientoProgreso/js/CerrarSesion.js"></script>
+  <script src="/seguimientoProgreso/js/dashboard.js"></script>
   <script type="module">
-    import { inicializarRecomendaciones } from '../js/recomendaciones.js';
+    import { inicializarRecomendaciones } from '/seguimientoProgreso/js/recomendaciones.js';
     document.addEventListener('DOMContentLoaded', () => {
       inicializarRecomendaciones();
     });
