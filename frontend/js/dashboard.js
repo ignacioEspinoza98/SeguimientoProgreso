@@ -1,12 +1,13 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const usuario = JSON.parse(sessionStorage.getItem("usuario"));
   if (!usuario) {
-    window.location.href = "InicioSesion.html";
+    window.location.href = "/frontend/html/InicioSesion.html";
     return;
   }
 
   const saludo = document.getElementById("saludoUsuario");
-  saludo.textContent = `¡Hola, ${usuario.nombre}!`;
+  const nombre = usuario.nombre || usuario.usuario || usuario.email || "usuario";
+  saludo.textContent = `¡Hola, ${nombre}!`;
 
   const obtenerHistorial = window.firebaseServices?.obtenerHistorial;
   if (typeof obtenerHistorial !== "function") {

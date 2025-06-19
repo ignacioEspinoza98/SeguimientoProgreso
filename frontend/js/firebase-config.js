@@ -8,7 +8,7 @@ let firebaseInitialized = false;
 // Configuración para los correos de verificación
 const actionCodeSettings = {
     // URL que se abrirá después de que el usuario haga clic en el enlace de verificación
-    url: window.location.origin + '/SeguimientoProgreso/frontend/html/verificacion.html',
+    url: window.location.origin + '/frontend/html/verificacion.html',
     // Esto asegura que el enlace solo funcione en el contexto de la aplicación
     handleCodeInApp: true
 };
@@ -162,8 +162,7 @@ window.loginWithGoogle = async function() {
         console.log('Redirigiendo a Dashboard.html');
         // Usar ruta absoluta desde la raíz del sitio
         const baseUrl = window.location.origin;
-        const dashboardUrl = `${baseUrl}/SeguimientoProgreso/frontend/html/Dashboard.html`;
-        console.log('Redirigiendo a:', dashboardUrl);
+        const dashboardUrl = `${baseUrl}/frontend/html/Dashboard.html`;
         window.location.replace(dashboardUrl);
         
     } catch (error) {
@@ -181,7 +180,8 @@ window.loginWithGoogle = async function() {
         // Si hay un error de red, intentar redirigir de todos modos
         if (error.code === 'unavailable' || error.code === 'unauthenticated') {
             console.log('Error de red detectado, redirigiendo de todos modos...');
-            window.location.href = 'Dashboard.html';
+            window.location.href = '/frontend/html/Dashboard.html';
+
         }
     }
 };
@@ -197,7 +197,7 @@ function loginWithEmail(email, password) {
             }).catch(console.warn);
             
             // Redirigir al dashboard después del login exitoso
-            window.location.href = 'Dashboard.html';
+            window.location.href = '/frontend/html/Dashboard.html';
         })
         .catch((error) => {
             console.error('Error en login con correo/contraseña:', error);
