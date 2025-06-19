@@ -115,11 +115,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     return filtrados;
   }
 
-<<<<<<< HEAD
-    // Inicializar vista
-    actualizarVista();
-}); 
-=======
   function renderizarEntrenamientos(entrenamientos) {
     listaEntrenamientos.innerHTML = '';
 
@@ -207,4 +202,3 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   actualizarVista();
 });
->>>>>>> Features/Ignacio/2025-06-18-fixAnalisisYInicioSesion
