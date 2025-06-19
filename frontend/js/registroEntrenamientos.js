@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   firebase.auth().onAuthStateChanged(user => {
     if (!user) {
       console.warn("Usuario no autenticado, redirigiendo al login...");
-      window.location.href = "/SeguimientoProgreso/frontend/html/InicioSesion.html";
+      window.location.href = "/frontend/html/InicioSesion.html";
     } else {
       console.log("Usuario autenticado al cargar la página:", user.uid);
     }

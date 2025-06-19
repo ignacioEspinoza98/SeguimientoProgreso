@@ -171,7 +171,7 @@
           
           // Enviar correo de restablecimiento
           await firebase.auth().sendPasswordResetEmail(email, {
-            url: window.location.origin + '/SeguimientoProgreso/frontend/html/InicioSesion.html'
+            url: window.location.origin + '/frontend/html/InicioSesion.html'
           });
           
           // Mostrar mensaje de éxito

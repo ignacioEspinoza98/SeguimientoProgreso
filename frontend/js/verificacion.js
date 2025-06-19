@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
             `;
 
             if (user.emailVerified) {
-                window.location.href = '/SeguimientoProgreso/frontend/html/Dashboard.html';
+                window.location.href = '/frontend/html/Dashboard.html';
             }
         } else {
             window.location.href = 'InicioSesion.html';
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         confirmButtonColor: '#198754',
                         allowOutsideClick: false
                     }).then(() => {
-                        window.location.href = '/SeguimientoProgreso/frontend/html/Dashboard.html';
+                        window.location.href = '/frontend/html/Dashboard.html';
                     });
                 }
             });
