@@ -93,9 +93,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const comparacion = document.getElementById("comparacionSemanal");
   if (comparacion) {
     if (diferencia > 0) {
-      comparacion.textContent = `📈 +${diferencia} series respecto a la semana pasada`;
+      comparacion.textContent = `+${diferencia} series respecto a la semana pasada`;
     } else if (diferencia < 0) {
-      comparacion.textContent = `📉 ${diferencia} series respecto a la semana pasada`;
+      comparacion.textContent = `${diferencia} series respecto a la semana pasada`;
     } else {
       comparacion.textContent = `⚖️ Mismo número de series que la semana pasada`;
     }

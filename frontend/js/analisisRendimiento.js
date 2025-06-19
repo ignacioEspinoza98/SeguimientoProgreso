@@ -154,9 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const diferencia = ultimoValor - primerValor;
         const porcentaje = ((diferencia / primerValor) * 100).toFixed(1);
         const signo = porcentaje >= 0 ? "+" : "";
-        const emoji = porcentaje >= 0 ? "📈" : "📉";
         evolucionElement.innerHTML =
-          `${emoji} ${signo}${porcentaje}% en ${ejercicioSeleccionado}<br><small style="font-size: 0.8em; color: #aaa;">Basado en volumen total (peso × reps)</small>`;
+          `${signo}${porcentaje}% en ${ejercicioSeleccionado}<br><small style="font-size: 0.8em; color: #aaa;">Basado en volumen total (peso × reps)</small>`;
       } else {
         evolucionElement.innerHTML =
           "Sin datos suficientes<br><small style='font-size: 0.8em; color: #aaa;'>Basado en volumen total (peso × reps)</small>";

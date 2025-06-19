@@ -16,7 +16,6 @@
 
 .seccion-bienvenida .saludo {
   font-size: 3rem;
-  margin: 0 0 1rem 0;
   background: var(--gradiente);
   -webkit-background-clip: text;
   background-clip: text;
@@ -31,6 +30,18 @@
   max-width: 800px;
   margin: 0 auto;
   line-height: 1.6;
+}
+
+h1.saludos {
+  font-size: 2.75rem;
+  font-weight: 800;
+  margin: 0 0 var(--espaciado-md) 0;
+  background: var(--gradiente);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+  margin-top: 100px;
 }
 
 /* Filtros */
