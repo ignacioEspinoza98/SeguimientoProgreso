@@ -787,3 +787,20 @@
 .cta-button:hover {
   background: #e68a00;
 }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .nav-link.active {
+    font-weight: bold;
+    border-bottom: 2px solid var(--primary-color);
+  }
+
+  .footer {
+  background: #111;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2rem;
+}

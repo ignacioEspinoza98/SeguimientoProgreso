@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Progreso Gym: registra tus entrenamientos, mide tu progreso y alcanza tus objetivos de fitness con precisión.">
+  <meta name="keywords" content="fitness, gimnasio, progreso, entrenamiento, fuerza, salud, gym, registro de entrenamientos">
+  <meta name="author" content="Progreso Gym Team">
   <title>Progreso Gym - Transforma tu Cuerpo, Mejora tu Vida</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -27,6 +30,7 @@
     <div class="contenedor">
       <h1 class="animate__animated animate__fadeInDown">Transforma tu cuerpo,<br>mejora tu vida</h1>
       <p class="animate__animated animate__fadeInUp animate__delay-1s">La aplicación definitiva para seguir tu progreso en el gimnasio y alcanzar tus objetivos de fitness.</p>
+      <p id="fraseTexto" class="frase-motivacional animate__animated animate__fadeIn" style="margin-top: 20px; font-style: italic;"></p>
       <a href="frontend/html/Registro.html" class="cta-button animate__animated animate__fadeInUp animate__delay-2s">Comenzar Ahora</a>
     </div>
   </section>
@@ -96,15 +100,12 @@
     </div>
   </section>
   <!-- Sección CTA -->
-  <section class="cta-section" id="contacto">
+  <footer class="footer">
     <div class="contenedor">
-      <h2>¿Listo para comenzar?</h2>
-      <p>Únete a nuestra comunidad y lleva tu entrenamiento al siguiente nivel.</p>
-      <a href="frontend/html/Registro.html" class="cta-button">Regístrate Gratis</a>
+      <p>&copy; 2025 Progreso Gym. Todos los derechos reservados.</p>
     </div>
-  </section>
+  </footer>
 
-  <script src="index.js"></script>
   <script>
     // Array de frases motivacionales
     const frases = [
@@ -150,5 +151,6 @@
       }
     });
   </script>
+  <script src="frontend/js/index.js"></script>
 </body>
 </html>

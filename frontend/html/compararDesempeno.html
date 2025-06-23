@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../css/Dashboard.css">
   <link rel="stylesheet" href="../css/compararDesempeno.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
   <!-- Barra de navegación -->
@@ -17,9 +21,9 @@
         <span>Progreso Gym</span>
       </a>
       <div class="nav-botones">
-        <a href="Dashboard.html" class="boton boton-secundario">
+        <button id="volverDashboard" class="boton boton-secundario">
           <i class="fas fa-arrow-left"></i> Volver al Dashboard
-        </a>
+        </button>
         <button id="cerrarSesion" class="boton boton-primario">
           <i class="fas fa-sign-out-alt"></i> Cerrar sesión
         </button>
@@ -163,6 +167,7 @@
     </section>
   </main>
 
+  <script src="../js/firebase-config.js"></script>
   <script src="../js/Auth.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="../js/compararDesempeno.js"></script>

@@ -149,9 +149,9 @@ export function analizarRendimiento(historial) {
     fechasEntrenamiento.push(fecha);
     
     sesion.ejercicios.forEach(ejercicio => {
-      if (!ejercicio.grupoMuscular || ejercicio.grupoMuscular === "Otro") return;
+      if (!ejercicio.grupo  || ejercicio.grupo  === "Otro") return;
       
-      const grupo = ejercicio.grupoMuscular;
+      const grupo = ejercicio.grupo ;
       const series = parseInt(ejercicio.series) || 0;
       const repeticiones = parseInt(ejercicio.repeticiones) || 0;
       const peso = parseFloat(ejercicio.peso) || 0;
