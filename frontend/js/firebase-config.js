@@ -144,13 +144,15 @@ window.loginWithGoogle = async function() {
         }
         
         // 3. Guardar información del usuario en sessionStorage
+        const user = result.user;
+
         const usuario = {
-            nombre: result.user.displayName || result.user.email.split('@')[0],
-            usuario: user.displayName || user.email.split('@')[0],
-            email: result.user.email,
-            emailVerificado: result.user.emailVerified,
-            uid: result.user.uid,
-            fotoURL: result.user.photoURL || ''
+        nombre: user.displayName || user.email.split('@')[0],
+        usuario: user.displayName || user.email.split('@')[0],
+        email: user.email,
+        emailVerificado: user.emailVerified,
+        uid: user.uid,
+        fotoURL: user.photoURL || ''
         };
         
         sessionStorage.setItem('Logueado', 'true');
@@ -181,7 +183,7 @@ window.loginWithGoogle = async function() {
         // Si hay un error de red, intentar redirigir de todos modos
         if (error.code === 'unavailable' || error.code === 'unauthenticated') {
             console.log('Error de red detectado, redirigiendo de todos modos...');
-            window.location.href = 'Dashboard.html';
+            window.location.href = '/frontend/html/Dashboard.html';
         }
     }
 };
@@ -197,7 +199,8 @@ function loginWithEmail(email, password) {
             }).catch(console.warn);
             
             // Redirigir al dashboard después del login exitoso
-            window.location.href = 'Dashboard.html';
+            window.location.href = '/frontend/html/Dashboard.html';
+
         })
         .catch((error) => {
             console.error('Error en login con correo/contraseña:', error);
