@@ -1,0 +1,139 @@
+/* ESTILOS BASE */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0f0f0f;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1, h2, h3 {
+  color: #ffa500;
+  margin-bottom: 0.5em;
+}
+
+/* MÉTRICAS GENERALES */
+.metricas {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.card-metrica {
+  background-color: #1a1a1a;
+  border: 1px solid #ffa50055;
+  border-radius: 12px;
+  padding: 1.5rem;
+  flex: 1;
+  min-width: 220px;
+  text-align: center;
+  box-shadow: 0 0 10px #00000050;
+  transition: transform 0.2s ease;
+}
+
+.card-metrica:hover {
+  transform: scale(1.02);
+}
+
+.card-metrica h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-metrica span {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* TABLA DE USUARIOS */
+.tabla-usuarios {
+  margin-top: 3rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #1a1a1a;
+  border: 1px solid #ffa50030;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+th {
+  background-color: #ffa50010;
+  color: #ffa500;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+td {
+  color: #eee;
+}
+
+tr:hover {
+  background-color: #292929;
+}
+
+button.ver-detalles {
+  background-color: #ffa500;
+  color: #0f0f0f;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button.ver-detalles:hover {
+  background-color: #ffbb33;
+}
+
+/* SECCIONES ADICIONALES */
+section {
+  margin-top: 3rem;
+}
+
+.top-usuarios-lista,
+.actividad-lista {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+}
+
+.top-usuarios-lista li,
+.actividad-lista li {
+  padding: 4px 0;
+  color: #ccc;
+  border-bottom: 1px solid #222;
+}
+
+.bloque-reciente {
+  margin-top: 1.5rem;
+}
+
+.crecimiento-semanal p {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #1a1a1a;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ffa50040;
+  max-width: 400px;
+}

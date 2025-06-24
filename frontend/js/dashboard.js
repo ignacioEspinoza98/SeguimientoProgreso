@@ -5,6 +5,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  const UID_ADMIN = "aQUdj3oJR5VceRFAOKv89naAJaA3";
+  if (usuario.uid === UID_ADMIN) {
+    const btnAdmin = document.getElementById("btnAdmin");
+    if (btnAdmin) {
+      btnAdmin.style.display = "inline-block";
+      btnAdmin.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = "../html/admin.html";
+      });
+    }
+  }
+
   const saludo = document.getElementById("saludoUsuario");
   saludo.textContent = `¡Hola, ${usuario.nombre}!`;
 

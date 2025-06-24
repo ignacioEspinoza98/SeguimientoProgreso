@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel Admin | Progreso Gym</title>
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body>
+  <main>
+    <h1>Panel de Administración</h1>
+
+    <!-- Métricas generales -->
+    <section class="metricas">
+      <div class="card-metrica">
+        <h2>Total Usuarios</h2>
+        <span id="totalUsuarios">--</span>
+      </div>
+      <div class="card-metrica">
+        <h2>Total Sesiones</h2>
+        <span id="totalSesiones">--</span>
+      </div>
+      <div class="card-metrica">
+        <h2>Promedio x Usuario</h2>
+        <span id="promedioSesiones">--</span>
+      </div>
+    </section>
+
+    <!-- Tabla de usuarios -->
+    <section class="tabla-usuarios">
+      <h2>Lista de Usuarios</h2>
+      <table id="tablaUsuarios">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Registrado</th>
+            <th>Sesiones</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Top usuarios más activos -->
+    <section class="top-usuarios">
+      <h2> Top usuarios más activos</h2>
+      <ul id="listaTopUsuarios" class="top-usuarios-lista"></ul>
+    </section>
+
+    <!-- Actividad reciente -->
+    <section class="actividad-reciente">
+      <h2> Actividad reciente</h2>
+
+      <div class="bloque-reciente">
+        <h3> Últimos usuarios registrados</h3>
+        <ul id="ultimosUsuariosRegistrados" class="actividad-lista"></ul>
+      </div>
+
+      <div class="bloque-reciente">
+        <h3> Usuarios inactivos</h3>
+        <ul id="listaUsuariosInactivos" class="actividad-lista"></ul>
+      </div>
+    </section>
+
+    <!-- Crecimiento semanal -->
+    <section class="crecimiento-semanal">
+      <h2> Crecimiento semanal</h2>
+      <p id="porcentajeCrecimiento">Cargando...</p>
+    </section>
+  </main>
+
+  <!-- Firebase & Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/Auth.js"></script>
+  <script src="../js/CerrarSesion.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>
