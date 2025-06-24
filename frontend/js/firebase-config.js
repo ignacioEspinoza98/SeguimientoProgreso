@@ -8,7 +8,7 @@ let firebaseInitialized = false;
 // Configuración para los correos de verificación
 const actionCodeSettings = {
     // URL que se abrirá después de que el usuario haga clic en el enlace de verificación
-    url: window.location.origin + '/SeguimientoProgreso/frontend/html/verificacion.html',
+    url: window.location.origin + '/frontend/html/verificacion.html',
     // Esto asegura que el enlace solo funcione en el contexto de la aplicación
     handleCodeInApp: true
 };
@@ -162,7 +162,7 @@ window.loginWithGoogle = async function() {
         console.log('Redirigiendo a Dashboard.html');
         // Usar ruta absoluta desde la raíz del sitio
         const baseUrl = window.location.origin;
-        const dashboardUrl = `${baseUrl}/SeguimientoProgreso/frontend/html/Dashboard.html`;
+        const dashboardUrl = `${baseUrl}/frontend/html/Dashboard.html`;
         console.log('Redirigiendo a:', dashboardUrl);
         window.location.replace(dashboardUrl);
         

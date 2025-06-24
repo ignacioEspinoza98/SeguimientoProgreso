@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Enviar correo de verificación
     async function enviarCorreoVerificacion(user) {
         const actionCodeSettings = {
-            url: window.location.origin + '/SeguimientoProgreso/frontend/html/verificacion.html',
+            url: window.location.origin + '/frontend/html/verificacion.html',
             handleCodeInApp: true
         };
         await user.sendEmailVerification(actionCodeSettings);
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             await auth.signOut();
-            window.location.href = `/SeguimientoProgreso/frontend/html/verificacion.html?email=${encodeURIComponent(user.email)}`;
+            window.location.href = `/frontend/html/verificacion.html?email=${encodeURIComponent(user.email)}`;
         } catch (error) {
             console.error('Error en registro:', error);
             window.mostrarError?.(error);
