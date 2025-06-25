@@ -39,23 +39,23 @@ const ejerciciosPorGrupoDefault = {
     "Dominadas pronas", "Jalón con agarre supino", "Jalón en máquina neutro", "Jalón al pecho prono"
   ],
   Hombros: [
-    "Press Arnold", "Press militar en máquina", "Elevaciones frontales", "Elevaciones laterales",
+    "Press Arnold", "Press militar en máquina", "Elevaciones frontales", "Laterales con mancuerna",
     "Aperturas inversas", "Laterales en máquina", "Laterales en polea"
   ],
   Bíceps: [
     "Curl con barra recta", "Curl concentración", "Curl martillo en polea",
-    "Curl bayesiano en polea", "Curl en banco inclinado"
+    "Curl bayesiano en polea", "Curl en banco inclinado", "Curl con mancuernas"
   ],
   Tríceps: [
     "Extensión tríceps unilateral", "Extensión de tríceps en cuerda", "Fondos en paralelas", "Press francés"
   ],
   Piernas: [
     "Sentadilla libre", "Sentadilla hack", "Peso muerto convencional", "Peso muerto rumano",
-    "Prensa unilateral", "Extensión de cuádriceps", "Curl isquio sentado", "Step-up con mancuernas",
+    "Prensa", "Prensa unilateral", "Pendulo", "Extensión de cuádriceps", "Curl isquio sentado","Curl isquio acostado", "Bulgaras con mancuernas",
     "Zancadas caminando", "Buenos días", "Hip thrust con barra", "Aductores"
   ],
   Gemelos: [
-    "Gemelos de pie con barra", "Gemelos en prensa", "Gemelos (gastrocnemio)"
+    "Gemelos de pie con barra", "Gemelos en prensa", "Soleo"
   ],
   Abdomen: [
     "Crunch en máquina", "Plancha abdominal", "Rueda abdominal"

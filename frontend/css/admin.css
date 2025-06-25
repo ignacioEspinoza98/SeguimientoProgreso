@@ -5,6 +5,7 @@ body {
   color: #fff;
   margin: 0;
   padding: 0;
+  padding-top: 80px;
 }
 
 main {
@@ -16,6 +17,66 @@ main {
 h1, h2, h3 {
   color: #ffa500;
   margin-bottom: 0.5em;
+}
+
+/* ===== BARRA DE NAVEGACIÓN ===== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(10, 10, 10, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 0.8rem 0;
+  transition: var(--transicion-media);
+}
+
+.navbar.scrolled {
+  padding: 0.5rem 0;
+  background: rgba(5, 5, 5, 0.98);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.nav-contenedor {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--espaciado-md);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--color-texto);
+}
+
+.nav-logo i {
+  font-size: 1.8rem;
+  background: var(--gradiente);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: var(--transicion-rapida);
+}
+
+.nav-logo:hover i {
+  transform: scale(1.1);
+}
+
+.nav-botones {
+  display: flex;
+  align-items: center;
+  gap: var(--espaciado-sm);
 }
 
 /* MÉTRICAS GENERALES */
@@ -102,6 +163,39 @@ button.ver-detalles {
 
 button.ver-detalles:hover {
   background-color: #ffbb33;
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  border: none;
+}
+
+.boton-primario {
+  background-color: #ffa500;
+  color: #0f0f0f;
+}
+
+.boton-primario:hover {
+  background-color: #ffbb33;
+}
+
+.boton-secundario {
+  background-color: transparent;
+  color: #ffa500;
+  border: 1px solid #ffa500;
+}
+
+.boton-secundario:hover {
+  background-color: #ffa50022;
 }
 
 /* SECCIONES ADICIONALES */

@@ -2,7 +2,7 @@ auth = window.firebaseServices?.auth;
 db = window.firebaseServices?.db;
 
 document.addEventListener("DOMContentLoaded", () => {
-  const UID_ADMIN = "aQUdj3oJR5VceRFAOKv89naAJaA3";
+  const UID_ADMIN = "IdH1zj73eBTeZW0bxK4KBJQe98d2";
 
   auth.onAuthStateChanged(async (user) => {
     if (!user || user.uid !== UID_ADMIN) {

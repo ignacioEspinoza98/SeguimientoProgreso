@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  const UID_ADMIN = "aQUdj3oJR5VceRFAOKv89naAJaA3";
+  const UID_ADMIN = "IdH1zj73eBTeZW0bxK4KBJQe98d2";
   if (usuario.uid === UID_ADMIN) {
     const btnAdmin = document.getElementById("btnAdmin");
     if (btnAdmin) {
